@@ -71,17 +71,7 @@ width:100%;
 
 /* CURSOR */
 
-.cursor{
-position:fixed;
-width:15px;
-height:15px;
-background:#ff2d78;
-border-radius:50%;
-pointer-events:none;
-z-index:999999;
-box-shadow:0 0 20px #ff2d78;
-transform:translate(-50%,-50%);
-}
+
 
 /* PARTICLES */
 
