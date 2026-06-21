@@ -316,7 +316,6 @@ alert('❌ ' + error);
 
 }
    
-});
 registerForm.reset();
 
 });
