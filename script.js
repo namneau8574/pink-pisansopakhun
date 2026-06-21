@@ -244,7 +244,7 @@ commentForm.reset();
 const registerForm =
 document.getElementById('registerForm');
 
-registerForm.addEventListener('submit',(e)=>{
+registerForm.addEventListener('submit', async (e)=>{
 
 e.preventDefault();
 
@@ -282,21 +282,41 @@ contact,
 sport
 });
 
-push(ref(db,'players'),{
+try{
 
-name: name,
-room: room,
-level: level,
-contact: contact,
-sport: sport,
-time: Date.now()
-
-});
-
-alert(
-'⚔️ สมัคร ' + sport + ' สำเร็จ!'
+const response = await fetch(
+'https://script.google.com/macros/s/AKfycbxLz64OOBbu9TBfT7oyY_41B8lrZtzAVfUxgLmaLyTJBDsKW9bhWnQmvlbuFYQYs04/exec',
+{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify({
+name,
+room,
+level,
+contact,
+sport
+})
+}
 );
 
+console.log(response.status);
+console.log(await response.text());
+
+alert('⚔️ สมัคร ' + sport + ' สำเร็จ!');
+
+registerForm.reset();
+
+}catch(error){
+
+console.error(error);
+
+alert('❌ ' + error);
+
+}
+   
+});
 registerForm.reset();
 
 });
