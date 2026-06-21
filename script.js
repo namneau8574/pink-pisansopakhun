@@ -241,83 +241,42 @@ commentForm.reset();
    REGISTER SYSTEM
 ========================= */
 
-const registerForm =
-document.getElementById('registerForm');
+const registerForm = document.getElementById('registerForm');
 
-registerForm.addEventListener('submit', async (e)=>{
+registerForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-e.preventDefault();
+  const name    = document.getElementById('name').value.trim();
+  const room    = document.getElementById('room').value.trim();
+  const sport   = document.getElementById('sport').value;
+  const level   = document.getElementById('level').value;
+  const contact = document.getElementById('contact').value.trim();
 
-const name =
-document.getElementById('name')
-.value.trim();
+  if (name === '' || room === '') {
+    alert('กรอกข้อมูลให้ครบ');
+    return;
+  }
 
-const room =
-document.getElementById('room')
-.value.trim();
+  // ใช้ URLSearchParams แทน JSON เพื่อหลีกเลี่ยง CORS preflight
+  const params = new URLSearchParams({ name, room, sport, level, contact });
 
-const sport =
-document.getElementById('sport')
-.value;
-const level =
-document.getElementById('level')
-.value;
+  try {
+    await fetch(
+      'https://script.google.com/macros/s/AKfycbxLz64OOBbu9TBfT7oyY_41B8lrZtzAVfUxgLmaLyTJBDsKW9bhWnQmvlbuFYQYs04/exec',
+      {
+        method: 'POST',
+        body: params,
+        // ไม่ต้องใส่ Content-Type — browser จะตั้งเป็น form-urlencoded ให้เอง
+      }
+    );
 
-const contact =
-document.getElementById('contact')
-.value.trim();
+    alert('⚔️ สมัคร ' + sport + ' สำเร็จ!');
+    registerForm.reset();
 
-if(name === '' || room === ''){
-
-alert('กรอกข้อมูลให้ครบ');
-return;
-
-}
-
-console.log({
-name,
-room,
-level,
-contact,
-sport
-});
-
-try{
-
-const response = await fetch(
-'https://script.google.com/macros/s/AKfycbxLz64OOBbu9TBfT7oyY_41B8lrZtzAVfUxgLmaLyTJBDsKW9bhWnQmvlbuFYQYs04/exec',
-{
-method:'POST',
-headers:{
-'Content-Type':'application/json'
-},
-body:JSON.stringify({
-name,
-room,
-level,
-contact,
-sport
-})
-}
-);
-
-console.log(response.status);
-console.log(await response.text());
-
-alert('⚔️ สมัคร ' + sport + ' สำเร็จ!');
-
-registerForm.reset();
-
-}catch(error){
-
-console.error(error);
-
-alert('❌ ' + error);
-
-}
-   
-registerForm.reset();
-
+  } catch (error) {
+    console.error(error);
+    alert('❌ เกิดข้อผิดพลาด: ' + error.message);
+  }
 });
 function showPopup(text){
 
