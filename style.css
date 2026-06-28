@@ -1100,3 +1100,133 @@ bottom:30px;
 }
 
 }
+/* =========================
+   QR POPUP
+========================= */
+
+.qr-popup{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,.75);
+
+display:none;
+
+justify-content:center;
+align-items:center;
+
+z-index:9999;
+
+backdrop-filter:blur(8px);
+
+}
+
+.qr-box{
+
+background:#111;
+
+padding:30px;
+
+border-radius:20px;
+
+text-align:center;
+
+width:340px;
+
+box-shadow:0 0 30px #ff4db8;
+
+animation:popup .35s ease;
+
+}
+
+.qr-box h2{
+
+color:#ff69c8;
+
+margin-bottom:20px;
+
+font-size:26px;
+
+line-height:1.5;
+
+}
+
+.qr-box img{
+
+width:230px;
+
+height:230px;
+
+border-radius:12px;
+
+background:#fff;
+
+padding:10px;
+
+margin-bottom:15px;
+
+}
+
+.qr-box p{
+
+color:white;
+
+font-size:16px;
+
+margin-bottom:20px;
+
+}
+
+.qr-box button{
+
+background:#ff4db8;
+
+color:white;
+
+border:none;
+
+padding:12px 30px;
+
+border-radius:30px;
+
+font-size:16px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.qr-box button:hover{
+
+background:#ff1493;
+
+transform:scale(1.05);
+
+}
+
+@keyframes popup{
+
+from{
+
+opacity:0;
+
+transform:scale(.7);
+
+}
+
+to{
+
+opacity:1;
+
+transform:scale(1);
+
+}
+
+}
