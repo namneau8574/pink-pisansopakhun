@@ -381,3 +381,43 @@ document.getElementById("loader").style.display="none";
 },3000);
 
 });
+const qrImages = {
+  "ฟุตบอลชาย": "images/qr-football.png",
+  "บาสเกตบอลชาย": "qr-basketball-boy.png",
+  "บาสเกตบอลหญิง": "qr-basketball-boy.png",
+  "วอลเลย์บอลชาย": "images/qr-volleyball-boy.png",
+  "วอลเลย์บอลหญิง": "images/qr-volleyball-girl.png",
+  "แบดมินตันชาย": "images/qr-badminton-boy.png",
+  "แบดมินตันหญิง": "images/qr-badminton-girl.png",
+  "แฮนด์บอลหญิง": "images/qr-handball.png",
+  "กรีฑาชาย": "images/qr-athletics-boy.png",
+  "กรีฑาหญิง": "images/qr-athletics-girl.png",
+  "แชร์บอลชาย": "images/qr-chairball-boy.png",
+  "แชร์บอลหญิง": "images/qr-chairball-girl.png",
+  "ตะกร้อชาย": "images/qr-sepak-boy.png",
+  "ตะกร้อหญิง": "images/qr-sepak-girl.png",
+  "เปตองชาย": "images/qr-petanque-boy.png",
+  "เปตองหญิง": "images/qr-petanque-girl.png",
+  "เทเบิลเทนนิสชาย": "images/qr-tabletennis-boy.png",
+  "เทเบิลเทนนิสหญิง": "images/qr-tabletennis-girl.png"
+};
+document.getElementById("registerForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const room = document.getElementById("room").value.trim();
+  const level = document.getElementById("level").value;
+  const contact = document.getElementById("contact").value.trim();
+  const sport = document.getElementById("sport").value;
+
+  if (!name || !room || !level || !contact) {
+    alert("กรุณากรอกข้อมูลให้ครบก่อนนะครับ");
+    return;
+  }
+
+  showQR(sport); // เด้ง QR หลังกรอกครบ
+});
+function closeQR() {
+  document.getElementById("qrPopup").style.display = "none";
+  document.getElementById("registerForm").reset(); // เคลียร์ฟอร์ม
+}
