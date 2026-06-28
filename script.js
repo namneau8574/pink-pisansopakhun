@@ -399,7 +399,7 @@ const qrImages={
 
 "ฟุตบอลชาย":"images/qr-football.png",
 
-"บาสเกตบอลชาย":"images/qr-basketball-boy.png.jpg",
+"บาสเกตบอลชาย":"qr-basketball-boy.png",
 
 "บาสเกตบอลหญิง":"images/qr-basketball-girl.png",
 
