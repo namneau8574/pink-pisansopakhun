@@ -587,6 +587,12 @@ if (inputField) {
     inputField.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             verifyWebAccess(e);
-        }
-    });
-}
+           // 🧹 ฟังก์ชันเคลียร์บั๊กแคชค้าง: บังคับเปลี่ยนคำใบ้ (Placeholder) ในช่องอินพุตให้เป็นปัจจุบัน
+document.addEventListener("DOMContentLoaded", () => {
+    const inputField = document.getElementById('studentIdInput');
+    if (inputField) {
+        // บังคับเปลี่ยนคำใบ้เป็นคำที่คุณต้องการตรงนี้ได้เลยครับ
+        inputField.setAttribute('placeholder', 'กรอกรหัสประจำตัว 5 หลัก');
+    }
+});
+      
