@@ -1277,3 +1277,8 @@ body::before {
     font-size: 1.5rem;
   }
 }
+@keyframes fireRise {
+  0%   { transform: translateY(0)    scale(1);   opacity: 1; }
+  60%  { transform: translateY(-120px) scale(1.2); opacity: 0.8; }
+  100% { transform: translateY(-220px) scale(0.5); opacity: 0; }
+}
