@@ -399,7 +399,7 @@ const qrImages={
 
 "⚽ ฟุตบอลชาย":"images/qr-football.png",
 
-"🏀 บาสเกตบอลชาย":"qr-basketball-boy.png",
+"🏀 บาสเกตบอลชาย":"images/qr-basketball-boy.png",
 
 "🏀 บาสเกตบอลหญิง":"images/qr-basketball-girl.png",
 
@@ -449,4 +449,4 @@ function closeQR(){
 
 document.getElementById("qrPopup").style.display="none";
 
-}
+} 
