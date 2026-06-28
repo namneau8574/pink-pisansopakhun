@@ -262,12 +262,10 @@ return;
 try{
 
 await fetch(
-'https://script.google.com/macros/s/AKfycbxLz64OOBbu9TBfT7oyY_41B8lrZtzAVfUxgLmaLyTJBDsKW9bhWnQmvlbuFYQYs04/exec',
+"https://script.google.com/macros/s/AKfycbzZAejKi5eQzsDTOu627FCYqJpoaWDoMrp_KutnKlEekyvA4ynP-sXqBH382SArxlo/exec",
 {
-method:'POST',
-headers:{
-'Content-Type':'application/json'
-},
+method:"POST",
+mode:"no-cors",
 body:JSON.stringify({
 name,
 room,
@@ -278,15 +276,17 @@ sport
 }
 );
 
-alert('⚔️ สมัคร ' + sport + ' สำเร็จ!');
-
+// ถือว่าส่งแล้ว
 registerForm.reset();
 
-}catch(error){
+// เด้ง QR
+showQR(sport);
 
-console.error(error);
+}catch(err){
 
-alert('❌ ส่งข้อมูลไม่สำเร็จ');
+console.error(err);
+
+alert("❌ ส่งข้อมูลไม่สำเร็จ");
 
 }
 
@@ -397,56 +397,62 @@ document.getElementById("loader").style.display="none";
 
 const qrImages={
 
-"⚽ ฟุตบอลชาย":"images/qr-football.png",
+"ฟุตบอลชาย":"images/qr-football.png",
 
-"🏀 บาสเกตบอลชาย":"images/qr-basketball-boy.png",
+"บาสเกตบอลชาย":"images/qr-basketball-boy.png.jpg",
 
-"🏀 บาสเกตบอลหญิง":"images/qr-basketball-girl.png",
+"บาสเกตบอลหญิง":"images/qr-basketball-girl.png",
 
-"🏐 วอลเลย์บอลชาย":"images/qr-volleyball-boy.png",
+"วอลเลย์บอลชาย":"images/qr-volleyball-boy.png",
 
-"🏐 วอลเลย์บอลหญิง":"images/qr-volleyball-girl.png",
+"วอลเลย์บอลหญิง":"images/qr-volleyball-girl.png",
 
-"🏸 แบดมินตันชาย":"images/qr-badminton-boy.png",
+"แบดมินตันชาย":"images/qr-badminton-boy.png",
 
-"🏸 แบดมินตันหญิง":"images/qr-badminton-girl.png",
+"แบดมินตันหญิง":"images/qr-badminton-girl.png",
 
-"🤾 แฮนด์บอลหญิง":"images/qr-handball.png",
+"แฮนด์บอลหญิง":"images/qr-handball.png",
 
-"🏃 กรีฑาชาย":"images/qr-athletics-boy.png",
+"กรีฑาชาย":"images/qr-athletics-boy.png",
 
-"🏃 กรีฑาหญิง":"images/qr-athletics-girl.png",
+"กรีฑาหญิง":"images/qr-athletics-girl.png",
 
-"🥅 แชร์บอลชาย":"images/qr-chairball-boy.png",
+"แชร์บอลชาย":"images/qr-chairball-boy.png",
 
-"🥅 แชร์บอลหญิง":"images/qr-chairball-girl.png",
+"แชร์บอลหญิง":"images/qr-chairball-girl.png",
 
-"🦵 ตะกร้อชาย":"images/qr-sepak-boy.png",
+"ตะกร้อชาย":"images/qr-sepak-boy.png",
 
-"🦵 ตะกร้อหญิง":"images/qr-sepak-girl.png",
+"ตะกร้อหญิง":"images/qr-sepak-girl.png",
 
-"🎯 เปตองชาย":"images/qr-petanque-boy.png",
+"เปตองชาย":"images/qr-petanque-boy.png",
 
-"🎯 เปตองหญิง":"images/qr-petanque-girl.png",
+"เปตองหญิง":"images/qr-petanque-girl.png",
 
-"🏓 เทเบิลเทนนิสชาย":"images/qr-tabletennis-boy.png",
+"เทเบิลเทนนิสชาย":"images/qr-tabletennis-boy.png",
 
-"🏓 เทเบิลเทนนิสหญิง":"images/qr-tabletennis-girl.png"
+"เทเบิลเทนนิสหญิง":"images/qr-tabletennis-girl.png"
 
 };
 
 function showQR(sport){
 
-document.getElementById("qrTitle").innerText=sport;
+    const qr = qrImages[sport];
 
-document.getElementById("qrImage").src=qrImages[sport];
+    if(!qr){
+        alert("ไม่พบ QR ของ " + sport);
+        return;
+    }
 
-document.getElementById("qrPopup").style.display="flex";
+    document.getElementById("qrTitle").innerText =
+    "✅ สมัครสำเร็จ\n" + sport;
+
+    document.getElementById("qrImage").src = qr;
+
+    document.getElementById("qrPopup").style.display = "flex";
 
 }
 
-function closeQR(){
-
-document.getElementById("qrPopup").style.display="none";
-
-} 
+window.closeQR = function () {
+    document.getElementById("qrPopup").style.display = "none";
+}
