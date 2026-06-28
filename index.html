@@ -20,12 +20,12 @@
         <div class="loader-text">กำลังเตรียมเข้าสู่เว็บไซต์...</div>
     </div>
 
-   <div id="gatekeeper" style="display: none; opacity: 0;">
+ <div id="gatekeeper" style="display: none; opacity: 0;">
   <div class="gate-box">
     <h2>✦ ตรวจสอบสิทธิ์เข้าใช้งาน ✦</h2>
     <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">กรุณากรอกรหัสประจำตัวนักเรียน เพื่อเข้าสู่เว็บไซต์</p>
     
-    <input type="number" id="studentIdInput" placeholder="กรอกรหัสประจำตัว เช่น 12345" autocomplete="off">
+    <input type="text" id="studentIdInput" inputmode="numeric" pattern="[0-9]*" placeholder="กรอกรหัสประจำตัว เช่น 40005" autocomplete="off">
     
     <button type="button" id="mainSubmitBtn" onclick="verifyWebAccess(event)">เข้าสู่เว็บไซต์</button>
     
