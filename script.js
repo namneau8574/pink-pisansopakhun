@@ -205,8 +205,8 @@ commentForm.addEventListener('submit', (e) => {
  
 const qrImages = {
   "ฟุตบอลชาย":        "images/qr-football.png",
-  "บาสเกตบอลชาย":    "images/qr-basketball-boy.png",
-  "บาสเกตบอลหญิง":   "images/qr-basketball-girl.png",
+  "บาสเกตบอลชาย":    "qr-basketball-boy.png",
+  "บาสเกตบอลหญิง":   "qr-basketball-boy.png",
   "วอลเลย์บอลชาย":   "images/qr-volleyball-boy.png",
   "วอลเลย์บอลหญิง":  "images/qr-volleyball-girl.png",
   "แบดมินตันชาย":    "images/qr-badminton-boy.png",
