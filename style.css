@@ -1067,3 +1067,213 @@ body::before {
         min-height:auto;
     }
 }
+/*รอกรอกเข้าเว็บ ===================================================
+   GATEKEEPER SYSTEM - หรูหรา คลาสสิก (แก้ไขจุดผิดแล้ว)
+   =================================================== */
+
+#gatekeeper {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, #3a001f 0%, #1a000d 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+  padding: 20px;
+}
+
+/* ลายไทยพื้นหลังเฉพาะหน้าล็อค */
+#gatekeeper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5 L35 20 L50 25 L35 30 L30 45 L25 30 L10 25 L25 20 Z' fill='%23c9920a' fill-opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+/* ตัวกล่องประมวลผล */
+.gate-box {
+  background: var(--white);
+  backdrop-filter: blur(10px);
+  padding: 50px 40px;
+  border-radius: 30px;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 
+    0 30px 70px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(232, 0, 90, 0.15);
+  border: 1.5px solid rgba(201, 146, 10, 0.3);
+  position: relative;
+  animation: gateFlyUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* มุมทองไทยประยุกต์ 4 มุม */
+.gate-box::before,
+.gate-box::after {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+}
+.gate-box::before {
+  top: 12px; left: 12px;
+  border-top: 2px solid var(--gold);
+  border-left: 2px solid var(--gold);
+  border-radius: 18px 0 0 0;
+}
+.gate-box::after {
+  bottom: 12px; right: 12px;
+  border-bottom: 2px solid var(--gold);
+  border-right: 2px solid var(--gold);
+  border-radius: 0 0 18px 0;
+}
+
+/* หัวข้อภาษาไทย */
+.gate-box h2 {
+  font-family: 'Noto Serif Thai', serif;
+  color: var(--dark);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  margin-bottom: 8px;
+}
+
+.gate-box h2::after {
+  content: '✦ ๑ ✦';
+  display: block;
+  font-size: 0.8rem;
+  color: var(--gold);
+  margin-top: 5px;
+  letter-spacing: 4px;
+}
+
+.gate-box p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+/* ช่องกรอกรหัสประจำตัว */
+.gate-box input {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-align: center;
+  border-radius: 16px;
+  border: 2px solid rgba(201, 146, 10, 0.25);
+  background: #fff9fb;
+  color: var(--text);
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(42, 0, 24, 0.04);
+}
+
+.gate-box input:focus {
+  border-color: var(--pink);
+  background: #ffffff;
+  box-shadow: 
+    0 0 0 4px rgba(232, 0, 90, 0.1),
+    inset 0 2px 4px rgba(42, 0, 24, 0.02);
+  transform: scale(1.01);
+}
+
+.gate-box input::placeholder {
+  color: rgba(138, 64, 96, 0.35);
+  font-weight: 400;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+}
+
+/* ปุ่มกดเข้าสู่ระบบ */
+.gate-box button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 16px;
+  font-family: 'Anuphan', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: white; /* แก้ไข: เปลี่ยนจาก #white เป็น white */
+  background: linear-gradient(135deg, var(--pink), var(--pink-light));
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(232, 0, 90, 0.25);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.gate-box button::before {
+  content: '';
+  position: absolute;
+  inset: 1.5px;
+  border-radius: 48px;
+  border: 1px solid rgba(255, 215, 100, 0.4);
+  pointer-events: none;
+}
+
+.gate-box button::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transition: 0.5s;
+}
+
+.gate-box button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(232, 0, 90, 0.35);
+}
+
+.gate-box button:hover::after {
+  left: 100%;
+}
+
+.gate-box button:active {
+  transform: translateY(-1px);
+}
+
+/* ข้อความแจ้งเตือนสีแดงเวลากรอกผิด */
+#errTxt {
+  color: var(--pink);
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: rgba(232, 0, 90, 0.06);
+  padding: 10px;
+  border-radius: 10px;
+  border-left: 3px solid var(--pink);
+  margin-top: 15px;
+  animation: gateShake 0.4s ease;
+}
+
+/* ===================================================
+   ANIMATIONS
+   =================================================== */
+@keyframes gateFlyUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gateShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+@media (max-width: 480px) {
+  .gate-box {
+    padding: 40px 24px;
+    border-radius: 24px;
+  }
+  .gate-box h2 {
+    font-size: 1.5rem;
+  }
+}
