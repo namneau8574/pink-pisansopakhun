@@ -997,7 +997,7 @@ body::before {
   
   /* ⚠️ หากต้องการเปลี่ยนเป็นภาพโปร่งใส PNG ของตัวเองให้เปลี่ยนพาธตรงนี้ เช่น url('images/hanuman.png') 
      ตอนนี้ใส่ SVG ลายเส้นหนุมานจำลองสีชมพู-ทองไว้ให้ขึ้นทดสอบแน่นอนครับ */
-  background-image: url("hanuman.png.png");
+  background-image: url("images/hanuman.png.png");
   
   background-size: contain;
   background-repeat: no-repeat;
