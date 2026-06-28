@@ -376,8 +376,29 @@ PINK PISANSOPAKHUN
 
 </footer>
 
-<script type="module" src="script.js"></script>
+<!-- Popup แจ้งเตือน -->
 <div id="popup" class="popup"></div>
 
+<!-- QR Popup -->
+<div id="qrPopup" class="qr-popup">
+
+    <div class="qr-box">
+
+        <h2 id="qrTitle"></h2>
+
+        <img id="qrImage" src="" alt="QR Code">
+
+        <p>📱 สแกนเพื่อเข้ากลุ่ม Messenger</p>
+
+        <button onclick="closeQR()">
+            ปิด
+        </button>
+
+    </div>
+
+</div>
+
+<script type="module" src="script.js"></script>
+
 </body>
-</html> 
+</html>
