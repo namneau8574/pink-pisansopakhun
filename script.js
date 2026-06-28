@@ -453,16 +453,10 @@ function showQR(sport){
 
 }
 
-window.closeQR = function () {
-    document.getElementById("qrPopup").style.display = "none";
-}
-window.closeQR = function () {
-    document.getElementById("qrPopup").style.display = "none";
-}
 // 📑 ฐานข้อมูลรหัสประจำตัวนักเรียนที่มีสิทธิ์เข้าเว็บ
-const studentDatabase = ["41879", "40004", "39995", "39973"];
+const studentDatabase = ["41879", "40004", "39995", "55432", "99887"];
 
-// 🧪 วิธีทดสอบ: บังคับล้างความจำเก่าทิ้งทุกครั้งที่รีเฟรชหน้าจอ (ถ้าทำเสร็จให้ใส่ // ไว้หน้า 2 บรรทัดนี้ครับ)
+// 🧪 ล้างความจำเก่าทิ้งเพื่อทดสอบระบบใหม่ทุกครั้งที่รีเฟรชหน้าจอ (ถ้าทำเสร็จให้ใส่ // ไว้หน้า 2 บรรทัดนี้ครับ)
 localStorage.removeItem('web_access_granted'); 
 localStorage.removeItem('is_logged_in');
 
@@ -471,7 +465,6 @@ window.addEventListener('load', () => {
     const loader = document.getElementById('loader');
     const gateKeeper = document.getElementById('gatekeeper');
     
-    // ตั้งเวลาให้ Loader แสดงตัว 3 วินาที (3000 มิลลิวินาที)
     setTimeout(() => {
         if (loader) {
             loader.style.transition = "opacity 0.5s ease, visibility 0.5s ease";
@@ -479,11 +472,9 @@ window.addEventListener('load', () => {
             loader.style.visibility = "hidden";
         }
         
-        // จังหวะที่ Loader หายไป ให้เรียกหน้าต่างกรอกรหัสขึ้นมา
         setTimeout(() => {
-            if (loader) loader.style.display = 'none'; // สลัด Loader ทิ้งไป
+            if (loader) loader.style.display = 'none';
             
-            // ตรวจเช็คว่าเคยล็อกอินหรือกดเข้าชมหรือยัง
             if (localStorage.getItem('web_access_granted') !== 'true') {
                 if (gateKeeper) {
                     gateKeeper.style.setProperty('display', 'flex', 'important');
@@ -496,12 +487,10 @@ window.addEventListener('load', () => {
                         gateBox.style.color = "#2a0018";      
                     }
 
-                    // 🚀 เรียกใช้ฟังก์ชันให้ปุ่ม "เข้าชมทั่วไป" งอกออกมาข้างล่างปุ่มหลัก
                     addGuestButton();
                 }
             }
         }, 500);
-        
     }, 3000); 
 });
 
@@ -510,13 +499,13 @@ function addGuestButton() {
     const gateBox = document.querySelector('.gate-box');
     const existingBtn = gateBox.querySelector('button');
     
-    // ป้องกันปุ่มงอกซ้ำซ้อนเวลารีเฟรช
     if (!document.getElementById('guestBtn')) {
         const guestBtn = document.createElement('button');
         guestBtn.id = 'guestBtn';
+        guestBtn.type = 'button'; // ป้องกันบั๊กบนมือถือ
         guestBtn.innerText = '✦ เข้าชมเว็บไซต์ทั่วไป ✦';
         
-        // สไตล์แต่งปุ่มชมเฉยๆ ให้สวยนวลๆ ไม่แย่งซีนปุ่มกรอกรหัสหลัก
+        // สไตล์แต่งปุ่มชมทั่วไป
         guestBtn.style.width = '100%';
         guestBtn.style.marginTop = '12px';
         guestBtn.style.padding = '16px';
@@ -529,56 +518,72 @@ function addGuestButton() {
         guestBtn.style.fontFamily = "'Anuphan', sans-serif";
         guestBtn.style.transition = 'all 0.3s ease';
         
-        // เอฟเฟกต์เวลาชี้ปุ่ม
         guestBtn.onmouseover = () => { guestBtn.style.background = '#e5e5e5'; };
         guestBtn.onmouseout = () => { guestBtn.style.background = '#f2f2f2'; };
         
-        // เมื่อคลิก -> ให้เข้าเว็บแบบ Guest (สายส่อง ไม่มีสิทธิ์โหวต)
+        // เมื่อคลิก -> เข้าเว็บแบบ Guest (ดูได้อย่างเดียว ทำอะไรไม่ได้เลย)
         guestBtn.onclick = function() {
-            localStorage.setItem('web_access_granted', 'true'); // ผ่านประตูเข้าเว็บได้
-            localStorage.setItem('is_logged_in', 'false');       // แต่ไม่ได้ล็อกอินระบบโหวต
+            localStorage.setItem('web_access_granted', 'true'); 
+            localStorage.setItem('is_logged_in', 'false'); // ล็อกสถานะว่าไม่ได้ล็อกอิน
+            
+            // 🔒 สั่งแช่แข็งปุ่มทั้งหมดบนเว็บทันที!
+            freezeAllActions(); 
             warpIntoWeb();
         };
         
-        // เอาปุ่มชมทั่วไป ไปวางต่อท้ายปุ่มยืนยันรหัสหลัก
         existingBtn.parentNode.insertBefore(guestBtn, existingBtn.nextSibling);
     }
 }
 
-// 🔐 ฟังก์ชันตรวจสอบรหัสประจำตัวนักเรียน (สายโหวต/สมัครเต็มระบบ)
-function verifyWebAccess() {
+// 🔒 ฟังก์ชันแช่แข็ง: สั่งปิดการใช้งานปุ่มโหวต ปุ่มสมัคร ฟอร์มทุกอย่างในเว็บ (สำหรับสายส่อง)
+function freezeAllActions() {
+    // หาปุ่มทั้งหมดในเว็บหลัก (ยกเว้นปุ่มในหน้ากากล็อกอิน)
+    const allButtons = document.querySelectorAll('button:not(#gatekeeper button), input[type="submit"], input[type="button"]');
+    const allInputs = document.querySelectorAll('input:not(#studentIdInput), textarea, select');
+
+    // 1. สั่งเปิดโหมดเดดล็อกให้กับทุกปุ่ม เปลี่ยนสีให้จางลง และกดไม่ได้
+    allButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+        btn.style.pointerEvents = 'none'; // บล็อกไม่ให้เกิดคลิกอีเวนต์เด็ดขาด
+    });
+
+    // 2. สั่งปิดฟอร์มกรอกข้อมูลทั้งหมด พิมพ์อะไรลงไปไม่ได้เลย
+    allInputs.forEach(input => {
+        input.disabled = true;
+        input.style.background = '#f5f5f5';
+        input.style.cursor = 'not-allowed';
+    });
+}
+
+// 🔐 ฟังก์ชันตรวจสอบรหัสประจำตัวนักเรียน (แก้ไขรองรับมือถือ 100%)
+function verifyWebAccess(event) {
+    if (event) event.preventDefault(); 
+
     const inputEl = document.getElementById('studentIdInput');
     const gateBox = document.querySelector('.gate-box');
     const errTxt = document.getElementById('errTxt');
     const inputId = inputEl.value.trim();
 
     if (studentDatabase.includes(inputId)) {
-        localStorage.setItem('web_access_granted', 'true'); // ผ่านประตูเข้าเว็บได้
-        localStorage.setItem('is_logged_in', 'true');       // ได้สิทธิ์ล็อกอินโหวต/สมัครรหัสนี้
+        localStorage.setItem('web_access_granted', 'true'); 
+        localStorage.setItem('is_logged_in', 'true');       
         localStorage.setItem('logged_student_id', inputId);
         
         if (errTxt) errTxt.style.display = 'none';
-        warpIntoWeb(); // สั่งเอฟเฟกต์วาร์ปเข้าเว็บ
+        warpIntoWeb(); 
     } else {
-        // ❌ ถ้ารหัสผิด ให้สั่นกล่องเตือน
         if (errTxt) errTxt.style.display = 'block';
         if (gateBox) {
             gateBox.style.animation = 'none';
             gateBox.offsetHeight; 
             gateBox.style.animation = 'gateShake 0.4s ease';
         }
-        if (inputEl) {
-            inputEl.style.borderColor = '#e8005a';
-            inputEl.style.boxShadow = '0 0 15px rgba(232, 0, 90, 0.4)';
-            setTimeout(() => {
-                inputEl.style.borderColor = 'rgba(201, 146, 10, 0.25)';
-                inputEl.style.boxShadow = 'inset 0 2px 4px rgba(42, 0, 24, 0.04)';
-            }, 400);
-        }
     }
 }
 
-// 🎬 เอฟเฟกต์หมุนกล่อง 3D วาร์ปหายไปด้านบนตอนเข้าเว็บ
+// 🎬 เอฟเฟกต์วาร์ปเข้าเว็บ
 function warpIntoWeb() {
     const gateBox = document.querySelector('.gate-box');
     const gateKeeper = document.getElementById('gatekeeper');
@@ -600,24 +605,12 @@ function warpIntoWeb() {
     }, 900);
 }
 
-// 🔐 [ฟังก์ชันดักจับ] เอาไปครอบฟังก์ชันปุ่มโหวต / ปุ่มสมัคร ข้างในเว็บของคุณเพื่อไม่ให้คนชมทั่วไปกดได้
-function GuardAction(event, originalFunction) {
-    if(event) event.preventDefault(); 
-    
-    if (localStorage.getItem('is_logged_in') === 'true') {
-        originalFunction(); // ล็อกอินมา -> ผ่านไปโหวตหรือสมัครได้เลย
-    } else {
-        // กดปุ่มชมทั่วไปมา -> โดนบล็อกและเตือนให้รีเฟรชรหัส
-        alert("🔒 ขออภัยครับ สิทธิ์เข้าชมทั่วไปไม่สามารถทำรายการได้ กรุณารีเฟรชหน้าเว็บแล้วกรอกรหัสประจำตัวนักเรียนเพื่อร่วมโหวต/สมัคร ครับ");
-    }
-}
-
-// ⌨️ ตรวจจับการกดปุ่ม Enter
+// ⌨️ ตรวจจับการกดปุ่ม Enter บนมือถือและคอม
 const inputField = document.getElementById('studentIdInput');
 if (inputField) {
     inputField.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
-            verifyWebAccess();
+            verifyWebAccess(e);
         }
     });
 }
