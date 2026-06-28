@@ -20,12 +20,13 @@
         <div class="loader-text">กำลังเตรียมเข้าสู่เว็บไซต์...</div>
     </div>
 
- <div id="gatekeeper" style="display: none; opacity: 0;">
+    <div id="gatekeeper" style="display: none; opacity: 0;">
   <div class="gate-box">
     <h2>✦ ตรวจสอบสิทธิ์เข้าใช้งาน ✦</h2>
     <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">กรุณากรอกรหัสประจำตัวนักเรียน เพื่อเข้าสู่เว็บไซต์</p>
     
-  <input type="text" id="studentIdInput" inputmode="numeric" pattern="[0-9]*" placeholder="กรอกรหัสประจำตัว 5 หลัก" autocomplete="off">
+    <input type="number" id="studentIdInput" placeholder="กรอกรหัสประจำตัว เช่น 12345" autocomplete="off">
+    
     <button type="button" id="mainSubmitBtn" onclick="verifyWebAccess(event)">เข้าสู่เว็บไซต์</button>
     
     <button type="button" id="guestBtn" onclick="loginAsGuest(event)">✦ เข้าชมเว็บไซต์ทั่วไป ✦</button>
@@ -36,7 +37,7 @@
 
 <script>
     // 📑 รายชื่อรหัสประจำตัวนักเรียนของจริงของคุณ (อัปเดตให้เรียบร้อยครับ)
-    const studentDatabase = ["41879", "40005", "39995", "55432", "99887"];
+    const studentDatabase = ["41789", "40005", "39995", "55432", "99887"];
 
     // 🧪 วิธีทดสอบ: ล้างความจำเก่าทิ้งอัตโนมัติทุกครั้งที่รีเฟรชหน้าจอ (ถ้าทำระบบเสร็จหมดแล้ว ค่อยใส่ // ไว้หน้า 2 บรรทัดนี้ครับ)
     localStorage.removeItem('web_access_granted'); 
@@ -173,6 +174,7 @@
         });
     }
 </script>
+รอกรอกเข้าเว็บ5/11
 <!-- PARTICLES -->
 
 <div class="particles"></div>
@@ -189,7 +191,6 @@
 
 <li><a href="#home">HOME</a></li>
 <li><a href="#vote">VOTE</a></li>
-<li><a href="#sports">SPORTS</a></li>
 <li><a href="#comment">COMMENT</a></li>
 <li><a href="#register">REGISTER</a></li>
 
@@ -258,8 +259,7 @@ VOTE NOW
 
 <div class="card featured">
 
-<div class="best">
-BEST
+<div class="cards">
 </div>
 
 <img src="neonvoid.png.jpg">
@@ -455,7 +455,6 @@ PINK PISANSOPAKHUN
 </div>
 
 <script type="module" src="script.js"></script>
+
 <div class="thai-character-egg"></div>
 
-</body>
-</html>
