@@ -434,7 +434,21 @@ const qrImages={
 "เทเบิลเทนนิสหญิง":"images/qr-tabletennis-girl.png"
 
 };
+// QR CLOSE
+window.closeQR = function() {
+  document.getElementById('qrPopup').style.display = 'none';
+  document.getElementById('registerForm').reset();
+};
 
+// กดพื้นหลังเพื่อปิด
+document.getElementById('qrPopup').addEventListener('click', function(e) {
+  if (e.target.id === 'qrPopup') window.closeQR();
+});
+
+// กด Escape เพื่อปิด
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') window.closeQR();
+});
 function showQR(sport){
 
     const qr = qrImages[sport];
