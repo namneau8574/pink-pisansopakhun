@@ -120,68 +120,37 @@ getDatabase(app);
 /* =========================
    VOTE SYSTEM
 ========================= */
-/* =========================
-   VOTE SYSTEM
-========================= */
 
 window.voteTeam = async function(team){
-
   try{
 
-    // 🔒 กันโหวตซ้ำ 2 นาที
-    const lastVote = localStorage.getItem('lastVote');
+    // 🔒 เช็คว่าเคยโหวตทีมไหนไปแล้วมั้ย
+    const votedTeam = localStorage.getItem('votedTeam');
 
-    if(lastVote){
-
-      const diff = Date.now() - parseInt(lastVote);
-
-      if(diff < 120000){
-
-        const remain =
-        Math.ceil((120000 - diff)/1000);
-
-        alert(`⛔ รอ ${remain} วินาที`);
-
-        return;
-      }
-
+    if(votedTeam){
+      alert(`⛔ คุณโหวตให้ "${votedTeam}" ไปแล้ว\nโหวตได้แค่ 1 ทีมเท่านั้น`);
+      return;
     }
 
-    // บันทึกเวลาโหวตล่าสุด
-    localStorage.setItem(
-      'lastVote',
-      Date.now()
-    );
+    // บันทึกทีมที่โหวต
+    localStorage.setItem('votedTeam', team);
 
     playSound();
-
     voteAnimation(team);
 
-    const voteRef =
-    ref(db, 'votes/' + team);
-
-    const snapshot =
-    await get(voteRef);
-
-    let current =
-    snapshot.exists()
-    ? snapshot.val()
-    : 0;
-
+    const voteRef = ref(db, 'votes/' + team);
+    const snapshot = await get(voteRef);
+    let current = snapshot.exists() ? snapshot.val() : 0;
     await set(voteRef, current + 1);
 
-    alert(
-      `🔥 ${team} = ${current + 1} คะแนน`
-    );
+    alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${current + 1} คะแนน`);
+
+    fireEffect();
 
   }catch(error){
-
     console.error(error);
-
     alert("❌ โหวตไม่สำเร็จ");
-
   }
-
 };
 
 
@@ -190,42 +159,54 @@ window.voteTeam = async function(team){
    COMMENT SYSTEM
 ========================= */
 
-const commentForm =
-document.getElementById('commentForm');
-
 commentForm.addEventListener('submit',(e)=>{
+  e.preventDefault();
 
-e.preventDefault();
+  const name = document.getElementById('commentName').value.trim() || 'ANONYMOUS';
+  const text = document.getElementById('commentText').value.trim();
 
-const name =
-document.getElementById('commentName')
-.value.trim() || 'ANONYMOUS';
+  if(text === ''){
+    alert('กรุณาพิมพ์ข้อความ');
+    return;
+  }
 
-const text =
-document.getElementById('commentText')
-.value.trim();
+  push(ref(db,'comments'),{
+    name: name,
+    text: text,
+    time: Date.now()
+  });
 
-if(text === ''){
+  alert('💬 ส่งความคิดเห็นแล้ว');
+  commentForm.reset();
 
-alert('กรุณาพิมพ์ข้อความ');
-return;
+  fireEffect(); // 🔥 เพิ่มบรรทัดนี้
+});
+/* =========================
+   FIRE EFFECT
+========================= */
+function fireEffect() {
+  const count = 18;
 
+  for(let i = 0; i < count; i++){
+    const fire = document.createElement('div');
+
+    fire.innerText = ['🔥','🔥','🔥','✨','💫'][Math.floor(Math.random()*5)];
+
+    fire.style.cssText = `
+      position: fixed;
+      font-size: ${14 + Math.random()*22}px;
+      left: ${20 + Math.random()*60}%;
+      bottom: 10%;
+      z-index: 99999;
+      pointer-events: none;
+      animation: fireRise ${0.8 + Math.random()*0.8}s ease forwards;
+      animation-delay: ${Math.random()*0.4}s;
+    `;
+
+    document.body.appendChild(fire);
+    setTimeout(() => fire.remove(), 1600);
+  }
 }
-
-push(ref(db,'comments'),{
-
-name: name,
-text: text,
-time: Date.now()
-
-});
-
-alert('💬 ส่งความคิดเห็นแล้ว');
-
-commentForm.reset();
-
-});
-
 /* =========================
    REGISTER SYSTEM
 ========================= */
