@@ -502,7 +502,7 @@ function verifyWebAccess(event) {
     const errTxt = document.getElementById('errTxt');
     
     if (!inputEl) return; // กันระเบิดกรณีหาอินพุตไม่เจอ
-    const inputId = inputEl.value.trim();
+  const inputId = inputEl.value.replace(/\D/g, '');
 
     if (studentDatabase.includes(inputId)) {
         localStorage.setItem('web_access_granted', 'true'); 
