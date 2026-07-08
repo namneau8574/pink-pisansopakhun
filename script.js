@@ -121,23 +121,38 @@ getDatabase(app);
    VOTE SYSTEM
 ========================= */
 
-window.voteTeam = async function(team){
-  try{
+window.voteTeam = async function(team) {
+  try {
+    const NOW = Date.now(); // เวลาปัจจุบัน (มิลลิวินาที)
+    const COOLDOWN_TIME = 10 * 60 * 1000; // 10 นาที แปลงเป็นมิลลิวินาที (600,000 ms)
 
-    // 🔒 เช็คว่าเคยโหวตทีมไหนไปแล้วมั้ย
-    const votedTeam = localStorage.getItem('votedTeam');
+    // 🔒 ดึงข้อมูลเวลาที่เคยโหวตล่าสุด
+    const lastVoteTime = localStorage.getItem('lastVoteTime');
+    const votedTeam = localStorage.getItem('votedTeam') || 'ทีมก่อนหน้านี้';
 
-    if(votedTeam){
-      alert(`⛔ คุณโหวตให้ "${votedTeam}" ไปแล้ว\nโหวตได้แค่ 1 ทีมเท่านั้น`);
-      return;
+    if (lastVoteTime) {
+      const timeElapsed = NOW - parseInt(lastVoteTime, 10);
+
+      // ถ้าเวลาที่ผ่านไป ยังไม่ถึง 10 นาที
+      if (timeElapsed < COOLDOWN_TIME) {
+        const timeRemainingMs = COOLDOWN_TIME - timeElapsed;
+        const minutesLeft = Math.floor(timeRemainingMs / (60 * 1000));
+        const secondsLeft = Math.floor((timeRemainingMs % (60 * 1000)) / 1000);
+
+        alert(`⛔ คุณเพิ่งโหวตให้ "${votedTeam}" ไปไม่นานนี้\nกรุณารออีก ${minutesLeft} นาที ${secondsLeft} วินาที จึงจะโหวตใหม่ได้ครับ`);
+        return;
+      }
     }
 
-    // บันทึกทีมที่โหวต
+    // 📝 บันทึกข้อมูลการโหวตรอบใหม่และอัปเดต Timestamp ปัจจุบัน
     localStorage.setItem('votedTeam', team);
+    localStorage.setItem('lastVoteTime', NOW);
 
+    // เอฟเฟกต์ระหว่างโหวต
     playSound();
     voteAnimation(team);
 
+    // 📡 เชื่อมต่อ Firebase และอัปเดตคะแนน
     const voteRef = ref(db, 'votes/' + team);
     const snapshot = await get(voteRef);
     let current = snapshot.exists() ? snapshot.val() : 0;
@@ -147,7 +162,7 @@ window.voteTeam = async function(team){
 
     fireEffect();
 
-  }catch(error){
+  } catch (error) {
     console.error(error);
     alert("❌ โหวตไม่สำเร็จ");
   }
