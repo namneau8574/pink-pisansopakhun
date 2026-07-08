@@ -422,15 +422,7 @@ required
 
 <footer>
 
-<h2>
-PINK PISANSOPAKHUN
-</h2>
 
-<p>
-2026 CYBER SYSTEM
-</p>
-
-</footer>
 
 <!-- Popup แจ้งเตือน -->
 <div id="popup" class="popup"></div>
@@ -458,3 +450,60 @@ PINK PISANSOPAKHUN
 
 <div class="thai-character-egg"></div>
 
+ <!-- CHECKIN -->
+    <section id="checkin" class="checkin-section">
+        <div class="header">
+            <h1>🏮 เช็คชื่อเข้าร่วมกิจกรรม</h1>
+            <p>คณะสีชมพูพิศาลโสภาคุณ</p>
+        </div>
+ 
+        <div class="main-container">
+            <label class="input-label">🔢 กรอกเลขประจำตัวนักเรียน</label>
+            <div class="input-wrap">
+                <input type="text" id="studentId" inputmode="numeric" placeholder="เช่น 42556"
+                    onkeydown="if(event.key==='Enter') searchStudent()">
+                <button onclick="searchStudent()">🔎 ค้นหารายชื่อ</button>
+            </div>
+ 
+            <div class="error-box" id="errorBox">❌ ไม่พบเลขประจำตัวนี้ในคณะสี ม.5 ครับ</div>
+ 
+            <div class="name-box" id="nameBox">
+                <div class="name-id" id="nameId"></div>
+                <div class="name-text" id="nameText"></div>
+            </div>
+ 
+            <div class="dept-section" id="roomSection">
+                <label class="dept-label">🏫 เลือกห้องเรียนของคุณ</label>
+                <select id="roomSelect" class="room-select">
+                    <option value="">-- กรุณาเลือกห้องเรียน --</option>
+                    <option value="ม.5/3">ม.5/3</option>
+                    <option value="ม.5/7">ม.5/7</option>
+                    <option value="ม.5/11">ม.5/11</option>
+                </select>
+            </div>
+ 
+            <div class="dept-section" id="deptSection">
+                <label class="dept-label">🏮 เลือกฝ่ายของคุณ</label>
+                <div class="dept-grid" id="deptGrid"></div>
+            </div>
+ 
+            <button class="confirm-btn" id="confirmBtn" onclick="confirmCheckIn()">✅ ยืนยันเช็คชื่อ</button>
+ 
+            <div class="success-box" id="successBox">
+                <div class="success-icon">✅</div>
+                <div class="success-name" id="successName"></div>
+                <div class="success-info">
+                    <div class="success-badge" id="successRoomBadge"></div>
+                    <div class="success-badge" id="successDeptBadge"></div>
+                </div>
+                <div class="success-sub">เช็คชื่อสำเร็จแล้วครับ 🌸</div>
+            </div>
+        </div>
+ 
+        <div class="toast" id="toast"></div>
+    </section>
+ 
+    <footer>
+        <h2>PINK PISANSOPAKHUN</h2>
+        <p>2026 CYBER SYSTEM</p>
+    </footer>
