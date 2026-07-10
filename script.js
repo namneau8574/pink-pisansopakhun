@@ -120,36 +120,42 @@ getDatabase(app);
 /* =========================
    VOTE SYSTEM
 ========================= */
-
 window.voteTeam = async function(team) {
   try {
-    const now = new Date();
-    const todayStr = now.toISOString().split('T')[0]; // เช่น "2026-07-10"
-
-    // 🔒 ดึงข้อมูลวันที่โหวตล่าสุด
-    const lastVoteDate = localStorage.getItem('lastVoteDate');
-    const votedTeam = localStorage.getItem('votedTeam') || 'ทีมก่อนหน้านี้';
-
-    if (lastVoteDate === todayStr) {
-      alert(`⛔ วันนี้คุณโหวตให้ "${votedTeam}" ไปแล้ว\nกรุณากลับมาโหวตใหม่พรุ่งนี้ครับ`);
+    // 🔐 เช็คว่าล็อกอินหรือยัง
+    const user = auth.currentUser;
+    if (!user) {
+      alert("⛔ กรุณาเข้าสู่ระบบก่อนโหวตครับ");
       return;
     }
 
-    // 📝 บันทึกข้อมูลการโหวตรอบใหม่
-    localStorage.setItem('votedTeam', team);
-    localStorage.setItem('lastVoteDate', todayStr);
+    const uid = user.uid;
+    const voterRef = ref(db, 'voters/' + uid);
+
+    // 🔒 เช็คก่อนว่า uid นี้เคยโหวตไปหรือยัง
+    const voterSnap = await get(voterRef);
+    if (voterSnap.exists()) {
+      const votedTeam = voterSnap.val().team;
+      alert(`⛔ คุณโหวตให้ "${votedTeam}" ไปแล้ว\nแต่ละคนโหวตได้เพียง 1 ครั้งเท่านั้นครับ`);
+      return;
+    }
 
     // เอฟเฟกต์ระหว่างโหวต
     playSound();
     voteAnimation(team);
 
-    // 📡 เชื่อมต่อ Firebase และอัปเดตคะแนน (ใช้ transaction กันคะแนนเพี้ยนตอนโหวตพร้อมกัน)
+    // 📡 บวกคะแนนทีมแบบ atomic (กัน race condition)
     const voteRef = ref(db, 'votes/' + team);
     const result = await runTransaction(voteRef, (current) => (current || 0) + 1);
     const newCount = result.snapshot.val();
 
-    alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${newCount} คะแนน`);
+    // 📝 บันทึกว่า uid นี้โหวตให้ทีมไหนไปแล้ว (กันโหวตซ้ำ)
+    await set(voterRef, {
+      team: team,
+      votedAt: Date.now()
+    });
 
+    alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${newCount} คะแนน`);
     fireEffect();
 
   } catch (error) {
@@ -157,7 +163,6 @@ window.voteTeam = async function(team) {
     alert("❌ โหวตไม่สำเร็จ");
   }
 };
-
 
 
 /* =========================
