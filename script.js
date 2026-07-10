@@ -120,47 +120,7 @@ getDatabase(app);
 /* =========================
    VOTE SYSTEM
 ========================= */
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import {
-    getAuth,
-    signInAnonymously,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import {
-    getDatabase,
-    ref,
-    get,
-    set,
-    runTransaction
-  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-  // 🔧 แก้ค่าตรงนี้ให้เป็นของ Firebase Project จริงของคุณ
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "YOUR_PROJECT",
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getDatabase(app);
-
-  // 🔐 ล็อกอินอัตโนมัติแบบไม่ระบุตัวตน (สร้าง uid ประจำเครื่อง/เบราว์เซอร์)
-  let currentUser = null;
-  let authReady = false;
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUser = user;
-      authReady = true;
-    } else {
-      signInAnonymously(auth).catch((err) => {
-        console.error("เข้าสู่ระบบไม่สำเร็จ:", err);
-      });
-    }
-  });
+❌ เกิดข้อผิดพลาด: currentUserUid is not defined
 
   // =========================================
   // 🗳️ ฟังก์ชันโหวต (คนละ 1 ครั้งเท่านั้น ตลอดกิจกรรม)
