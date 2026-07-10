@@ -120,54 +120,52 @@ getDatabase(app);
 /* =========================
    VOTE SYSTEM
 ========================= */
-❌ เกิดข้อผิดพลาด: currentUserUid is not defined
+window.voteTeam = async function(team) {
+  try {
+    const NOW = Date.now(); // เวลาปัจจุบัน (มิลลิวินาที)
+    const COOLDOWN_TIME = 10 * 60 * 1000; // 10 นาที แปลงเป็นมิลลิวินาที (600,000 ms)
 
-  // =========================================
-  // 🗳️ ฟังก์ชันโหวต (คนละ 1 ครั้งเท่านั้น ตลอดกิจกรรม)
-  // =========================================
-  window.voteTeam = async function (team) {
-    try {
-      // รอให้ระบบล็อกอินพร้อมก่อน (กันกดเร็วเกินไปตอนเพิ่งเข้าเว็บ)
-      if (!authReady || !currentUser) {
-        alert("⏳ ระบบกำลังเตรียมพร้อม กรุณารอสักครู่แล้วลองใหม่อีกครั้งครับ");
+    // 🔒 ดึงข้อมูลเวลาที่เคยโหวตล่าสุด
+    const lastVoteTime = localStorage.getItem('lastVoteTime');
+    const votedTeam = localStorage.getItem('votedTeam') || 'ทีมก่อนหน้านี้';
+
+    if (lastVoteTime) {
+      const timeElapsed = NOW - parseInt(lastVoteTime, 10);
+
+      // ถ้าเวลาที่ผ่านไป ยังไม่ถึง 10 นาที
+      if (timeElapsed < COOLDOWN_TIME) {
+        const timeRemainingMs = COOLDOWN_TIME - timeElapsed;
+        const minutesLeft = Math.floor(timeRemainingMs / (60 * 1000));
+        const secondsLeft = Math.floor((timeRemainingMs % (60 * 1000)) / 1000);
+
+        alert(`⛔ คุณเพิ่งโหวตให้ "${votedTeam}" ไปไม่นานนี้\nกรุณารออีก ${minutesLeft} นาที ${secondsLeft} วินาที จึงจะโหวตใหม่ได้ครับ`);
         return;
       }
-
-      const uid = currentUser.uid;
-      const voterRef = ref(db, "voters/" + uid);
-
-      // 🔒 เช็คว่า uid นี้เคยโหวตไปแล้วหรือยัง
-      const voterSnap = await get(voterRef);
-      if (voterSnap.exists()) {
-        const votedTeam = voterSnap.val().team;
-        alert(`⛔ คุณโหวตให้ "${votedTeam}" ไปแล้ว\nแต่ละคนโหวตได้เพียง 1 ครั้งเท่านั้นครับ`);
-        return;
-      }
-
-      // เอฟเฟกต์ระหว่างโหวต (ถ้าไม่มีฟังก์ชันเหล่านี้ในเว็บ ให้คอมเมนต์ทิ้งไว้ก่อน)
-      if (typeof playSound === "function") playSound();
-      if (typeof voteAnimation === "function") voteAnimation(team);
-
-      // 📡 บวกคะแนนทีมแบบ atomic (กัน race condition ตอนหลายคนโหวตพร้อมกัน)
-      const voteRef = ref(db, "votes/" + team);
-      const result = await runTransaction(voteRef, (current) => (current || 0) + 1);
-      const newCount = result.snapshot.val();
-
-      // 📝 บันทึกว่า uid นี้โหวตให้ทีมไหนไปแล้ว (กันโหวตซ้ำถาวร)
-      await set(voterRef, {
-        team: team,
-        votedAt: Date.now(),
-      });
-
-      alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${newCount} คะแนน`);
-      if (typeof fireEffect === "function") fireEffect();
-
-    } catch (error) {
-      console.error("โหวตไม่สำเร็จ:", error);
-      alert("❌ โหวตไม่สำเร็จ: " + error.message);
     }
-  };
-</script>
+
+    // 📝 บันทึกข้อมูลการโหวตรอบใหม่และอัปเดต Timestamp ปัจจุบัน
+    localStorage.setItem('votedTeam', team);
+    localStorage.setItem('lastVoteTime', NOW);
+
+    // เอฟเฟกต์ระหว่างโหวต
+    playSound();
+    voteAnimation(team);
+
+    // 📡 เชื่อมต่อ Firebase และอัปเดตคะแนน
+    const voteRef = ref(db, 'votes/' + team);
+    const snapshot = await get(voteRef);
+    let current = snapshot.exists() ? snapshot.val() : 0;
+    await set(voteRef, current + 1);
+
+    alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${current + 1} คะแนน`);
+
+    fireEffect();
+
+  } catch (error) {
+    console.error(error);
+    alert("❌ โหวตไม่สำเร็จ");
+  }
+};
 
 
 /* =========================
