@@ -414,9 +414,12 @@ section {
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 28px;
   align-items: stretch;
+  justify-content: center;   /* 👈 เพิ่ม: ทำให้แถวที่ไม่เต็มอยู่กึ่งกลาง ไม่ยืดเบี้ยว */
+  max-width: 1200px;         /* 👈 เพิ่ม: กันไม่ให้การ์ดยืดกว้างเกินไปบนจอคอมใหญ่ */
+  margin: 0 auto;            /* 👈 เพิ่ม: จัดกึ่งกลางทั้งกลุ่ม */
 }
 
 .card {
@@ -424,19 +427,19 @@ section {
   border: 1px solid rgba(200,146,10,.2);
   border-radius: 20px;
   padding: 24px;
+  width: 100%;
+  max-width: 320px;          /* 👈 เพิ่ม: จำกัดขนาดการ์ดไม่ให้ใหญ่ต่างกันเวลามีน้อยใบ */
+  margin: 0 auto;            /* 👈 เพิ่ม: จัดกึ่งกลางตัวการ์ดเองในกริดด้วย */
 
   display: flex;
   flex-direction: column;
-
   height: 100%;
   transition: .35s;
   text-align: center;
   position: relative;
   overflow: hidden;
-
   box-shadow: 0 4px 20px rgba(232,0,90,.06);
 }
-
 /* แก้ไข: ยุบรวมคลาสรูปภาพทั้งหมดให้ใช้มาตรฐานเดียวกัน */
 .card img,
 .jersey-img,
@@ -935,7 +938,6 @@ footer p {
   .jersey-img       { height: 180px; }
   .qr-box           { width: 90%; }
 }
-
 @media (max-width: 768px) {
   .loader-bar  { width: 220px; bottom: 60px; }
   .loader-text { font-size: 12px; bottom: 30px; }
