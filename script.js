@@ -120,49 +120,94 @@ getDatabase(app);
 /* =========================
    VOTE SYSTEM
 ========================= */
-window.voteTeam = async function(team) {
-  try {
-    // 🔐 เช็คว่าล็อกอินหรือยัง
-    const user = auth.currentUser;
-    if (!user) {
-      alert("⛔ กรุณาเข้าสู่ระบบก่อนโหวตครับ");
-      return;
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import {
+    getAuth,
+    signInAnonymously,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    getDatabase,
+    ref,
+    get,
+    set,
+    runTransaction
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  // 🔧 แก้ค่าตรงนี้ให้เป็นของ Firebase Project จริงของคุณ
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "YOUR_PROJECT",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  // 🔐 ล็อกอินอัตโนมัติแบบไม่ระบุตัวตน (สร้าง uid ประจำเครื่อง/เบราว์เซอร์)
+  let currentUser = null;
+  let authReady = false;
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUser = user;
+      authReady = true;
+    } else {
+      signInAnonymously(auth).catch((err) => {
+        console.error("เข้าสู่ระบบไม่สำเร็จ:", err);
+      });
     }
+  });
 
-    const uid = user.uid;
-    const voterRef = ref(db, 'voters/' + uid);
+  // =========================================
+  // 🗳️ ฟังก์ชันโหวต (คนละ 1 ครั้งเท่านั้น ตลอดกิจกรรม)
+  // =========================================
+  window.voteTeam = async function (team) {
+    try {
+      // รอให้ระบบล็อกอินพร้อมก่อน (กันกดเร็วเกินไปตอนเพิ่งเข้าเว็บ)
+      if (!authReady || !currentUser) {
+        alert("⏳ ระบบกำลังเตรียมพร้อม กรุณารอสักครู่แล้วลองใหม่อีกครั้งครับ");
+        return;
+      }
 
-    // 🔒 เช็คก่อนว่า uid นี้เคยโหวตไปหรือยัง
-    const voterSnap = await get(voterRef);
-    if (voterSnap.exists()) {
-      const votedTeam = voterSnap.val().team;
-      alert(`⛔ คุณโหวตให้ "${votedTeam}" ไปแล้ว\nแต่ละคนโหวตได้เพียง 1 ครั้งเท่านั้นครับ`);
-      return;
+      const uid = currentUser.uid;
+      const voterRef = ref(db, "voters/" + uid);
+
+      // 🔒 เช็คว่า uid นี้เคยโหวตไปแล้วหรือยัง
+      const voterSnap = await get(voterRef);
+      if (voterSnap.exists()) {
+        const votedTeam = voterSnap.val().team;
+        alert(`⛔ คุณโหวตให้ "${votedTeam}" ไปแล้ว\nแต่ละคนโหวตได้เพียง 1 ครั้งเท่านั้นครับ`);
+        return;
+      }
+
+      // เอฟเฟกต์ระหว่างโหวต (ถ้าไม่มีฟังก์ชันเหล่านี้ในเว็บ ให้คอมเมนต์ทิ้งไว้ก่อน)
+      if (typeof playSound === "function") playSound();
+      if (typeof voteAnimation === "function") voteAnimation(team);
+
+      // 📡 บวกคะแนนทีมแบบ atomic (กัน race condition ตอนหลายคนโหวตพร้อมกัน)
+      const voteRef = ref(db, "votes/" + team);
+      const result = await runTransaction(voteRef, (current) => (current || 0) + 1);
+      const newCount = result.snapshot.val();
+
+      // 📝 บันทึกว่า uid นี้โหวตให้ทีมไหนไปแล้ว (กันโหวตซ้ำถาวร)
+      await set(voterRef, {
+        team: team,
+        votedAt: Date.now(),
+      });
+
+      alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${newCount} คะแนน`);
+      if (typeof fireEffect === "function") fireEffect();
+
+    } catch (error) {
+      console.error("โหวตไม่สำเร็จ:", error);
+      alert("❌ โหวตไม่สำเร็จ: " + error.message);
     }
-
-    // เอฟเฟกต์ระหว่างโหวต
-    playSound();
-    voteAnimation(team);
-
-    // 📡 บวกคะแนนทีมแบบ atomic (กัน race condition)
-    const voteRef = ref(db, 'votes/' + team);
-    const result = await runTransaction(voteRef, (current) => (current || 0) + 1);
-    const newCount = result.snapshot.val();
-
-    // 📝 บันทึกว่า uid นี้โหวตให้ทีมไหนไปแล้ว (กันโหวตซ้ำ)
-    await set(voterRef, {
-      team: team,
-      votedAt: Date.now()
-    });
-
-    alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${newCount} คะแนน`);
-    fireEffect();
-
-  } catch (error) {
-    console.error(error);
-    alert("❌ โหวตไม่สำเร็จ");
-  }
-};
+  };
+</script>
 
 
 /* =========================
