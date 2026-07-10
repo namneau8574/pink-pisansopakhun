@@ -124,7 +124,7 @@ getDatabase(app);
 window.voteTeam = async function(team) {
   try {
     const NOW = Date.now(); // เวลาปัจจุบัน (มิลลิวินาที)
-    const COOLDOWN_TIME = 10 * 60 * 1000; // 10 นาที แปลงเป็นมิลลิวินาที (600,000 ms)
+    const COOLDOWN_TIME = 20 * 60 * 1000; // 10 นาที แปลงเป็นมิลลิวินาที (600,000 ms)
 
     // 🔒 ดึงข้อมูลเวลาที่เคยโหวตล่าสุด
     const lastVoteTime = localStorage.getItem('lastVoteTime');
