@@ -123,37 +123,32 @@ getDatabase(app);
 
 window.voteTeam = async function(team) {
   try {
-    const NOW = Date.now(); // เวลาปัจจุบัน (มิลลิวินาที)
-    const COOLDOWN_TIME = 20 * 60 * 1000; // 10 นาที แปลงเป็นมิลลิวินาที (600,000 ms)
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0]; // เช่น "2026-07-10"
 
-    // 🔒 ดึงข้อมูลเวลาที่เคยโหวตล่าสุด
-    const lastVoteTime = localStorage.getItem('lastVoteTime');
+    // 🔒 ดึงข้อมูลวันที่โหวตล่าสุด
+    const lastVoteDate = localStorage.getItem('lastVoteDate');
     const votedTeam = localStorage.getItem('votedTeam') || 'ทีมก่อนหน้านี้';
 
-    if (lastVoteTime) {
-      const timeElapsed = NOW - parseInt(lastVoteTime, 10);
-
-      // ถ้าเวลาที่ผ่านไป ยังไม่ถึง 10 นาที
-      if (timeElapsed < COOLDOWN_TIME) {
-        const timeRemainingMs = COOLDOWN_TIME - timeElapsed;
-        const minutesLeft = Math.floor(timeRemainingMs / (60 * 1000));
-        const secondsLeft = Math.floor((timeRemainingMs % (60 * 1000)) / 1000);
-
-        alert(`⛔ คุณเพิ่งโหวตให้ "${votedTeam}" ไปไม่นานนี้\nกรุณารออีก ${minutesLeft} นาที ${secondsLeft} วินาที จึงจะโหวตใหม่ได้ครับ`);
-        return;
-      }
+    if (lastVoteDate === todayStr) {
+      alert(`⛔ วันนี้คุณโหวตให้ "${votedTeam}" ไปแล้ว\nกรุณากลับมาโหวตใหม่พรุ่งนี้ครับ`);
+      return;
     }
+
+    // 📝 บันทึกข้อมูลการโหวตรอบใหม่
+    localStorage.setItem('votedTeam', team);
+    localStorage.setItem('lastVoteDate', todayStr);
+
     // เอฟเฟกต์ระหว่างโหวต
     playSound();
     voteAnimation(team);
 
-    // 📡 เชื่อมต่อ Firebase และอัปเดตคะแนน
+    // 📡 เชื่อมต่อ Firebase และอัปเดตคะแนน (ใช้ transaction กันคะแนนเพี้ยนตอนโหวตพร้อมกัน)
     const voteRef = ref(db, 'votes/' + team);
-    const snapshot = await get(voteRef);
-    let current = snapshot.exists() ? snapshot.val() : 0;
-    await set(voteRef, current + 1);
+    const result = await runTransaction(voteRef, (current) => (current || 0) + 1);
+    const newCount = result.snapshot.val();
 
-    alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${current + 1} คะแนน`);
+    alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${newCount} คะแนน`);
 
     fireEffect();
 
