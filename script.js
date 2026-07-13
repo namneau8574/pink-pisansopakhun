@@ -377,9 +377,9 @@ const qrImages={
 
 "วอลเลย์บอลหญิง":"qrvolleybal.png.jpg",
 
-"แบดมินตันชาย":"images/qr-volleyball-boy.png",
+"แบดมินตันชาย":"imagesว่าง-volleyball-boy.png",
 
-"แบดมินตันหญิง":"images/qr-volleyball-boy.png",
+"แบดมินตันหญิง":"imageว่าง-volleyball-boy.png",
 
 "แฮนด์บอลหญิง":"chairballpk69.jpg",
 
@@ -391,9 +391,9 @@ const qrImages={
 
 "แชร์บอลหญิง":"qrchairball.png.jpg",
 
-"ตะกร้อชาย":"images/qr-volleyball-boy.png",
+"ตะกร้อชาย":"images/qว่างyball-boy.png",
 
-"ตะกร้อหญิง":"images/qr-volleyball-boy.png",
+"ตะกร้อหญิง":"images/qว่างlleyball-boy.png",
 
 "เปตองชาย":"qrpetanque.png.jpg",
 
