@@ -367,37 +367,37 @@ document.getElementById("loader").style.display="none";
 
 const qrImages={
 
-"ฟุตบอลชาย":"images/qr-football.png",
+"ฟุตบอลชาย":"footballpk69.jpg",
 
 "บาสเกตบอลชาย":"qrbasketball.png.png",
 
 "บาสเกตบอลหญิง":"qrbasketball.png.png",
 
-"วอลเลย์บอลชาย":"images/qr-volleyball-boy.png",
+"วอลเลย์บอลชาย":"volleyballpk69.jpg",
 
-"วอลเลย์บอลหญิง":"images/qr-volleyball-girl.png",
+"วอลเลย์บอลหญิง":"volleyballpk69.jpg",
 
 "แบดมินตันชาย":"images/qr-badminton-boy.png",
 
 "แบดมินตันหญิง":"images/qr-badminton-girl.png",
 
-"แฮนด์บอลหญิง":"images/qr-handball.png",
+"แฮนด์บอลหญิง":"chairballpk69.jpg"",
 
-"กรีฑาชาย":"images/qr-athletics-boy.png",
+"กรีฑาชาย":"athleticspk69.jpg",
 
-"กรีฑาหญิง":"images/qr-athletics-girl.png",
+"กรีฑาหญิง":"athleticspk69.jpg",
 
-"แชร์บอลชาย":"images/qr-chairball-boy.png",
+"แชร์บอลชาย":"chairballpk69.jpg",
 
-"แชร์บอลหญิง":"images/qr-chairball-girl.png",
+"แชร์บอลหญิง":"chairballpk69.jpg",
 
 "ตะกร้อชาย":"images/qr-sepak-boy.png",
 
 "ตะกร้อหญิง":"images/qr-sepak-girl.png",
 
-"เปตองชาย":"images/qr-petanque-boy.png",
+"เปตองชาย":"petanquepk69.jpg",
 
-"เปตองหญิง":"images/qr-petanque-girl.png",
+"เปตองหญิง":"petanquepk69.jpg",
 
 "เทเบิลเทนนิสชาย":"images/qr-tabletennis-boy.png",
 
