@@ -377,9 +377,9 @@ const qrImages={
 
 "วอลเลย์บอลหญิง":"volleyballpk69.jpg",
 
-"แบดมินตันชาย":"images/qr-badminton-boy.png",
+"แบดมินตันชาย":"",
 
-"แบดมินตันหญิง":"images/qr-badminton-girl.png",
+"แบดมินตันหญิง":"",
 
 "แฮนด์บอลหญิง":"chairballpk69.jpg"",
 
@@ -391,17 +391,17 @@ const qrImages={
 
 "แชร์บอลหญิง":"chairballpk69.jpg",
 
-"ตะกร้อชาย":"images/qr-sepak-boy.png",
+"ตะกร้อชาย":"",
 
-"ตะกร้อหญิง":"images/qr-sepak-girl.png",
+"ตะกร้อหญิง":"",
 
 "เปตองชาย":"petanquepk69.jpg",
 
 "เปตองหญิง":"petanquepk69.jpg",
 
-"เทเบิลเทนนิสชาย":"images/qr-tabletennis-boy.png",
+"เทเบิลเทนนิสชาย":"",
 
-"เทเบิลเทนนิสหญิง":"images/qr-tabletennis-girl.png"
+"เทเบิลเทนนิสหญิง":""
 
 };
 // QR CLOSE
