@@ -383,9 +383,9 @@ const qrImages={
 
 "แฮนด์บอลหญิง":"chairballpk69.jpg",
 
-"กรีฑาชาย":"athleticspk69.jpg",
+"กรีฑาชาย":"qrathletics.png.jpg",
 
-"กรีฑาหญิง":"athleticspk69.jpg",
+"กรีฑาหญิง":"qrathletics.png.jpg",
 
 "แชร์บอลชาย":"qrchairball.png.jpg",
 
