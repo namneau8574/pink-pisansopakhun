@@ -381,7 +381,7 @@ const qrImages={
 
 "แบดมินตันหญิง":"images/qr-volleyball-boy.png",
 
-"แฮนด์บอลหญิง":"chairballpk69.jpg"",
+"แฮนด์บอลหญิง":"chairballpk69.jpg",
 
 "กรีฑาชาย":"athleticspk69.jpg",
 
