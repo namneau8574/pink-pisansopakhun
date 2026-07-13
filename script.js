@@ -395,9 +395,9 @@ const qrImages={
 
 "ตะกร้อหญิง":"images/qr-volleyball-boy.png",
 
-"เปตองชาย":"petanquepk69.jpg",
+"เปตองชาย":"qrpetanque.png.jpg",
 
-"เปตองหญิง":"petanquepk69.jpg",
+"เปตองหญิง":"qrpetanque.png.jpg",
 
 "เทเบิลเทนนิสชาย":"images/qr-volleyball-boy.png",
 
