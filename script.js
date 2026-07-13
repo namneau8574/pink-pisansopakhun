@@ -121,18 +121,20 @@ getDatabase(app);
    VOTE SYSTEM
 ========================= */
 window.voteTeam = async function(team) {
-  try {
-    const NOW = Date.now(); // เวลาปัจจุบัน (มิลลิวินาที)
-    const COOLDOWN_TIME = 10 * 60 * 1000; // 10 นาที แปลงเป็นมิลลิวินาที (600,000 ms)
+  alert("⏳ ยังไม่เปิดโหวตครับ กรุณารอก่อนนะครับ 🙏");
+  return;
 
-    // 🔒 ดึงข้อมูลเวลาที่เคยโหวตล่าสุด
+  // ----- โค้ดเดิมด้านล่างนี้จะไม่ถูกรันจนกว่าจะเปิดโหวต -----
+  try {
+    const NOW = Date.now();
+    const COOLDOWN_TIME = 10 * 60 * 1000;
+
     const lastVoteTime = localStorage.getItem('lastVoteTime');
     const votedTeam = localStorage.getItem('votedTeam') || 'ทีมก่อนหน้านี้';
 
     if (lastVoteTime) {
       const timeElapsed = NOW - parseInt(lastVoteTime, 10);
 
-      // ถ้าเวลาที่ผ่านไป ยังไม่ถึง 10 นาที
       if (timeElapsed < COOLDOWN_TIME) {
         const timeRemainingMs = COOLDOWN_TIME - timeElapsed;
         const minutesLeft = Math.floor(timeRemainingMs / (60 * 1000));
@@ -143,15 +145,12 @@ window.voteTeam = async function(team) {
       }
     }
 
-    // 📝 บันทึกข้อมูลการโหวตรอบใหม่และอัปเดต Timestamp ปัจจุบัน
     localStorage.setItem('votedTeam', team);
     localStorage.setItem('lastVoteTime', NOW);
 
-    // เอฟเฟกต์ระหว่างโหวต
     playSound();
     voteAnimation(team);
 
-    // 📡 เชื่อมต่อ Firebase และอัปเดตคะแนน
     const voteRef = ref(db, 'votes/' + team);
     const snapshot = await get(voteRef);
     let current = snapshot.exists() ? snapshot.val() : 0;
@@ -166,8 +165,6 @@ window.voteTeam = async function(team) {
     alert("❌ โหวตไม่สำเร็จ");
   }
 };
-
-
 /* =========================
    COMMENT SYSTEM
 ========================= */
