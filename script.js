@@ -367,7 +367,7 @@ document.getElementById("loader").style.display="none";
 
 const qrImages={
 
-"ฟุตบอลชาย":"footballpk69.jpg",
+"ฟุตบอลชาย":"qrfootball.png.jpg",
 
 "บาสเกตบอลชาย":"qrbasketball.png.png",
 
@@ -387,9 +387,9 @@ const qrImages={
 
 "กรีฑาหญิง":"athleticspk69.jpg",
 
-"แชร์บอลชาย":"chairballpk69.jpg",
+"แชร์บอลชาย":"qrchairball.png.jpg",
 
-"แชร์บอลหญิง":"chairballpk69.jpg",
+"แชร์บอลหญิง":"qrchairball.png.jpg",
 
 "ตะกร้อชาย":"images/qr-volleyball-boy.png",
 
