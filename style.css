@@ -251,6 +251,7 @@ nav a::after {
 nav a:hover { color: var(--pink); }
 nav a:hover::after { width: 100%; }
 
+
 /* =========================
    HERO
 ========================= */
@@ -408,18 +409,16 @@ section {
 .video-section video:hover {
   box-shadow: 0 12px 50px rgba(232, 0, 90, 0.2);
 }
+
 /* =========================
-   CARDS (VOTE) - ปรับปรุงความสมดุล
+   CARDS (VOTE)
 ========================= */
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 28px;
   align-items: stretch;
-  justify-content: center;   /* 👈 เพิ่ม: ทำให้แถวที่ไม่เต็มอยู่กึ่งกลาง ไม่ยืดเบี้ยว */
-  max-width: 1200px;         /* 👈 เพิ่ม: กันไม่ให้การ์ดยืดกว้างเกินไปบนจอคอมใหญ่ */
-  margin: 0 auto;            /* 👈 เพิ่ม: จัดกึ่งกลางทั้งกลุ่ม */
 }
 
 .card {
@@ -427,106 +426,65 @@ section {
   border: 1px solid rgba(200,146,10,.2);
   border-radius: 20px;
   padding: 24px;
-  width: 100%;
-  max-width: 320px;          /* 👈 เพิ่ม: จำกัดขนาดการ์ดไม่ให้ใหญ่ต่างกันเวลามีน้อยใบ */
-  margin: 0 auto;            /* 👈 เพิ่ม: จัดกึ่งกลางตัวการ์ดเองในกริดด้วย */
 
   display: flex;
   flex-direction: column;
+
   height: 100%;
   transition: .35s;
   text-align: center;
   position: relative;
   overflow: hidden;
+
   box-shadow: 0 4px 20px rgba(232,0,90,.06);
 }
-/* แก้ไข: ยุบรวมคลาสรูปภาพทั้งหมดให้ใช้มาตรฐานเดียวกัน */
+
+/* กล่องรูป */
 .card img,
-.jersey-img,
-.img-box {
-  width: 100%;
-  aspect-ratio: 3 / 4;      /* คุมสัดส่วนแนวตั้งให้เท่ากันทุกรูป */
-  object-fit: cover;        /* ป้องกันรูปภาพบิดเบี้ยว */
-  display: block;
-  border-radius: 14px;
-  border: 1px solid rgba(200,146,10,.2);
-  margin-bottom: 18px;
+.jersey-img{
+    width:100%;
+    aspect-ratio:3/4;      /* ทุกรูปสูงเท่ากัน */
+    object-fit:cover;
+    display:block;
+    border-radius:14px;
+    border:1px solid rgba(200,146,10,.2);
+    margin-bottom:18px;
 }
 
 /* หัวข้อ */
-.card h3 {
-  margin: 0 0 10px;
-  font-size: 1.25rem;
-  min-height: 55px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.card h3{
+    margin:0 0 10px;
+    font-size:1.25rem;
+    min-height:55px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
 /* รายละเอียด */
-.card p {
-  flex: 1;
-  margin-bottom: 18px;
+.card p{
+    flex:1;
+    margin-bottom:18px;
 }
 
 /* ปุ่มอยู่ล่างสุดเสมอ */
-.card button {
-  margin-top: auto;
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 999px;
-  background: linear-gradient(135deg,var(--pink),var(--pink-light));
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
+.card button{
+    margin-top:auto;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:999px;
+    background:linear-gradient(135deg,var(--pink),var(--pink-light));
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
 }
 
 /* Hover */
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 16px 40px rgba(232,0,90,.15);
-}
-
-
-/* =========================
-   MOBILE & RESPONSIVE (ปรับปรุงจุดที่บั๊ก)
-========================= */
-
-@media (max-width: 900px) {
-  .hero h1          { font-size: 2.5rem; }
-  nav ul            { display: none; }
-  nav                { padding: 0 20px; }
-  .register-layout  { grid-template-columns: 1fr; }
-  .qr-box           { width: 90%; }
-  
-  /* ❌ ลบ .jersey-img { height: 180px; } ออก เพื่อไม่ให้ความสูงเพี้ยน */
-}
-
-@media (max-width: 768px) {
-  .cards {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  /* คุมให้สัดส่วนรูปภาพบนมือถือยังคงเป็น 3/4 เท่าเดิม ไม่โย้เย้ */
-  .card img,
-  .jersey-img,
-  .img-box {
-    aspect-ratio: 3 / 4; 
-    max-width: 320px; /* จำกัดความกว้างบนมือถือไม่ให้ใหญ่เกินงาม */
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .card {
-    padding: 20px;
-  }
-
-  .card h3,
-  .card p {
-    min-height: auto; /* บนมือถือปล่อยอิสระเนื่องจากเรียงเป็นแถวเดี่ยว */
-  }
+.card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 16px 40px rgba(232,0,90,.15);
 }
 /* =========================
    FORM
@@ -938,6 +896,7 @@ footer p {
   .jersey-img       { height: 180px; }
   .qr-box           { width: 90%; }
 }
+
 @media (max-width: 768px) {
   .loader-bar  { width: 220px; bottom: 60px; }
   .loader-text { font-size: 12px; bottom: 30px; }
@@ -972,7 +931,7 @@ body::before {
   
   /* ⚠️ หากต้องการเปลี่ยนเป็นภาพโปร่งใส PNG ของตัวเองให้เปลี่ยนพาธตรงนี้ เช่น url('images/hanuman.png') 
      ตอนนี้ใส่ SVG ลายเส้นหนุมานจำลองสีชมพู-ทองไว้ให้ขึ้นทดสอบแน่นอนครับ */
-  background-image: url("images/hanuman.png.png");
+  background-image: url("");
   
   background-size: contain;
   background-repeat: no-repeat;
@@ -1045,29 +1004,6 @@ body::before {
     margin-left: auto;       
     margin-right: auto;
   }
-}
-@media (max-width:768px){
-
-    .cards{
-        grid-template-columns:1fr;
-        gap:20px;
-    }
-
-    .img-box{
-        aspect-ratio:4/5;
-    }
-
-    .card{
-        padding:20px;
-    }
-
-    .card h3{
-        min-height:auto;
-    }
-
-    .card p{
-        min-height:auto;
-    }
 }
 /*รอกรอกเข้าเว็บ ===================================================
    GATEKEEPER SYSTEM - หรูหรา คลาสสิก (แก้ไขจุดผิดแล้ว)
@@ -1284,6 +1220,50 @@ body::before {
   60%  { transform: translateY(-120px) scale(1.2); opacity: 0.8; }
   100% { transform: translateY(-220px) scale(0.5); opacity: 0; }
 }
+/* =========================
+   LANTERNS
+========================= */
+
+.lanterns {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.lantern {
+  font-size: 1.6rem;
+  transform-origin: top center;
+  animation: lanternSwing ease-in-out infinite alternate;
+  margin-top: -6px;
+  opacity: 0.85;
+  filter: drop-shadow(0 4px 8px rgba(200, 0, 80, 0.3));
+}
+
+/* แต่ละโคมแกว่งไม่พร้อมกัน */
+.lantern:nth-child(1) { animation-duration: 2.8s; animation-delay: 0s; }
+.lantern:nth-child(2) { animation-duration: 3.2s; animation-delay: 0.4s; }
+.lantern:nth-child(3) { animation-duration: 2.5s; animation-delay: 0.8s; }
+.lantern:nth-child(4) { animation-duration: 3.5s; animation-delay: 0.2s; }
+.lantern:nth-child(5) { animation-duration: 2.9s; animation-delay: 0.6s; }
+
+@keyframes lanternSwing {
+  0%   { transform: rotate(-12deg); }
+  100% { transform: rotate(12deg); }
+}
+nav {
+  position: fixed; /* มีอยู่แล้ว */
+  /* เพิ่มบรรทัดนี้ */
+  overflow: visible;
+}
+
+
 
 /* =========================================================
    เช็คชื่อเข้าร่วมกิจกรรม (#checkin)
@@ -1291,73 +1271,49 @@ body::before {
    นำโค้ดนี้ไปแปะต่อท้ายไฟล์ style.css เดิมของคุณได้เลย
 ========================================================= */
 
-/* =========================================================
-   🏮 MODULE: ระบบเช็คชื่อเข้าร่วมกิจกรรม (#checkin)
-   THEME: THAI ROMANTIC WHITE & PASTEL PINK (ขาว-ชมพู สว่าง ละมุนตา)
-   ========================================================= */
-
-/* เลเยอร์ลายไทยกระจังใบเทศโทนชมพูอ่อนละมุนตาบนพื้นหลังขาว */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.15'%3E%3Cpath d='M80,10 C92,35 115,58 140,70 C115,82 92,105 80,130 C68,105 45,82 20,70 C45,58 68,35 80,10 Z' fill='%23ff6fa3'/%3E%3Cpath d='M80,28 C88,48 102,62 122,70 C102,78 88,92 80,112 C72,92 58,78 38,70 C58,62 72,48 80,28 Z' fill='%23ffffff'/%3E%3Cpath d='M80,45 C84,58 92,66 105,70 C92,74 84,82 80,95 C76,82 68,74 55,70 C68,66 76,58 80,45 Z' fill='%23e8005a'/%3E%3Ccircle cx='80' cy='70' r='5' fill='%23e8005a'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 130px 130px;
+  /* ดีไซน์กระจังใบเทศ ซ้อนเลเยอร์สีชมพูไท สีครีมสว่าง และแกนในสีทองอร่าม */
+  background-image: url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.16'%3E%3Cpath d='M80,10 C92,35 115,58 140,70 C115,82 92,105 80,130 C68,105 45,82 20,70 C45,58 68,35 80,10 Z' fill='%23e8005a'/%3E%3Cpath d='M80,28 C88,48 102,62 122,70 C102,78 88,92 80,112 C72,92 58,78 38,70 C58,62 72,48 80,28 Z' fill='%23ffe0ee'/%3E%3Cpath d='M80,45 C84,58 92,66 105,70 C92,74 84,82 80,95 C76,82 68,74 55,70 C68,66 76,58 80,45 Z' fill='%23c9920a'/%3E%3Ccircle cx='80' cy='70' r='5' fill='%23c9920a'/%3E%3Cpath d='M0,10 Q20,20 10,40 Q0,20 0,10 Z M160,10 Q140,20 150,40 Q160,20 160,10 Z' fill='%23e8005a'/%3E%3Cpath d='M0,150 Q20,140 10,120 Q0,140 0,150 Z M160,150 Q140,140 150,120 Q160,140 160,150 Z' fill='%23e8005a'/%3E%3Ccircle cx='80' cy='145' r='3' fill='%23c9920a'/%3E%3Ccircle cx='80' cy='15' r='3' fill='%23c9920a'/%3E%3Ccircle cx='15' cy='70' r='3' fill='%23e8005a'/%3E%3Ccircle cx='145' cy='70' r='3' fill='%23e8005a'/%3E%3C/g%3E%3C/svg%3E");
+  
+  background-size: 130px 130px; /* ขนาดลายไทยพอดีสายตาบนหน้าจอคอมพิวเตอร์ */
   pointer-events: none;
   z-index: 0;
-  opacity: 0.6;
+  opacity: 0.5; /* ความเข้มจางของลายพื้นหลัง */
 }
 
-/* ปรับพื้นหลังหลักของเว็บให้เป็นสีขาวครีมออฟไวท์ สว่าง สะอาดตา */
-body {
-  background: #fff5f8;
-  color: #3a001f;
-}
-
-/* ส่วนหัวข้อ (Header) */
 #checkin .header {
   text-align: center;
   margin-bottom: 28px;
 }
-
-/* 🏮 เช็คชื่อเข้าร่วมกิจกรรม */
 #checkin .header h1 {
   font-family: 'Noto Serif Thai', serif;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: #e8005a; /* สีชมพูสด เด่นชัดเจน */
-  margin-bottom: 8px;
-  text-shadow: 0 2px 4px rgba(232, 0, 90, 0.1);
+  color: #8b003a;
+  margin-bottom: 6px;
 }
-
-/* คณะสีชมพูพิศาลโสภาคุณ */
 #checkin .header p {
-  color: #8a4060; /* สีชมพูเข้มแบบคลาสสิก อ่านง่าย */
-  font-size: 1.15rem;
+  color: #5a001e;
   font-weight: 600;
-  letter-spacing: 0.05em;
 }
 
-/* กล่องควบคุมหลักสไตล์กระจกขาวโปร่งแสง (Light Glassmorphism) */
 #checkin .main-container {
   width: 100%;
   max-width: 480px;
-  background: rgba(255, 255, 255, 0.85); /* สีขาวนวลโปร่งแสง เห็นลายไทยด้านหลังจางๆ */
-  border: 1px solid rgba(232, 0, 90, 0.15); /* ขอบชมพูบางๆ */
-  padding: 35px 30px;
-  border-radius: 24px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(232, 0, 90, 0.08); /* เงาสีชมพูจางๆ */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* 🔢 กรอกเลขประจำตัวนักเรียน */
 #checkin .input-label {
   font-family: 'Noto Serif Thai', serif;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: #5a001e;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   display: block;
   text-align: center;
 }
@@ -1366,38 +1322,32 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 14px;
+  gap: 12px;
   margin-bottom: 20px;
 }
-
-/* ช่อง Input โทนขาวคลีน */
 #checkin .input-wrap input {
   width: 100%;
   padding: 16px;
   border-radius: 14px;
-  border: 2px solid rgba(232, 0, 90, 0.2);
-  background: #ffffff; /* กล่องขาวสะอาด */
+  border: 2px solid rgba(139, 0, 58, 0.3);
+  background: #ffffff;
   color: #3a001f;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
   font-family: 'Anuphan', sans-serif;
   outline: none;
   text-align: center;
-  letter-spacing: 3px;
-  transition: 0.25s ease;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+  letter-spacing: 2px;
+  transition: 0.25s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-
 #checkin .input-wrap input:focus {
   border-color: #e8005a;
-  background: #ffffff;
-  box-shadow: 0 0 12px rgba(232, 0, 90, 0.15);
+  box-shadow: 0 0 0 4px rgba(232, 0, 90, 0.15);
 }
-
-/* ปุ่มกดส่งข้อมูลสีชมพูไล่เฉดหวานๆ */
 #checkin .input-wrap button {
   width: 100%;
-  padding: 15px;
+  padding: 14px;
   border: none;
   border-radius: 14px;
   background: linear-gradient(135deg, #e8005a, #ff6fa3);
@@ -1407,34 +1357,30 @@ body {
   cursor: pointer;
   font-family: 'Anuphan', sans-serif;
   transition: 0.25s;
-  box-shadow: 0 4px 15px rgba(232, 0, 90, 0.2);
+  box-shadow: 0 4px 14px rgba(232, 0, 90, 0.2);
 }
-
 #checkin .input-wrap button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(232, 0, 90, 0.3);
+  transform: scale(1.02);
+  box-shadow: 0 6px 18px rgba(232, 0, 90, 0.3);
 }
 
-/* ส่วนของกล่องแสดงชื่อหลังจากค้นหาเจอ */
 #checkin .name-box {
   background: #ffffff;
-  border: 2px solid rgba(232, 0, 90, 0.15);
+  border: 2px solid rgba(139, 0, 58, 0.2);
   border-radius: 16px;
   padding: 18px 20px;
   margin-bottom: 20px;
   width: 100%;
   text-align: center;
   display: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-
 #checkin .name-id {
   font-size: 0.85rem;
   color: #a04060;
   margin-bottom: 4px;
   letter-spacing: 0.1em;
 }
-
 #checkin .name-text {
   font-family: 'Noto Serif Thai', serif;
   font-size: 1.6rem;
@@ -1442,13 +1388,11 @@ body {
   color: #5a001e;
 }
 
-/* ส่วนของประเภทห้องเรียน/กลุ่ม */
 #checkin .dept-section {
   display: none;
   margin-bottom: 20px;
   width: 100%;
 }
-
 #checkin .dept-label {
   font-family: 'Noto Serif Thai', serif;
   font-size: 1rem;
@@ -1463,35 +1407,32 @@ body {
   width: 100%;
   padding: 14px;
   border-radius: 12px;
-  border: 1.5px solid rgba(232, 0, 90, 0.15);
-  background: #ffffff;
+  border: 1.5px solid rgba(139, 0, 58, 0.15);
+  background: white;
   font-family: 'Anuphan', sans-serif;
   font-size: 1rem;
   color: #5a001e;
   font-weight: 600;
   outline: none;
   text-align-last: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
   transition: 0.2s;
 }
-
 #checkin .room-select:focus {
   border-color: #e8005a;
-  box-shadow: 0 0 8px rgba(232, 0, 90, 0.1);
+  box-shadow: 0 0 0 3px rgba(232, 0, 90, 0.1);
 }
 
-/* ตารางปุ่มเลือกแผนก คณะย่อย */
 #checkin .dept-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
-
 #checkin .dept-btn {
   padding: 11px 10px;
-  border: 1.5px solid rgba(232, 0, 90, 0.15);
+  border: 1.5px solid rgba(139, 0, 58, 0.15);
   border-radius: 12px;
-  background: #ffffff;
+  background: white;
   font-family: 'Anuphan', sans-serif;
   font-size: 0.85rem;
   color: #5a001e;
@@ -1499,23 +1440,20 @@ body {
   transition: 0.2s;
   text-align: center;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
 }
-
 #checkin .dept-btn:hover {
   border-color: #e8005a;
   background: #fff0f6;
   color: #e8005a;
 }
-
 #checkin .dept-btn.selected {
   background: linear-gradient(135deg, #e8005a, #ff6fa3);
   color: white;
   border-color: #e8005a;
-  box-shadow: 0 4px 12px rgba(232, 0, 90, 0.2);
+  box-shadow: 0 4px 12px rgba(232, 0, 90, 0.25);
 }
 
-/* ปุ่มกดยืนยันสุดท้าย */
 #checkin .confirm-btn {
   width: 100%;
   padding: 16px;
@@ -1528,45 +1466,40 @@ body {
   cursor: pointer;
   font-family: 'Anuphan', sans-serif;
   transition: 0.3s;
-  box-shadow: 0 6px 20px rgba(232, 0, 90, 0.2);
+  box-shadow: 0 6px 20px rgba(232, 0, 90, 0.25);
   display: none;
 }
-
 #checkin .confirm-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(232, 0, 90, 0.3);
+  box-shadow: 0 10px 28px rgba(232, 0, 90, 0.38);
 }
 
-/* แจ้งเตือนความผิดพลาดและกล่องสำเร็จ */
 #checkin .error-box {
   background: #fff0f0;
-  border: 1px solid rgba(220, 0, 0, 0.15);
+  border: 1px solid rgba(220, 0, 0, 0.2);
   border-radius: 14px;
   padding: 14px 18px;
-  color: #ba0000;
+  color: #8b0000;
   font-weight: 600;
   text-align: center;
   display: none;
   margin-bottom: 12px;
   width: 100%;
 }
-
 #checkin .success-box {
   background: #ffffff;
-  border: 2px solid rgba(232, 0, 90, 0.15);
+  border: 2px solid rgba(139, 0, 58, 0.2);
   border-radius: 16px;
   padding: 28px;
   text-align: center;
   display: none;
   width: 100%;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
 }
-
 #checkin .success-icon {
   font-size: 3.5rem;
   margin-bottom: 10px;
 }
-
 #checkin .success-name {
   font-family: 'Noto Serif Thai', serif;
   font-size: 1.3rem;
@@ -1574,13 +1507,11 @@ body {
   color: #5a001e;
   margin-bottom: 4px;
 }
-
 #checkin .success-info {
   display: inline-flex;
   gap: 6px;
   margin-top: 8px;
 }
-
 #checkin .success-badge {
   background: linear-gradient(135deg, #e8005a, #ff6fa3);
   color: white;
@@ -1589,14 +1520,12 @@ body {
   font-size: 0.85rem;
   font-weight: 700;
 }
-
 #checkin .success-sub {
   font-size: 0.85rem;
   color: #a04060;
   margin-top: 12px;
 }
 
-/* Toast ดันสไลด์ขึ้นด้านล่าง */
 #checkin .toast {
   position: fixed;
   bottom: 30px;
@@ -1608,28 +1537,21 @@ body {
   border-radius: 50px;
   font-weight: 700;
   font-size: 0.95rem;
-  box-shadow: 0 8px 24px rgba(232, 0, 90, 0.25);
+  box-shadow: 0 8px 24px rgba(232, 0, 90, 0.3);
   transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 9999;
+  border: 1px solid rgba(255, 215, 100, 0.3);
   white-space: nowrap;
 }
-
 #checkin .toast.show {
   transform: translateX(-50%) translateY(0);
 }
 
-/* ระบบ Responsive รองรับมือถือ (ปุ่มใหญ่ขึ้น จัดแถวเรียงเดี่ยว) */
 @media(max-width: 480px) {
   #checkin .header h1 {
-    font-size: 1.6rem;
-  }
-  #checkin .header p {
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
   #checkin .dept-grid {
-    grid-template-columns: 1fr; /* แถวเดี่ยวกดง่ายสำหรับจอมือถือ */
-  }
-  #checkin .main-container {
-    padding: 25px 20px;
+    grid-template-columns: 1fr;
   }
 }
