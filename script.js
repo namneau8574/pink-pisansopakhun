@@ -624,60 +624,21 @@ function warpIntoWeb() {
 
 // ⌨️ ตรวจจับการกดปุ่ม Enter บนมือถือและคอม
 // ===========================
-// 🔐 ตรวจสอบรหัสนักเรียน
-// รองรับ PC / Android / iPhone / iPad
-// ===========================
+const inputField = document.getElementById("studentIdInput");
 
-function verifyWebAccess(e) {
+if(inputField){
 
-    if (e) e.preventDefault();
+    inputField.addEventListener("keydown",function(e){
 
-    const input = document.getElementById("studentIdInput");
+        if(e.key==="Enter"){
 
-    const errTxt = document.getElementById("errTxt");
+            e.preventDefault();
 
-    const gateBox = document.querySelector(".gate-box");
+            verifyWebAccess();
 
-    if (!input) return;
-
-    // ลบช่องว่างทั้งหมด
-    const inputId = input.value.replace(/\s+/g, "").trim();
-
-    if (inputId === "") {
-        if (errTxt) {
-            errTxt.innerHTML = "กรุณากรอกเลขประจำตัว";
-            errTxt.style.display = "block";
-        }
-        return;
-    }
-
-    // เปรียบเทียบเป็น String ทั้งหมด
-    const found = studentDatabase.some(id => String(id) === String(inputId));
-
-    if (found) {
-
-        localStorage.setItem("web_access_granted", "true");
-        localStorage.setItem("is_logged_in", "true");
-        localStorage.setItem("logged_student_id", inputId);
-
-        if (errTxt) errTxt.style.display = "none";
-
-        warpIntoWeb();
-
-    } else {
-
-        if (errTxt) {
-            errTxt.innerHTML = "ไม่พบเลขประจำตัวนักเรียน";
-            errTxt.style.display = "block";
         }
 
-        if (gateBox) {
-            gateBox.style.animation = "none";
-            gateBox.offsetHeight;
-            gateBox.style.animation = "gateShake .4s";
-        }
-
-    }
+    });
 
 }
 
