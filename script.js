@@ -391,9 +391,9 @@ const qrImages={
 
 "แชร์บอลหญิง":"qrchairball.png.jpg",
 
-"ตะกร้อชาย":"images/qว่างyball-boy.png",
+"ตะกร้อชาย":"qrtakrawt.jpg",
 
-"ตะกร้อหญิง":"images/qว่างlleyball-boy.png",
+"ตะกร้อหญิง":"qrtakrawt.jpg",
 
 "เปตองชาย":"qrpetanque.png.jpg",
 
