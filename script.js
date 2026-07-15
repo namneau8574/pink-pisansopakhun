@@ -244,7 +244,7 @@ registerForm.addEventListener('submit', (e) => {
 
     // ส่งข้อมูลไป Google Sheets แบบเบื้องหลัง
     fetch(
-        "https://script.google.com/macros/s/AKfycbyc4XaEf7PkH_ZFaBjrsFgvp5nSaeO1mZAw799ylp_6TsCzAuavcK_q3WWV7fiKlXeS/exec",
+        "https://script.google.com/macros/s/AKfycbyln62MR-kDraMEFqLmPUW1u0KmcAz-wdt6xQuzHDxDAY0_-Emt15GW1jsHn-jc3q32/exec",
         {
             method: "POST",
             mode: "no-cors",
