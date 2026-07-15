@@ -27,7 +27,7 @@
     
     <input type="number" id="studentIdInput" placeholder="กรอกรหัสประจำตัว เช่น 12345" autocomplete="off">
     
-    <button type="button" id="mainSubmitBtn" onclick="verifyWebAccess(event)">เข้าสู่เว็บไซต์</button>
+    <button onclick="verifyWebAccess()">เข้าสู่ระบบ</button>
     
     <button type="button" id="guestBtn" onclick="loginAsGuest(event)">✦ เข้าชมเว็บไซต์ทั่วไป ✦</button>
     
@@ -184,14 +184,19 @@
     }
 
     // ⌨️ ตรวจจับการกดปุ่ม Enter บนแป้นพิมพ์คีย์บอร์ดมือถือและคอมพิวเตอร์
-    const inputField = document.getElementById('studentIdInput');
-    if (inputField) {
-        inputField.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                verifyWebAccess(e);
-            }
-        });
-    }
+const inputField = document.getElementById("studentIdInput");
+
+if (inputField) {
+
+    // กด Enter
+    inputField.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            verifyWebAccess();
+        }
+    });
+
+}
 </script>
 รอกรอกเข้าเว็บ5/11
 <!-- PARTICLES -->
