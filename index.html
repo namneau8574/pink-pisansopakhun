@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
+<<body>
 
     <div id="loader">
         <picture>
@@ -21,22 +21,32 @@
     </div>
 
     <div id="gatekeeper" style="display: none; opacity: 0;">
-  <div class="gate-box">
-    <h2>✦ ตรวจสอบสิทธิ์เข้าใช้งาน ✦</h2>
-    <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">กรุณากรอกรหัสประจำตัวนักเรียน เพื่อเข้าสู่เว็บไซต์</p>
-    
-    <input type="text" id="studentIdInput" placeholder="กรอกรหัสประจำตัว เช่น 12345" autocomplete="off">
-    
-    <button type="button" id="mainSubmitBtn" onclick="verifyWebAccess(event)">เข้าสู่เว็บไซต์</button>
-    
-    <button type="button" id="guestBtn" onclick="loginAsGuest(event)">✦ เข้าชมเว็บไซต์ทั่วไป ✦</button>
-    
-    <p id="errTxt" style="color: #e8005a; margin-top: 15px; font-weight: 600; display: none;">❌ ไม่พบรหัสประจำตัวนักเรียนนี้ในระบบ!</p>
-  </div>
-</div>
+        <div class="gate-box">
+            <h2>✦ ตรวจสอบสิทธิ์เข้าใช้งาน ✦</h2>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">กรุณากรอกรหัสประจำตัวนักเรียน เพื่อเข้าสู่เว็บไซต์</p>
+            
+            <form id="gateForm" onsubmit="verifyWebAccess(event)">
+                <input 
+                    type="text" 
+                    id="studentIdInput" 
+                    placeholder="กรอกรหัสประจำตัว เช่น 12345" 
+                    autocomplete="off"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    style="width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 8px; border: 1px solid rgba(201, 146, 10, 0.25); box-sizing: border-box;"
+                >
+                
+                <button type="submit" id="mainSubmitBtn">เข้าสู่เว็บไซต์</button>
+            </form>
+            
+            <button type="button" id="guestBtn" onclick="loginAsGuest(event)">✦ เข้าชมเว็บไซต์ทั่วไป ✦</button>
+            
+            <p id="errTxt" style="color: #e8005a; margin-top: 15px; font-weight: 600; display: none;">❌ ไม่พบรหัสประจำตัวนักเรียนนี้ในระบบ!</p>
+        </div>
+    </div>
 
 <script>
-    // 📑 รายชื่อรหัสประจำตัวนักเรียนของจริงของคุณ (อัปเดตให้เรียบร้อยครับ)
+    // 📑 รายชื่อรหัสประจำตัวนักเรียนของจริงของคุณ
     const studentDatabase =  ["39019", "39150", "39153", "39159", "39169", "39212", "39217", "39246", "39499", "39519", "39522", "39523", "39536", "39567", "39570", "39577", "39627", "39638", "39665", "39672", "39713", "39720", "39748", "39754", "39757", "39774", "39776", "41215", "41886", "41887", "41888", "41889", "41890", "41891", "41892", "41893", "41895", "41897", "41898", "41899",
     "39152", "39180", "39198", "39244", "39248", "39249", "39264", "39272", "39287", "39291", "39303", "39319", "39323", "39326", "39344", "39350", "39413", "39508", "39515", "39528", "39539", "39540", "39566", "39636", "39670", "39674", "39704", "39727", "39752", "39756", "39769", "41825", "41826", "41827", "41828", "41829", "41830", "41831", "41832", "41833",
     "39220", "39236", "39268", "39279", "39288", "39289", "39321", "39335", "39346", "39364", "39375", "39527", "39537", "39561", "39593", "39597", "39604", "39606", "39617", "39626", "39635", "39650", "39671", "39673", "39682", "39688", "39702", "39715", "39716", "39717", "39730", "39766", "39788", "39840", "41844", "41845", "41846", "41847", "41848", "41849",
@@ -88,35 +98,61 @@
                             gateBox.style.color = "#2a0018";      
                         }
                     }
+                } else {
+                    // ป้องกันปุ่มถูกใช้ หากเคยล็อกอินเป็น Guest มาก่อนและผู้ใช้กดรีเฟรช
+                    if (localStorage.getItem('is_logged_in') === 'false') {
+                        freezeAllActions();
+                    }
                 }
             }, 500);
         }, 3000); 
     });
 
-    // 🔐 ลำดับที่ 2: ฟังก์ชันตรวจสอบรหัสประจำตัวนักเรียน (เวอร์ชั่นเสถียรชัวร์บนคอมและมือถือ)
+    // 🔐 ลำดับที่ 2: ฟังก์ชันตรวจสอบรหัสประจำตัวนักเรียน (ปรับปรุงความเสถียรบนมือถือและ iPad)
     function verifyWebAccess(event) {
-        if (event) event.preventDefault(); // 🛑 เบรกระบบรีเฟรชหน้าจอของโทรศัพท์มือถือ
+        if (event) {
+            if (typeof event.preventDefault === 'function') event.preventDefault(); // 🛑 หยุดรีเฟรชหน้าบนมือถือ
+        }
 
         const inputEl = document.getElementById('studentIdInput');
         const gateBox = document.querySelector('.gate-box');
         const errTxt = document.getElementById('errTxt');
         
         if (!inputEl) return;
-        const inputId = inputEl.value.trim();
+        
+        // ลบสเปซและฟอร์แมตแปลกๆ ที่อาจพ่วงมาจากคีย์บอร์ดมือถือ
+        const inputId = inputEl.value.replace(/\s+/g, "").trim();
 
-        if (studentDatabase.includes(inputId)) {
+        if (inputId === "") {
+            if (errTxt) {
+                errTxt.innerHTML = "❌ กรุณากรอกรหัสประจำตัว";
+                errTxt.style.display = "block";
+            }
+            return;
+        }
+
+        // ค้นหาในฐานข้อมูลโดยแปลงทุกตัวเป็น String เพื่อความแม่นยำสูงสุด
+        const found = studentDatabase.some(id => String(id).trim() === inputId);
+
+        if (found) {
             localStorage.setItem('web_access_granted', 'true'); 
-            localStorage.setItem('is_logged_in', 'true');       // สิทธิ์นักเรียนตัวจริง โหวตได้ สมัครได้
+            localStorage.setItem('is_logged_in', 'true'); // ได้สิทธิ์เต็ม โหวตได้ ลงสมัครได้
             localStorage.setItem('logged_student_id', inputId);
             
             if (errTxt) errTxt.style.display = 'none';
+            
+            // ดึงแป้นพิมพ์มือถือลงโดยอัตโนมัติเมื่อผ่าน
+            inputEl.blur();
             warpIntoWeb(); 
         } else {
-            // ❌ ถ้ารหัสผิด บังคับสั่นกล่องเตือน
-            if (errTxt) errTxt.style.display = 'block';
+            // ❌ ถ้ารหัสผิด
+            if (errTxt) {
+                errTxt.innerHTML = "❌ ไม่พบรหัสประจำตัวนักเรียนนี้ในระบบ!";
+                errTxt.style.display = 'block';
+            }
             if (gateBox) {
                 gateBox.style.animation = 'none';
-                gateBox.offsetHeight; 
+                gateBox.offsetHeight; // Trigger reflow เพื่อรีสตาร์ตแอนิเมชันสั่นใหม่
                 gateBox.style.animation = 'gateShake 0.4s ease';
             }
             if (inputEl) {
@@ -132,9 +168,11 @@
 
     // 👁️ ลำดับที่ 3: ฟังก์ชันสำหรับสายส่อง "เข้าชมทั่วไป" (ดูได้อย่างเดียว ปุ่มฟอร์มในเว็บทั้งหมดจะโดนแช่แข็ง)
     function loginAsGuest(event) {
-        if (event) event.preventDefault();
+        if (event) {
+            if (typeof event.preventDefault === 'function') event.preventDefault();
+        }
         localStorage.setItem('web_access_granted', 'true'); 
-        localStorage.setItem('is_logged_in', 'false'); // บันทึกสถานะว่าไม่ได้ล็อกอินระบบโหวต
+        localStorage.setItem('is_logged_in', 'false'); // บันทึกสถานะว่าไม่ได้ล็อกอินโหวต
         
         freezeAllActions(); // 🔒 สั่งแช่แข็งทุกปุ่มในหน้าเว็บหลักทันที
         warpIntoWeb();      
@@ -180,21 +218,6 @@
             if (gateKeeper) gateKeeper.style.display = 'none';
         }, 900);
     }
-
-    // ⌨️ ตรวจจับการกดปุ่ม Enter บนแป้นพิมพ์คีย์บอร์ดมือถือและคอมพิวเตอร์
-  const inputField = document.getElementById("studentIdInput");
-
-if (inputField) {
-
-    // กด Enter
-    inputField.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            verifyWebAccess();
-        }
-    });
-
-}
 </script>
 รอกรอกเข้าเว็บ5/11
 <!-- PARTICLES -->
