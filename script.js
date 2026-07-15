@@ -458,8 +458,8 @@ const studentDatabase = ["39019", "39150", "39153", "39159", "39169", "39212", "
     "42647", "42648", "42649", "42650", "42651", "42652", "42653", "42654", "42655", "42656", "42657", "42658", "42659", "42660", "42661", "42662", "42663", "42664", "42665", "42666", "42667", "42668", "42669", "42670", "42671", "42672", "42673", "42674", "42675", "42676", "42677", "42678", "42679", "42680", "42681", "42682"];
 
 // 🧪 ล้างความจำเก่าทิ้งเพื่อทดสอบระบบใหม่ทุกครั้งที่รีเฟรชหน้าจอ (ถ้าทำเสร็จให้ใส่ // ไว้หน้า 2 บรรทัดนี้ครับ)
-localStorage.removeItem('web_access_granted'); 
-localStorage.removeItem('is_logged_in');
+//localStorage.removeItem('web_access_granted'); 
+//localStorage.removeItem('is_logged_in');
 
 // ⏱️ รอหน้าเว็บโหลด (Loader ทำงาน)
 window.addEventListener('load', () => {
@@ -607,11 +607,13 @@ function warpIntoWeb() {
 }
 
 // ⌨️ ตรวจจับการกดปุ่ม Enter บนมือถือและคอม
-const inputField = document.getElementById('studentIdInput');
+const inputField = document.getElementById("studentIdInput");
+
 if (inputField) {
-    inputField.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            verifyWebAccess(e);
+    inputField.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            verifyWebAccess();
         }
     });
 }
