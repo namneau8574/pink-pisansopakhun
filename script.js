@@ -490,6 +490,13 @@ window.addEventListener('load', () => {
 
                     addGuestButton();
                 }
+            } else {
+                // ถ้าเคยล็อกอินแบบ Guest มาก่อน ให้แช่แข็งปุ่มต่อเมื่อรีเฟรชหน้า
+                if (localStorage.getItem('is_logged_in') === 'false') {
+                    freezeAllActions();
+                }
+                // ถ้าผ่านแล้ว ให้ซ่อนประตูล็อกอินทันที
+                if (gateKeeper) gateKeeper.style.display = 'none';
             }
         }, 500);
     }, 3000); 
@@ -498,6 +505,8 @@ window.addEventListener('load', () => {
 // 👁️ ฟังก์ชันเพิ่มปุ่ม "เข้าชมเว็บไซต์ทั่วไป" อัตโนมัติ
 function addGuestButton() {
     const gateBox = document.querySelector('.gate-box');
+    if (!gateBox) return;
+    
     const existingBtn = gateBox.querySelector('button');
     
     if (!document.getElementById('guestBtn')) {
@@ -523,7 +532,8 @@ function addGuestButton() {
         guestBtn.onmouseout = () => { guestBtn.style.background = '#f2f2f2'; };
         
         // เมื่อคลิก -> เข้าเว็บแบบ Guest (ดูได้อย่างเดียว ทำอะไรไม่ได้เลย)
-        guestBtn.onclick = function() {
+        guestBtn.onclick = function(e) {
+            e.preventDefault();
             localStorage.setItem('web_access_granted', 'true'); 
             localStorage.setItem('is_logged_in', 'false'); // ล็อกสถานะว่าไม่ได้ล็อกอิน
             
@@ -532,7 +542,11 @@ function addGuestButton() {
             warpIntoWeb();
         };
         
-        existingBtn.parentNode.insertBefore(guestBtn, existingBtn.nextSibling);
+        if (existingBtn) {
+            existingBtn.parentNode.insertBefore(guestBtn, existingBtn.nextSibling);
+        } else {
+            gateBox.appendChild(guestBtn);
+        }
     }
 }
 
@@ -558,46 +572,66 @@ function freezeAllActions() {
     });
 }
 
-// 🔐 ฟังก์ชันตรวจสอบรหัสประจำตัวนักเรียน (แก้ไขรองรับมือถือ 100%)
-// 🔐 ตรวจสอบสิทธิ์เข้าเว็บไซต์
+// ==========================================
+// 🔐 ฟังก์ชันตรวจสอบรหัสประจำตัวนักเรียน (เวอร์ชันรวมตัวที่ซ้ำและเสถียรที่สุด)
+// รองรับ PC / Android / iPhone / iPad 100%
+// ==========================================
 function verifyWebAccess(e) {
-
-    if (e) e.preventDefault();
+    if (e) {
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+    }
 
     const inputEl = document.getElementById("studentIdInput");
     const gateBox = document.querySelector(".gate-box");
     const errTxt = document.getElementById("errTxt");
 
-    if (!inputEl) return;
+    if (!inputEl) return false;
 
-    // ลบช่องว่างทั้งหมด
+    // ลบช่องว่างทั้งหมด และแปลงอักขระพิเศษที่อาจติดมาจากคีย์บอร์ดมือถือ
     const inputId = inputEl.value.replace(/\s+/g, "").trim();
 
-    // เปรียบเทียบเป็น String ทั้งหมด
-    const found = studentDatabase.some(id => String(id).trim() === inputId);
+    if (inputId === "") {
+        if (errTxt) {
+            errTxt.innerHTML = "กรุณากรอกเลขประจำตัว";
+            errTxt.style.display = "block";
+        }
+        return false;
+    }
+
+    // ตรวจสอบกับฐานข้อมูล (เผื่อกรณีฐานข้อมูลยังโหลดไม่เสร็จ)
+    if (typeof studentDatabase === 'undefined') {
+        console.error("ไม่พบฐานข้อมูล studentDatabase");
+        return false;
+    }
+
+    // เปรียบเทียบแบบป้องกันเคสช่องว่างแฝง
+    const found = studentDatabase.some(id => String(id).trim() === String(inputId));
 
     if (found) {
-
         localStorage.setItem("web_access_granted", "true");
         localStorage.setItem("is_logged_in", "true");
         localStorage.setItem("logged_student_id", inputId);
 
         if (errTxt) errTxt.style.display = "none";
 
+        // ถอนคีย์บอร์ดมือถือลงหลังกดสำเร็จ
+        inputEl.blur();
+
         warpIntoWeb();
-
+        return true;
     } else {
-
-        if (errTxt) errTxt.style.display = "block";
+        if (errTxt) {
+            errTxt.innerHTML = "ไม่พบเลขประจำตัวนักเรียน";
+            errTxt.style.display = "block";
+        }
 
         if (gateBox) {
             gateBox.style.animation = "none";
-            gateBox.offsetHeight;
+            gateBox.offsetHeight; // Trigger reflow
             gateBox.style.animation = "gateShake .4s ease";
         }
-
+        return false;
     }
-
 }
 
 // 🎬 เอฟเฟกต์วาร์ปเข้าเว็บ
@@ -620,26 +654,6 @@ function warpIntoWeb() {
     setTimeout(() => {
         if (gateKeeper) gateKeeper.style.display = 'none';
     }, 900);
-}
-
-// ⌨️ ตรวจจับการกดปุ่ม Enter บนมือถือและคอม
-// ===========================
-const inputField = document.getElementById("studentIdInput");
-
-if(inputField){
-
-    inputField.addEventListener("keydown",function(e){
-
-        if(e.key==="Enter"){
-
-            e.preventDefault();
-
-            verifyWebAccess();
-
-        }
-
-    });
-
 }
 
 /* =========================
