@@ -559,29 +559,45 @@ function freezeAllActions() {
 }
 
 // 🔐 ฟังก์ชันตรวจสอบรหัสประจำตัวนักเรียน (แก้ไขรองรับมือถือ 100%)
-function verifyWebAccess(event) {
-    if (event) event.preventDefault(); 
+// 🔐 ตรวจสอบสิทธิ์เข้าเว็บไซต์
+function verifyWebAccess(e) {
 
-    const inputEl = document.getElementById('studentIdInput');
-    const gateBox = document.querySelector('.gate-box');
-    const errTxt = document.getElementById('errTxt');
-    const inputId = inputEl.value.trim();
+    if (e) e.preventDefault();
 
-    if (studentDatabase.includes(inputId)) {
-        localStorage.setItem('web_access_granted', 'true'); 
-        localStorage.setItem('is_logged_in', 'true');       
-        localStorage.setItem('logged_student_id', inputId);
-        
-        if (errTxt) errTxt.style.display = 'none';
-        warpIntoWeb(); 
+    const inputEl = document.getElementById("studentIdInput");
+    const gateBox = document.querySelector(".gate-box");
+    const errTxt = document.getElementById("errTxt");
+
+    if (!inputEl) return;
+
+    // ลบช่องว่างทั้งหมด
+    const inputId = inputEl.value.replace(/\s+/g, "").trim();
+
+    // เปรียบเทียบเป็น String ทั้งหมด
+    const found = studentDatabase.some(id => String(id).trim() === inputId);
+
+    if (found) {
+
+        localStorage.setItem("web_access_granted", "true");
+        localStorage.setItem("is_logged_in", "true");
+        localStorage.setItem("logged_student_id", inputId);
+
+        if (errTxt) errTxt.style.display = "none";
+
+        warpIntoWeb();
+
     } else {
-        if (errTxt) errTxt.style.display = 'block';
+
+        if (errTxt) errTxt.style.display = "block";
+
         if (gateBox) {
-            gateBox.style.animation = 'none';
-            gateBox.offsetHeight; 
-            gateBox.style.animation = 'gateShake 0.4s ease';
+            gateBox.style.animation = "none";
+            gateBox.offsetHeight;
+            gateBox.style.animation = "gateShake .4s ease";
         }
+
     }
+
 }
 
 // 🎬 เอฟเฟกต์วาร์ปเข้าเว็บ
