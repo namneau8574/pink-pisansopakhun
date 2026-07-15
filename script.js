@@ -399,9 +399,9 @@ const qrImages={
 
 "เปตองหญิง":"qrpetanque.png.jpg",
 
-"เทเบิลเทนนิสชาย":"images/qr-volleyball-boy.png",
+"เทเบิลเทนนิสชาย":"qrtabletennis.jpg",
 
-"เทเบิลเทนนิสหญิง":"images/qr-volleyball-boy.png"
+"เทเบิลเทนนิสหญิง":"qrtabletennis.jpg"
 
 };
 // QR CLOSE
