@@ -22,18 +22,28 @@
 
     <div id="gatekeeper" style="display: none; opacity: 0;">
   <div class="gate-box">
-    <h2>✦ ตรวจสอบสิทธิ์เข้าใช้งาน ✦</h2>
-    <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">กรุณากรอกรหัสประจำตัวนักเรียน เพื่อเข้าสู่เว็บไซต์</p>
+ <div class="gate-box">
+  <h2>✦ ตรวจสอบสิทธิ์เข้าใช้งาน ✦</h2>
+  <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">กรุณากรอกรหัสประจำตัวนักเรียน เพื่อเข้าสู่เว็บไซต์</p>
+  
+  <form onsubmit="verifyWebAccess(event)">
+    <input 
+      type="text" 
+      id="studentIdInput" 
+      placeholder="กรอกรหัสประจำตัว เช่น 12345" 
+      autocomplete="off"
+      inputmode="numeric"
+      pattern="[0-9]*"
+      style="width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;"
+    >
     
-    <input type="number" id="studentIdInput" placeholder="กรอกรหัสประจำตัว เช่น 12345" autocomplete="off">
-    
-    <button onclick="verifyWebAccess()">เข้าสู่ระบบ</button>
-    
-    <button type="button" id="guestBtn" onclick="loginAsGuest(event)">✦ เข้าชมเว็บไซต์ทั่วไป ✦</button>
-    
-    <p id="errTxt" style="color: #e8005a; margin-top: 15px; font-weight: 600; display: none;">❌ ไม่พบรหัสประจำตัวนักเรียนนี้ในระบบ!</p>
-  </div>
+    <button type="submit" style="width: 100%; padding: 12px; background: #2a0018; color: #fff; border: none; border-radius: 50px; font-weight: bold; cursor: pointer;">เข้าสู่ระบบ</button>
+  </form>
+  
+  <p id="errTxt" style="color: #e8005a; margin-top: 15px; font-weight: 600; display: none;">❌ ไม่พบรหัสประจำตัวนักเรียนนี้ในระบบ!</p>
 </div>
+
+<script>
 
 <script>
     // 📑 รายชื่อรหัสประจำตัวนักเรียนของจริงของคุณ (อัปเดตให้เรียบร้อยครับ)
