@@ -261,6 +261,62 @@ registerForm.addEventListener('submit', (e) => {
     });
 
 });
+
+const roomsByLevel = {
+    "ม.1": ["1/2", "1/7", "1/15"],
+    "ม.2": ["2/1", "2/8", "2/13"],
+    "ม.3": ["3/1", "3/4", "3/5"],
+    "ม.4": ["4/1", "4/6", "4/13"],
+    "ม.5": ["5/3", "5/7", "5/11"],
+    "ม.6": ["6/7", "6/9", "6/14"]
+};
+
+const levelGrid = document.getElementById('levelGrid');
+const roomGrid = document.getElementById('roomGrid');
+const roomSection = document.getElementById('roomSection');
+const levelInput = document.getElementById('level');
+const roomInput = document.getElementById('room');
+
+if (levelGrid) {
+    levelGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.pick-btn');
+        if (!btn) return;
+
+        const selectedLevel = btn.dataset.level;
+
+        levelGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+
+        levelInput.value = selectedLevel;
+        roomInput.value = '';
+
+        const rooms = roomsByLevel[selectedLevel] || [];
+        roomGrid.innerHTML = '';
+        rooms.forEach(room => {
+            const roomBtn = document.createElement('button');
+            roomBtn.type = 'button';
+            roomBtn.className = 'pick-btn';
+            roomBtn.dataset.room = room;
+            roomBtn.textContent = room;
+            roomGrid.appendChild(roomBtn);
+        });
+
+        roomSection.style.display = 'block';
+    });
+}
+
+if (roomGrid) {
+    roomGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.pick-btn');
+        if (!btn) return;
+
+        roomGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+
+        roomInput.value = btn.dataset.room;
+    });
+}
+
 function showPopup(text){
 
 const popup =
@@ -855,4 +911,67 @@ function showCheckinToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+const checkStatusBtn = document.getElementById('checkStatusBtn');
+if (checkStatusBtn) {
+    checkStatusBtn.addEventListener('click', async () => {
+        const nameInput = document.getElementById('checkName') || document.getElementById('name');
+        const roomInput = document.getElementById('checkRoom') || document.getElementById('room');
+        
+        const resultBox = document.getElementById('checkResult');
+        if (!nameInput || !roomInput) {
+            resultBox.innerHTML = '<p style="color:red;">❌ ข้อผิดพลาดทางระบบ: หาช่องกรอกชื่อหรือห้องในหน้าเว็บไม่พบ</p>';
+            return;
+        }
+        const name = nameInput.value.trim();
+        const room = roomInput.value.trim();
+        if (!name || !room) {
+            resultBox.innerHTML = '<p style="color:red;">⚠️ กรุณากรอกชื่อและห้องให้ครบถ้วนก่อนกดปุ่ม</p>';
+            return;
+        }
+
+        // 🔒 ปิดปุ่มกันกดซ้ำ + เปลี่ยนข้อความปุ่ม
+        checkStatusBtn.disabled = true;
+        const originalText = checkStatusBtn.innerText;
+        checkStatusBtn.innerText = 'กำลังตรวจสอบ...';
+
+        resultBox.innerHTML = '<p>⏳ กำลังตรวจสอบข้อมูล กรุณารอสักครู่...</p>';
+        try {
+            const baseUrl = "https://script.google.com/macros/s/AKfycbyCwE8Ciba6Jml4AmWC7BGaZeAmnCkw42TflghWUafV4wJUpGO6TSk4uw7qE1WgaaRg/exec"
+            const url = `${baseUrl}?name=${encodeURIComponent(name)}&room=${encodeURIComponent(room)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (data.error) {
+                resultBox.innerHTML = `<p style="color:red;">❌ ${data.error}</p>`;
+                return;
+            }
+            if (!data.results || data.results.length === 0) {
+                resultBox.innerHTML = '<p style="color:orange;">❌ ไม่พบข้อมูลการสมัคร ยังไม่เคยลงทะเบียนกีฬาใดเลย</p>';
+                return;
+            }
+            let html = '<p style="color:green; font-weight:bold;">✅ พบข้อมูลการสมัครเรียบร้อย:</p><ul style="text-align:left; display:inline-block;">';
+            data.results.forEach(r => {
+                html += `<li style="margin-bottom: 5px;">🏆 <strong>${r.sport}</strong> (ระดับ: ${r.level || '-'})</li>`;
+            });
+            html += '</ul>';
+            resultBox.innerHTML = html;
+        } catch (err) {
+            console.error(err);
+            resultBox.innerHTML = '<p style="color:red;">❌ เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล ลองใหม่อีกครั้ง</p>';
+        } finally {
+            // 🔓 เปิดปุ่มกลับคืน ไม่ว่าจะสำเร็จหรือ error
+            checkStatusBtn.disabled = false;
+            checkStatusBtn.innerText = originalText;
+        }
+    });
+}
+// ทำความสะอาดข้อมูลห้อง: ลบเว้นวรรค, ลบคำนำหน้า ม./ม, แปลงเป็นพิมพ์เล็ก
+function normalizeRoom(str) {
+  return String(str)
+    .replace(/\s+/g, '')           // ลบช่องว่างทั้งหมด
+    .toLowerCase()
+    .replace(/^ม\.?/, '')          // ลบ "ม." หรือ "ม" ที่นำหน้า (เช่น ม.4/7 -> 4/7, ม4/7 -> 4/7)
+    .replace(/^m\.?/, '');         // เผื่อกรณีพิมพ์ภาษาอังกฤษ m.4/7 -> 4/7
 }
