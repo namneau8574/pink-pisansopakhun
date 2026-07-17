@@ -368,10 +368,10 @@ document.getElementById("loader").style.display="none";
 const qrImages={
 
 "ฟุตบอลชาย":"qrfootball.png.jpg",
-"บาสเกตบอลชาย":"qrbasketball.png.png",
-"บาสเกตบอลหญิง":"qrbasketball.png.png",
-"วอลเลย์บอลชาย":"qrvolleybal.png.jpg",
-"วอลเลย์บอลหญิง":"qrvolleybal.png.jpg",
+"บาสเกตบอลชาย":"qrbasketballl.png",
+"บาสเกตบอลหญิง":"qrbasketballl.png",
+"วอลเลย์บอลชาย":"qrvolleyballl.jpg",
+"วอลเลย์บอลหญิง":"qrvolleyballl.jpg",
 "แบดมินตันชาย":"qrbadminton.jpg",
 "แบดมินตันหญิง":"qrbadminton.jpg",
 "แฮนด์บอลชาย":"qrhandball.png.jpg",
