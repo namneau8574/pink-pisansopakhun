@@ -390,8 +390,8 @@ const qrImages={
 // แหล่งรวมลิงก์กลุ่ม Messenger ของแต่ละกีฬา (ใส่ลิงก์จริงแทน xxxxxxx)
 const qrLinks = {
     "ฟุตบอลชาย": "https://m.me/j/xxxxxxx",
-    "บาสเกตบอลชาย": "https://m.me/j/xxxxxxx",
-    "บาสเกตบอลหญิง": "https://m.me/j/xxxxxxx",
+    "บาสเกตบอลชาย": "https://m.me/j/AbbLk3tejBx6Aith/?send_source=gc:copy_invite_link_c",
+    "บาสเกตบอลหญิง": "https://m.me/j/AbbLk3tejBx6Aith/?send_source=gc:copy_invite_link_c",
     "วอลเลย์บอลชาย": "https://m.me/j/xxxxxxx",
     "วอลเลย์บอลหญิง": "https://m.me/j/xxxxxxx",
     "แบดมินตันชาย": "https://m.me/j/xxxxxxx",
