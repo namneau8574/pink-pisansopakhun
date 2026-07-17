@@ -389,7 +389,7 @@ const qrImages={
 };
 // แหล่งรวมลิงก์กลุ่ม Messenger ของแต่ละกีฬา (ใส่ลิงก์จริงแทน xxxxxxx)
 const qrLinks = {
-    "ฟุตบอลชาย": "https://m.me/j/xxxxxxx",
+    "ฟุตบอลชาย": "https://m.me/j/AbagNH1jRtE5crHJ/",
     "บาสเกตบอลชาย": "https://m.me/j/AbbLk3tejBx6Aith/",
     "บาสเกตบอลหญิง": "https://m.me/j/AbbLk3tejBx6Aith/",
     "วอลเลย์บอลชาย": "https://m.me/j/xxxxxxx",
