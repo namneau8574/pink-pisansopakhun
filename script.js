@@ -368,61 +368,64 @@ document.getElementById("loader").style.display="none";
 const qrImages={
 
 "ฟุตบอลชาย":"qrfootball.png.jpg",
-
 "บาสเกตบอลชาย":"qrbasketball.png.png",
-
 "บาสเกตบอลหญิง":"qrbasketball.png.png",
-
 "วอลเลย์บอลชาย":"qrvolleybal.png.jpg",
-
 "วอลเลย์บอลหญิง":"qrvolleybal.png.jpg",
-
 "แบดมินตันชาย":"qrbadminton.jpg",
-
 "แบดมินตันหญิง":"qrbadminton.jpg",
-
 "แฮนด์บอลชาย":"qrhandball.png.jpg",
 "แฮนด์บอลหญิง":"qrhandball.png.jpg",
-
 "กรีฑาชาย":"qrathletics.png.jpg",
-
 "กรีฑาหญิง":"qrathletics.png.jpg",
-
 "แชร์บอลชาย":"qrchairball.png.jpg",
-
 "แชร์บอลหญิง":"qrchairball.png.jpg",
-
 "ตะกร้อชาย":"qrtakrawt.jpg",
-
 "ตะกร้อหญิง":"qrtakrawt.jpg",
-
 "เปตองชาย":"qrpetanque.png.jpg",
-
 "เปตองหญิง":"qrpetanque.png.jpg",
-
 "เทเบิลเทนนิสชาย":"qrtabletennis.jpg",
-
 "เทเบิลเทนนิสหญิง":"qrtabletennis.jpg"
-
 };
+// แหล่งรวมลิงก์กลุ่ม Messenger ของแต่ละกีฬา (ใส่ลิงก์จริงแทน xxxxxxx)
+const qrLinks = {
+    "ฟุตบอลชาย": "https://m.me/j/xxxxxxx",
+    "บาสเกตบอลชาย": "https://m.me/j/xxxxxxx",
+    "บาสเกตบอลหญิง": "https://m.me/j/xxxxxxx",
+    "วอลเลย์บอลชาย": "https://m.me/j/xxxxxxx",
+    "วอลเลย์บอลหญิง": "https://m.me/j/xxxxxxx",
+    "แบดมินตันชาย": "https://m.me/j/xxxxxxx",
+    "แบดมินตันหญิง": "https://m.me/j/xxxxxxx",
+    "แฮนด์บอลหญิง": "https://m.me/j/xxxxxxx",
+    "กรีฑาชาย": "https://m.me/j/xxxxxxx",
+    "กรีฑาหญิง": "https://m.me/j/xxxxxxx",
+    "แชร์บอลชาย": "https://m.me/j/xxxxxxx",
+    "แชร์บอลหญิง": "https://m.me/j/xxxxxxx",
+    "ตะกร้อชาย": "https://m.me/j/xxxxxxx",
+    "ตะกร้อหญิง": "https://m.me/j/xxxxxxx",
+    "เปตองชาย": "https://m.me/j/xxxxxxx",
+    "เปตองหญิง": "https://m.me/j/xxxxxxx",
+    "เทเบิลเทนนิสชาย": "https://m.me/j/xxxxxxx",
+    "เทเบิลเทนนิสหญิง": "https://m.me/j/xxxxxxx"
+};
+
 // QR CLOSE
 window.closeQR = function() {
   document.getElementById('qrPopup').style.display = 'none';
   document.getElementById('registerForm').reset();
 };
-
 // กดพื้นหลังเพื่อปิด
 document.getElementById('qrPopup').addEventListener('click', function(e) {
   if (e.target.id === 'qrPopup') window.closeQR();
 });
-
 // กด Escape เพื่อปิด
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') window.closeQR();
 });
-function showQR(sport){
 
+function showQR(sport){
     const qr = qrImages[sport];
+    const link = qrLinks[sport];
 
     if(!qr){
         alert("ไม่พบ QR ของ " + sport);
@@ -430,12 +433,20 @@ function showQR(sport){
     }
 
     document.getElementById("qrTitle").innerText =
-    "✅ สมัครสำเร็จ\n" + sport;
-
+        "✅ สมัครสำเร็จ\n" + sport;
     document.getElementById("qrImage").src = qr;
 
-    document.getElementById("qrPopup").style.display = "flex";
+    const qrLink = document.getElementById("qrLink");
+    if (qrLink) {
+        if (link) {
+            qrLink.href = link;
+            qrLink.style.display = "inline-block";
+        } else {
+            qrLink.style.display = "none";
+        }
+    }
 
+    document.getElementById("qrPopup").style.display = "flex";
 }
 
 // 📑 ฐานข้อมูลรหัสประจำตัวนักเรียนที่มีสิทธิ์เข้าเว็บ
