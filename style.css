@@ -1557,3 +1557,19 @@ body::before {
 }
 
 
+.qr-link-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 20px;
+    background-color: #1877f2;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 15px;
+    transition: opacity 0.2s ease;
+}
+
+.qr-link-btn:hover {
+    opacity: 0.85;
+}
