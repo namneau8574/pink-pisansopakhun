@@ -394,35 +394,38 @@ required
 
 <form id="registerForm" class="register-form">
 
-<input
-type="text"
-id="name"
-placeholder="👤 ชื่อ"
-required
->
+    <input type="text" id="name" placeholder="👤 ชื่อ" required>
 
-<input
-type="text"
-id="room"
-placeholder="🏫 ห้อง"
-required
->
+    <input type="hidden" id="level" required>
+    <input type="hidden" id="room" required>
+
+    <label>เลือกระดับชั้น</label>
+    <div id="levelGrid" class="btn-grid">
+        <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
+        <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
+        <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
+        <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
+        <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
+        <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
+    </div>
+
+    <div id="roomSection" style="display:none;">
+        <label>เลือกห้อง</label>
+        <div id="roomGrid" class="btn-grid"></div>
+    </div>
+
+    <!-- ฟิลด์อื่นๆ เดิมของคุณต่อจากนี้ -->
 <select id="level" required>
-
 <option value="">
 🎓 ระดับชั้น
 </option>
-
 <option>
 📘 มัธยมต้น
 </option>
-
 <option>
 📕 มัธยมปลาย
 </option>
-
 </select>
-
 <input
 type="text"
 id="contact"
@@ -477,6 +480,16 @@ required
 <script type="module" src="script.js"></script>
 
 <div class="thai-character-egg"></div>
+
+<div id="checkStatusSection">
+    <h2>🔍 เช็คสถานะการสมัคร</h2>
+    <input type="text" id="checkName" placeholder="ชื่อ-นามสกุล ตามที่ได้กรอก">
+    <input type="text" id="checkRoom" placeholder="ห้องเรียน เช่น 6/1">
+    <button id="checkStatusBtn">ตรวจสอบ</button>
+
+    <div id="checkResult"></div>
+</div>
+
 
  <!-- CHECKIN -->
     <section id="checkin" class="checkin-section">
