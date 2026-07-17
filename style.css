@@ -1573,3 +1573,208 @@ body::before {
 .qr-link-btn:hover {
     opacity: 0.85;
 }
+
+
+
+
+/* ===== Check Status Section (ธีมเดียวกับทั้งเว็บ) ===== */
+#checkStatusSection {
+    max-width: 480px;
+    margin: 40px auto;
+    padding: 28px 24px;
+    background: var(--white);
+    border: 1px solid rgba(200, 146, 10, 0.2);
+    border-radius: 22px;
+    box-shadow: 0 4px 24px rgba(232, 0, 90, 0.07);
+    text-align: center;
+    position: relative;
+}
+
+/* กรอบมุมทองไทย ให้เข้าธีมเดียวกับ .register-info / .register-form */
+#checkStatusSection::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 36px; height: 36px;
+    border-top: 2px solid var(--gold-light);
+    border-left: 2px solid var(--gold-light);
+    border-radius: 22px 0 0 0;
+}
+#checkStatusSection::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 36px; height: 36px;
+    border-bottom: 2px solid var(--gold-light);
+    border-right: 2px solid var(--gold-light);
+    border-radius: 0 0 22px 0;
+}
+
+#checkStatusSection h2 {
+    font-family: 'Noto Serif Thai', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--pink);
+    letter-spacing: 0.03em;
+}
+
+#checkStatusSection input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px 18px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    border: 1.5px solid rgba(200, 146, 10, 0.2);
+    background: var(--white);
+    color: var(--text);
+    font-size: 1rem;
+    font-family: 'Anuphan', sans-serif;
+    outline: none;
+    transition: 0.25s;
+}
+
+#checkStatusSection input::placeholder {
+    color: rgba(138, 64, 96, 0.4);
+}
+
+#checkStatusSection input:focus {
+    border-color: var(--pink);
+    box-shadow: 0 0 0 3px rgba(232, 0, 90, 0.08);
+}
+
+#checkStatusBtn {
+    width: 100%;
+    padding: 17px;
+    margin-top: 4px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, var(--pink), var(--pink-light));
+    color: white;
+    font-family: 'Anuphan', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(232, 0, 90, 0.25);
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+#checkStatusBtn::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: 49px;
+    border: 1px solid rgba(255, 215, 100, 0.35);
+}
+
+#checkStatusBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(232, 0, 90, 0.38);
+}
+#checkStatusBtn:active { transform: translateY(-1px); }
+
+#checkStatusBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ===== Result Box ===== */
+#checkResult {
+    margin-top: 20px;
+    text-align: left;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+#checkResult p {
+    margin: 0;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--pink-pale);
+    color: var(--text);
+}
+
+/* บังคับสีทับ inline style เดิม ให้เข้าธีมเว็บ */
+#checkResult p[style*="color:red"],
+#checkResult p[style*="color: red"] {
+    background: rgba(232, 0, 90, 0.08) !important;
+    color: var(--pink) !important;
+    border-left: 4px solid var(--pink);
+}
+
+#checkResult p[style*="color:orange"],
+#checkResult p[style*="color: orange"] {
+    background: var(--gold-pale) !important;
+    color: var(--gold) !important;
+    border-left: 4px solid var(--gold-light);
+}
+
+#checkResult p[style*="color:green"],
+#checkResult p[style*="color: green"] {
+    background: rgba(232, 0, 90, 0.06) !important;
+    color: var(--pink) !important;
+    border-left: 4px solid var(--pink-light);
+    font-family: 'Noto Serif Thai', serif;
+}
+
+#checkResult ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#checkResult li {
+    padding: 14px 18px;
+    background: var(--white);
+    border: 1px solid rgba(200, 146, 10, 0.18);
+    border-left: 4px solid var(--pink-light);
+    border-radius: 12px;
+    font-weight: 500;
+    color: var(--text);
+    box-shadow: 0 2px 12px rgba(232, 0, 90, 0.05);
+    animation: fadeInUp 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+    #checkStatusSection {
+        margin: 20px 16px;
+        padding: 24px 20px;
+    }
+}
+
+
+
+
+.btn-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 16px;
+}
+
+.pick-btn {
+    padding: 10px 16px;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #e8005a;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.pick-btn.selected {
+    background: #333;
+    color: #fff;
+    border-color: #333;
+}
