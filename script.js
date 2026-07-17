@@ -287,9 +287,14 @@ if (levelGrid) {
         levelGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
 
-        levelInput.value = selectedLevel;
-        roomInput.value = '';
+              // เปลี่ยนจาก ม.1-ม.6 เป็น มัธยมต้น/ปลาย
+levelInput.value =
+    ["ม.1", "ม.2", "ม.3"].includes(selectedLevel)
+        ? "📘 มัธยมต้น"
+        : "📕 มัธยมปลาย";
 
+roomInput.value = '';
+       
         const rooms = roomsByLevel[selectedLevel] || [];
         roomGrid.innerHTML = '';
         rooms.forEach(room => {
