@@ -389,24 +389,25 @@ const qrImages={
 };
 // แหล่งรวมลิงก์กลุ่ม Messenger ของแต่ละกีฬา (ใส่ลิงก์จริงแทน xxxxxxx)
 const qrLinks = {
-    "ฟุตบอลชาย": "https://m.me/j/AbagNH1jRtE5crHJ/",
-    "บาสเกตบอลชาย": "https://m.me/j/AbbLk3tejBx6Aith/",
-    "บาสเกตบอลหญิง": "https://m.me/j/AbbLk3tejBx6Aith/",
+    "ฟุตบอลชาย": "https://m.me/j/AbagNH1jRtE5crHJ/?send_source=gc:share_to_line",
+    "บาสเกตบอลชาย": "https://m.me/j/AbZukYRd197hRbmV/?send_source=gc:share_to_line",
+    "บาสเกตบอลหญิง": "https://m.me/j/AbZukYRd197hRbmV/?send_source=gc:share_to_line",
     "วอลเลย์บอลชาย": "https://m.me/j/AbZD7ERdBeKulDty/?send_source=gc:share_to_line",
     "วอลเลย์บอลหญิง": "https://m.me/j/AbZD7ERdBeKulDty/?send_source=gc:share_to_line",
-    "แบดมินตันชาย": "https://m.me/j/xxxxxxx",
-    "แบดมินตันหญิง": "https://m.me/j/xxxxxxx",
-    "แฮนด์บอลหญิง": "https://m.me/j/xxxxxxx",
-    "กรีฑาชาย": "https://m.me/j/xxxxxxx",
-    "กรีฑาหญิง": "https://m.me/j/xxxxxxx",
-    "แชร์บอลชาย": "https://m.me/j/xxxxxxx",
-    "แชร์บอลหญิง": "https://m.me/j/xxxxxxx",
+    "แบดมินตันชาย": "https://m.me/j/AbYhHKZz1oddYFxJ/?send_source=gc:share_to_line",
+    "แบดมินตันหญิง": "https://m.me/j/AbYhHKZz1oddYFxJ/?send_source=gc:share_to_line",
+    "แฮนด์บอลชาย": "https://m.me/j/AbbrOntvOA1UTSJw/?send_source=gc:share_to_line",
+   "แฮนด์บอลหญิง": "https://m.me/j/AbbrOntvOA1UTSJw/?send_source=gc:share_to_line",
+    "กรีฑาชาย": "https://m.me/j/Abbk4m6GDPI2-TYJ/?send_source=gc:share_to_line",
+    "กรีฑาหญิง": "https://m.me/j/Abbk4m6GDPI2-TYJ/?send_source=gc:share_to_line",
+    "แชร์บอลชาย": "https://m.me/j/AbbqWlkmdRYtTFLq/?send_source=gc:share_to_line",
+    "แชร์บอลหญิง": "https://m.me/j/AbbqWlkmdRYtTFLq/?send_source=gc:share_to_line",
     "ตะกร้อชาย": "https://m.me/j/AbYB8OkqN5GY8oyE/?send_source=gc:share_to_line",
     "ตะกร้อหญิง": "https://m.me/j/AbYB8OkqN5GY8oyE/?send_source=gc:share_to_line",
-    "เปตองชาย": "https://m.me/j/xxxxxxx",
-    "เปตองหญิง": "https://m.me/j/xxxxxxx",
-    "เทเบิลเทนนิสชาย": "https://m.me/j/xxxxxxx",
-    "เทเบิลเทนนิสหญิง": "https://m.me/j/xxxxxxx"
+    "เปตองชาย": "https://m.me/j/AbbSSxsrD-UzqfQJ/?send_source=gc:share_to_line",
+    "เปตองหญิง": "https://m.me/j/AbbSSxsrD-UzqfQJ/?send_source=gc:share_to_line",
+    "เทเบิลเทนนิสชาย": "https://m.me/j/AbbHQ_zj1a-hD90X/?send_source=gc:share_to_line",
+    "เทเบิลเทนนิสหญิง": "https://m.me/j/AbbHQ_zj1a-hD90X/?send_source=gc:share_to_line"
 };
 
 // QR CLOSE
