@@ -854,24 +854,7 @@ const departments = [
   "เชียร์หลีดเดอร์","ฝ่ายอุปกรณ์","ปฏิคม"
 ];
  
-let currentId   = null;
-let currentName = null;
-let currentDept = null;
 
-// 🌟 3. สั่งวาดปุ่มเมนูเมื่อ DOM โหลดเสร็จเรียบร้อย
-document.addEventListener("DOMContentLoaded", () => {
-  const deptGrid = document.getElementById('deptGrid');
-  if (deptGrid) {
-    deptGrid.innerHTML = ''; 
-    departments.forEach(d => {
-      const btn = document.createElement('button');
-      btn.className = 'dept-btn';
-      btn.textContent = d;
-      btn.onclick = () => window.selectDept(d);
-      deptGrid.appendChild(btn);
-    });
-  }
-});
 // 📍 1. ตั้งค่าลิงก์พิกัดและระยะทางของคณะสี
 const GOOGLE_MAPS_URL = "https://www.google.com/maps/dir/18.5791586,99.0239452/%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%A3%E0%B8%B5%E0%B8%A2%E0%B8%99%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%A3%E0%B8%84%E0%B9%8D%E0%B8%B2%E0%B8%84%E0%B8%93%E0%B8%B2%E0%B8%97%E0%B8%A3/data=!4m6!4m5!1m0!1m2!1m1!1s0x30dbd2aadd7b605f:0x32d89249057f38eb!3e0?sa=X&ved=1t:196274&ictx=111"; 
 const MAX_DISTANCE_METERS = 100000; // 🎯 ขยายรัศมีเป็น 100 กิโลให้ครอบคลุมทั่วโรงเรียน
