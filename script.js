@@ -726,7 +726,7 @@ if (inputField) {
    เช็คชื่อเข้าร่วมกิจกรรม (ม.5)
 ========================= */
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycbx6-75sOCeFf1X95JbXzFaauUyg1WNgPktuAja6Tn8gdrRU0BudNboPNyR7B-1x53kL/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzuXf9jJYZcru-oQXDXpmbovUNdvzhHKrOND-CWAq7N_5dfFNt6_dxHaV4ih3KgD5Mv/exec";
  
 const students = {
   // --- ม.5/3 ---
