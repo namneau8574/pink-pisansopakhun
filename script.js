@@ -725,132 +725,130 @@ if (inputField) {
 /* =========================
    เช็คชื่อเข้าร่วมกิจกรรม (ม.5)
 ========================= */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyLQfyGwNAzPurlESWsi5VgbuQN6T21MrkIIRUMYlWLv64EHCZt5W416YGftPptR6Ry/exec";
- 
-const students = {
-  "39079":"นางสาว ธัญเรศ นรินทร์","39506":"นาย เดโช ปานทอง",
-  "39979":"นาย พิชญุ อุ่นละมัย","39991":"นาย กฤษฎา แก้ววิจิตร",
-  "39997":"นางสาว มนตรีชา แก้วยู่","40103":"นาย ธฤต แจ้งใจ",
-  "40105":"นางสาว สาธิตา ปัญญา","40119":"นาย ธนภัทร ใจบุญ",
-  "40123":"นางสาว ฐิติพร ดวงตาทิพย์","40131":"นาย นาวิน ปิ่นตาเสน",
-  "40138":"นางสาว งามเนตร ก้อนจำปา","40148":"นางสาว ปานชีวา จุลเฉิมศักดิ์",
-  "40166":"นางสาว ชนิดนันท์ อนันต์กิจเจริญฯ","40186":"นาย ยงยุทธ สุขสวัสดิ์",
-  "40190":"นาย ตัสกร ใจยะสาร","40227":"นาย ธนดล อันบ้านดง",
-  "40229":"นางสาว สุธาสินี สุยะสัก","40243":"นางสาว ธนัญชนก ไชยวงศ์",
-  "40344":"นางสาว บุญยาพร มูลธิ","40346":"นาย ธนกร ต๊ะกาบโพธิ์",
-  "40367":"นางสาว พิชญาภา จำปาทอง","40369":"นาย ปริญญา ธรรมยอม",
-  "40372":"นาย วชิรวิทย์ ณะปัญญา","40389":"นาย ชวัลลักษณ์ แดงเต๊ะ",
-  "40392":"นางสาว ข้าวขวัญ ธำรงวิชาการ","40432":"นางสาว นันทชา เบ้าสีดา",
-  "40437":"นางสาว พิมพันัส อุนะนำ","40443":"นาย ณัฐพงษ์ ต้นเจริญ",
-  "40452":"นางสาว พิมพ์มาดา เอ้าปาน","40454":"นางสาว พิมพันัส จอมขันเงิน",
-  "41907":"นาย บิดผึ้งกร สาวะจันทร์","42548":"นาย ญาณณัฐ เนตรนิลพฤกษ์",
-  "42549":"นางสาว สุพิชญา คำปันนา","42550":"นาย พงศกร หาทวี",
-  "42551":"นางสาว ปริยาภรณ์ แรกนา","42552":"นางสาว ขวัญจิรา คำนาศักดิ์",
-  "42553":"นาย พงษ์ธร ท้าแสน","42554":"นาย ธณิษา วิเศษกาศ",
-  "42555":"นาย อนาวิน ปาลีเลื่อม","42556":"นาย อธิวัฒน์ ไชยชนะ",
-  "39858":"นาย ชยพล แสนคะนารึ","39881":"นางสาว พรปวีณ์ ทรัพย์สนธิ",
-  "39893":"นาย ภูริวัชร อุดมทิพย์","39901":"นางสาว ศุภิกา ชูกลิ่น",
-  "39936":"นาย สุกฤต สิงห์โตชะนา","39942":"นาย พีรพัฒน์ สมบูนไชย",
-  "39943":"นางสาว พิชญ์สิริ โกมาร","39959":"นางสาว อชิรญาณ์ บุตรนุชิต",
-  "39963":"นางสาว ญาดากานต์ ศรีลองเมือง","39994":"นาย ศุภโชค ใจจิตร",
-  "39995":"นางสาว ณิชชา เทพพรมวงศ์","40005":"นางสาว สุพิชช์นันท์ กิติทรัพย์",
-  "40040":"นางสาว กัลย์รัตน์ กันทาทรัพย์","40042":"นางสาว กนกนาถ สุปินนะวรรณา",
-  "40045":"นาย ณัฐกาส ศรีสด","40051":"นาย ธนกฤต พื้นอินต๊ะศรี",
-  "40244":"นาย นาคพิชัย กาวิเนตร","40246":"นางสาว พิชชาภา บุญเมอ",
-  "40249":"นางสาว ขวัญวรินทร์ แก้วกันโท","40253":"นางสาว ภคมน วงศ์สถาน",
-  "40267":"นาย ธราเทพ ไชยล้ำว","40277":"นาย วรยุทธ ทิพย์รักษ์",
-  "40327":"นางสาว บุญยาพร เลิศวิไล","40352":"นาย บูรพล สุธีรางกูร",
-  "40362":"นาย นันทิพัฒน์ ปันศรี","40444":"นางสาว นรมน จินาเดช",
-  "40455":"นาย ปาณัท ไม้ประเสริฐ","41879":"นาย น้ำเหนือ ศรีนาคำ",
-  "42513":"นางสาว กัญญารัตน์ จันทร์ต๊ะ","42514":"นางสาว มุริน วิชัยกิตติกุล",
-  "42515":"นาย ธีรวัช หิรัญบริรักษ์","42516":"นางสาว ธญปดี วงศ์อนันต์ชัย",
-  "42517":"นางสาว ปวีชญา ทรายใหม่","42518":"นางสาว ศิรภัสสร ต้นกลาง",
-  "42519":"นางสาว ศศิวิมล สุวรรณชีพ","42520":"นาย จักริน หมื่นบาง",
-  "42521":"นาย นพพล สุนันท์ต๊ะ","42522":"นางสาว รมิตา กาตัญญูคณานนท์",
-  "42523":"นาย นพรัตน์ สุยะวารี","42525":"นางสาว เขมจิรา บุญมาอุป",
-  "39854":"นางสาว ปวรวรรณ เมินชัยภูมิ","39917":"นางสาว เยาวเรศ อภิวงศ์",
-  "39923":"นาย กรกฤษณ์ ยะใจ","39927":"นางสาว ชญาดา ลินฐูญ",
-  "39929":"นางสาว กชพร สงวนศักดิ์","39938":"นางสาว กุลสตรี จักขุเรือง",
-  "39948":"นาย กิตติพงศ์ แก้วปัน","39950":"นางสาว อริญชยา ตุ่นใจ",
-  "39956":"นาย วิชานาถ โยศรี","39958":"นางสาว ธัญชนก คำพิภาค",
-  "39965":"นางสาว ณัฐฐณิชา อินออม","39968":"นางสาว ภัควัลญชน์ กันทะวรรณ์",
-  "39973":"นาย ปกรณ์ ศรีบุญกอง","39998":"นางสาว วิมลณัฐ วสุรัช",
-  "40002":"นางสาว ไอยรัศฏ์ อินต๊ะปัน","40011":"นางสาว อภิชญา ผาด่านสกุล",
-  "40014":"นางสาว กวินตรา วรรณโชค","40025":"นางสาว ธัญญลักษณ์ วงค์จันทร์",
-  "40242":"นางสาว กรวรรณ กันธาทรัพย์","40282":"นาย ณัฐปกรณ์ ตุ่นไชย",
-  "40414":"นางสาว สิริภาพร บัวงาม","40453":"นางสาว ชนกนันท์ พรมเสพสัก",
-  "42487":"นาย จักรภพ พรมชัย","42488":"นาย ต้นธาร ปัญโญชาติดี",
-  "42489":"นางสาว จุฬาลักษณ์ จิตจักร","42490":"นางสาว กรรณิการ์ ศรีเกื้อกลิ่น",
-  "42491":"sans-serif","42492":"นางสาว ธิตินันท์ ไชยเขื่อน",
-  "42493":"นาย พีรพล ทองแดง","42494":"นางสาว ณณิชา สุขสวัสดิ์"
-};
- 
-const departments = [
-  "ประธานคณะสี","ผู้ช่วยคณะสี","รองประธานคณะสี",
-  "เลขานุการ","ฝ่ายสวัสดิการ","เหรัญญิก",
-  "แสตนเชียร์","อัฒจันทร์","ขบวนพาเหรด",
-  "กีฬา","กรีฑา","สปอตแดนซ์",
-  "เชียร์หลีดเดอร์","ฝ่ายอุปกรณ์","ปฏิคม"
-];
- 
-const deptGrid = document.getElementById('deptGrid');
-if (deptGrid) {
-  departments.forEach(d => {
-    const btn = document.createElement('button');
-    btn.className = 'dept-btn';
-    btn.textContent = d;
-    btn.onclick = () => selectDept(d);
-    deptGrid.appendChild(btn);
-  });
+function verifyWebAccess(e) {
+
+    if (e) e.preventDefault();
+
+    const input = document.getElementById("studentIdInput");
+
+    const errTxt = document.getElementById("errTxt");
+
+    const gateBox = document.querySelector(".gate-box");
+
+    if (!input) return;
+
+    // ลบช่องว่างทั้งหมด
+    const inputId = input.value.replace(/\s+/g, "").trim();
+
+    if (inputId === "") {
+        if (errTxt) {
+            errTxt.innerHTML = "กรุณากรอกเลขประจำตัว";
+            errTxt.style.display = "block";
+        }
+        return;
+    }
+
+    // เปรียบเทียบเป็น String ทั้งหมด
+    const found = studentDatabase.some(id => String(id) === String(inputId));
+
+    if (found) {
+
+        localStorage.setItem("web_access_granted", "true");
+        localStorage.setItem("is_logged_in", "true");
+        localStorage.setItem("logged_student_id", inputId);
+
+        if (errTxt) errTxt.style.display = "none";
+
+        warpIntoWeb();
+
+    } else {
+
+        if (errTxt) {
+            errTxt.innerHTML = "ไม่พบเลขประจำตัวนักเรียน";
+            errTxt.style.display = "block";
+        }
+
+        if (gateBox) {
+            gateBox.style.animation = "none";
+            gateBox.offsetHeight;
+            gateBox.style.animation = "gateShake .4s";
+        }
+
+    }
+
 }
- 
-let currentId   = null;
-let currentName = null;
-let currentDept = null;
- 
+// 🎬 เอฟเฟกต์วาร์ปเข้าเว็บ
+function warpIntoWeb() {
+    const gateBox = document.querySelector('.gate-box');
+    const gateKeeper = document.getElementById('gatekeeper');
+    
+    if (gateBox) {
+        gateBox.style.transition = "all 0.6s cubic-bezier(0.6, -0.28, 0.735, 0.045)";
+        gateBox.style.transform = "perspective(1000px) rotateX(90deg) scale(0.7) translateY(-50px)";
+        gateBox.style.opacity = "0";
+    }
+    setTimeout(() => {
+        if (gateKeeper) {
+            gateKeeper.style.transition = "all 0.5s ease";
+            gateKeeper.style.opacity = "0";
+            gateKeeper.style.backdropFilter = "blur(0px)";
+        }
+    }, 400);
+    setTimeout(() => {
+        if (gateKeeper) gateKeeper.style.display = 'none';
+    }, 900);
+}
+
+const inputField = document.getElementById("studentIdInput");
+
+if (inputField) {
+    inputField.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            verifyWebAccess();
+        }
+    });
+}
+
+/* =========================
+   เช็คชื่อเข้าร่วมกิจกรรม (ม.5)
+========================= */
+
+// 🌟 1. ย้ายฟังก์ชันขึ้นมาประกาศไว้บนสุดทันที เพื่อให้ HTML เรียกใช้งานได้ทันทีไม่ว่าจะโหลดช้าหรือเร็ว
 window.searchStudent = async function () {
   const id = document.getElementById('studentId').value.trim();
-  hideAllCheckin();
+  window.hideAllCheckin();
   currentDept = null;
   document.getElementById('roomSelect').value = "";
-  resetDeptBtns();
+  window.resetDeptBtns();
   if (!id) return;
  
-  const name = students[id];
-  if (!name) {
+  const studentData = students[id];
+  if (!studentData) {
     document.getElementById('errorBox').style.display = 'block';
     return;
   }
  
   currentId   = id;
-  currentName = name;
+  currentName = studentData.name;
+  
   document.getElementById('nameId').textContent   = '🎓 เลขประจำตัว ' + id;
-  document.getElementById('nameText').textContent = name;
+  document.getElementById('nameText').textContent = currentName;
+  
+  // เลือกห้องเรียนอัตโนมัติจากข้อมูล
+  document.getElementById('roomSelect').value = studentData.room;
+
   document.getElementById('nameBox').style.display     = 'block';
   document.getElementById('roomSection').style.display = 'block';
   document.getElementById('deptSection').style.display = 'block';
 };
- 
-function selectDept(dept) {
-  currentDept = dept;
-  resetDeptBtns();
-  [...document.querySelectorAll('.dept-btn')]
-    .find(b => b.textContent === dept)
-    ?.classList.add('selected');
-  document.getElementById('confirmBtn').style.display = 'block';
-}
- 
-function resetDeptBtns() {
-  document.querySelectorAll('.dept-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('confirmBtn').style.display = 'none';
-}
- 
+
 window.confirmCheckIn = async function () {
   const room = document.getElementById('roomSelect').value;
  
   if (!currentId || !currentDept) return;
   if (!room) {
-    showCheckinToast('⚠️ กรุณาเลือกห้องเรียนก่อนครับ');
+    window.showCheckinToast('⚠️ กรุณาเลือกห้องเรียนก่อนครับ');
     return;
   }
  
@@ -863,13 +861,15 @@ window.confirmCheckIn = async function () {
   btn.textContent = '⏳ กำลังบันทึก...';
  
   try {
-    await set(ref(db, 'checkin/' + currentId), {
-      name: currentName,
-      room: room,
-      dept: currentDept,
-      time, date,
-      timestamp: now.getTime()
-    });
+    if (typeof set === 'function' && typeof ref === 'function' && typeof db !== 'undefined') {
+        await set(ref(db, 'checkin/' + currentId), {
+          name: currentName,
+          room: room,
+          dept: currentDept,
+          time, date,
+          timestamp: now.getTime()
+        });
+    }
  
     const params = new URLSearchParams({
       sheet: 'เช็คชื่อ', id: currentId,
@@ -883,23 +883,209 @@ window.confirmCheckIn = async function () {
       body: params
     });
  
-    hideAllCheckin();
+    window.hideAllCheckin();
     document.getElementById('successName').textContent = currentName;
     document.getElementById('successRoomBadge').textContent = '🏫 ' + room;
     document.getElementById('successDeptBadge').textContent = '🏮 ' + currentDept;
     document.getElementById('successBox').style.display = 'block';
     document.getElementById('studentId').value = '';
-    showCheckinToast('✅ เช็คชื่อสำเร็จ! ' + currentName);
+    
+    window.showCheckinToast('✅ เช็คชื่อสำเร็จ! ' + currentName);
+    
     currentId = currentName = currentDept = null;
  
   } catch (err) {
     console.error(err);
-    showCheckinToast('❌ เกิดข้อผิดพลาดกับ Google Sheets กรุณาตรวจสอบ URL การ deploy');
+    window.showCheckinToast('❌ เกิดข้อผิดพลาดกับ Google Sheets กรุณาตรวจสอบ URL การ deploy');
   } finally {
     btn.disabled = false;
     btn.textContent = '✅ ยืนยันเช็คชื่อ';
   }
 };
+
+window.hideAllCheckin = function() {
+  document.getElementById('errorBox').style.display = 'none';
+  document.getElementById('nameBox').style.display = 'none';
+  document.getElementById('roomSection').style.display = 'none';
+  document.getElementById('deptSection').style.display = 'none';
+  document.getElementById('confirmBtn').style.display = 'none';
+  document.getElementById('successBox').style.display = 'none';
+}
+
+window.resetDeptBtns = function() {
+  document.querySelectorAll('.dept-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('confirmBtn').style.display = 'none';
+}
+
+window.selectDept = function(dept) {
+  currentDept = dept;
+  window.resetDeptBtns();
+  [...document.querySelectorAll('.dept-btn')]
+    .find(b => b.textContent === dept)
+    ?.classList.add('selected');
+  document.getElementById('confirmBtn').style.display = 'block';
+}
+
+// 🌟 สร้างฟังก์ชันรองรับการแสดง Toast (กล่องเด้งเตือน) ป้องกันปัญหาฟังก์ชันนี้พังในโค้ดเก่า
+window.showCheckinToast = function(msg) {
+  const toastEl = document.getElementById('toast');
+  if (toastEl) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    setTimeout(() => { toastEl.classList.remove('show'); }, 3000);
+  } else {
+    alert(msg); // ถ้าไม่เจอกล่อง toast ให้ alert แทนเพื่อความปลอดภัย
+  }
+}
+
+// ----------------------------------------------------------------
+// 2. ตัวแปรและข้อมูลระบบ (วางไว้ถัดมา)
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyLQfyGwNAzPurlESWsi5VgbuQN6T21MrkIIRUMYlWLv64EHCZt5W416YGftPptR6Ry/exec";
+ 
+const students = {
+  // --- ม.5/3 ---
+  "39079": { name: "นางสาว ธัญเรศ นรินทร์", room: "ม.5/3" },
+  "39506": { name: "นาย เดโช ปานทอง", room: "ม.5/3" },
+  "39979": { name: "นาย พิชญุ อุ่นละมัย", room: "ม.5/3" },
+  "39991": { name: "นาย กฤษฎา แก้ววิจิตร", room: "ม.5/3" },
+  "39997": { name: "นางสาว มนตรีชา แก้วยู่", room: "ม.5/3" },
+  "40103": { name: "นาย ธฤต แจ้งใจ", room: "ม.5/3" },
+  "40105": { name: "นางสาว สาธิตา ปัญญา", room: "ม.5/3" },
+  "40119": { name: "นาย ธนภัทร ใจบุญ", room: "ม.5/3" },
+  "40123": { name: "นางสาว ฐิติพร ดวงตาทิพย์", room: "ม.5/3" },
+  "40131": { name: "นาย นาวิน ปิ่นตาเสน", room: "ม.5/3" },
+  "40138": { name: "นางสาว งามเนตร ก้อนจำปา", room: "ม.5/3" },
+  "40148": { name: "นางสาว ปานชีวา จุลเฉิมศักดิ์", room: "ม.5/3" },
+  "40166": { name: "นางสาว ชนิดนันท์ อนันต์กิจเจริญฯ", room: "ม.5/3" },
+  "40186": { name: "นาย ยงยุทธ สุขสวัสดิ์", room: "ม.5/3" },
+  "40190": { name: "นาย ตัสกร ใจยะสาร", room: "ม.5/3" },
+  "40227": { name: "นาย ธนดล อันบ้านดง", room: "ม.5/3" },
+  "40229": { name: "นางสาว สุธาสินี สุยะสัก", room: "ม.5/3" },
+  "40243": { name: "นางสาว ธนัญชนก ไชยวงศ์", room: "ม.5/3" },
+  "40344": { name: "นางสาว บุญยาพร มูลธิ", room: "ม.5/3" },
+  "40346": { name: "นาย ธนกร ต๊ะกาบโพธิ์", room: "ม.5/3" },
+  "40367": { name: "นางสาว พิชญาภา จำปาทอง", room: "ม.5/3" },
+  "40369": { name: "นาย ปริญญา ธรรมยอม", room: "ม.5/3" },
+  "40372": { name: "นาย วชิรวิทย์ ณะปัญญา", room: "ม.5/3" },
+  "40389": { name: "นาย ชวัลลักษณ์ แดงเต๊ะ", room: "ม.5/3" },
+  "40392": { name: "นางสาว ข้าวขวัญ ธำรงวิชาการ", room: "ม.5/3" },
+  "40432": { name: "นางสาว นันทชา เบ้าสีดา", room: "ม.5/3" },
+  "40437": { name: "นางสาว พิมพันัส อุนะนำ", room: "ม.5/3" },
+  "40443": { name: "นาย ณัฐพงษ์ ต้นเจริญ", room: "ม.5/3" },
+  "40452": { name: "นางสาว พิมพ์มาดา เอ้าปาน", room: "ม.5/3" },
+  "40454": { name: "นางสาว พิมพันัส จอมขันเงิน", room: "ม.5/3" },
+  "41907": { name: "นาย บิดผึ้งกร สาวะจันทร์", room: "ม.5/3" },
+  "42548": { name: "นาย ญาณณัฐ เนตรนิลพฤกษ์", room: "ม.5/3" },
+  "42549": { name: "นางสาว สุพิชญา คำปันนา", room: "ม.5/3" },
+  "42550": { name: "นาย พงศกร หาทวี", room: "ม.5/3" },
+  "42551": { name: "นางสาว ปริยาภรณ์ แรกนา", room: "ม.5/3" },
+  "42552": { name: "นางสาว ขวัญจิรา คำนาศักดิ์", room: "ม.5/3" },
+  "42553": { name: "นาย พงษ์ธร ท้าแสน", room: "ม.5/3" },
+  "42554": { name: "นาย ธณิษา วิเศษกาศ", room: "ม.5/3" },
+  "42555": { name: "นาย อนาวิน ปาลีเลื่อม", room: "ม.5/3" },
+  "42556": { name: "นาย อธิวัฒน์ ไชยชนะ", room: "ม.5/3" },
+
+  // --- ม.5/7 ---
+  "39858": { name: "นาย ชยพล แสนคะนารึ", room: "ม.5/7" },
+  "39881": { name: "นางสาว พรปวีณ์ ทรัพย์สนธิ", room: "ม.5/7" },
+  "39893": { name: "นาย ภูริวัชร อุดมทิพย์", room: "ม.5/7" },
+  "39901": { name: "นางสาว ศุภิกา ชูกลิ่น", room: "ม.5/7" },
+  "39936": { name: "นาย สุกฤต สิงห์โตชะนา", room: "ม.5/7" },
+  "39942": { name: "นาย พีรพัฒน์ สมบูนไชย", room: "ม.5/7" },
+  "39943": { name: "นางสาว พิชญ์สิริ โกมาร", room: "ม.5/7" },
+  "39959": { name: "นางสาว อชิรญาณ์ บุตรนุชิต", room: "ม.5/7" },
+  "39963": { name: "นางสาว ญาดากานต์ ศรีลองเมือง", room: "ม.5/7" },
+  "39994": { name: "นาย ศุภโชค ใจจิตร", room: "ม.5/7" },
+  "39995": { name: "นางสาว ณิชชา เทพพรมวงศ์", room: "ม.5/7" },
+  "40005": { name: "นางสาว สุพิชช์นันท์ กิติทรัพย์", room: "ม.5/7" },
+  "40040": { name: "นางสาว กัลย์รัตน์ กันทาทรัพย์", room: "ม.5/7" },
+  "40042": { name: "นางสาว กนกนาถ สุปินนะวรรณา", room: "ม.5/7" },
+  "40045": { name: "นาย ณัฐกาส ศรีสด", room: "ม.5/7" },
+  "40051": { name: "นาย ธนกฤต พื้นอินต๊ะศรี", room: "ม.5/7" },
+  "40244": { name: "นาย นาคพิชัย กาวิเนตร", room: "ม.5/7" },
+  "40246": { name: "นางสาว พิชชาภา บุญเมอ", room: "ม.5/7" },
+  "40249": { name: "นางสาว ขวัญวรินทร์ แก้วกันโท", room: "ม.5/7" },
+  "40253": { name: "นางสาว ภคมน วงศ์สถาน", room: "ม.5/7" },
+  "40267": { name: "นาย ธราเทพ ไชยล้ำว", room: "ม.5/7" },
+  "40277": { name: "นาย วรยุทธ ทิพย์รักษ์", room: "ม.5/7" },
+  "40327": { name: "นางสาว บุญยาพร เลิศวิไล", room: "ม.5/7" },
+  "40352": { name: "นาย บูรพล สุธีรางกูร", room: "ม.5/7" },
+  "40362": { name: "นาย นันทิพัฒน์ ปันศรี", room: "ม.5/7" },
+  "40444": { name: "นางสาว นรมน จินาเดช", room: "ม.5/7" },
+  "40455": { name: "นาย ปาณัท ไม้ประเสริฐ", room: "ม.5/7" },
+  "41879": { name: "นาย น้ำเหนือ ศรีนาคำ", room: "ม.5/7" },
+  "42513": { name: "นางสาว กัญญารัตน์ จันทร์ต๊ะ", room: "ม.5/7" },
+  "42514": { name: "นางสาว มุริน วิชัยกิตติกุล", room: "ม.5/7" },
+  "42515": { name: "นาย ธีรวัช หิรัญบริรักษ์", room: "ม.5/7" },
+  "42516": { name: "นางสาว ธญปดี วงศ์อนันต์ชัย", room: "ม.5/7" },
+  "42517": { name: "นางสาว ปวีชญา ทรายใหม่", room: "ม.5/7" },
+  "42518": { name: "นางสาว ศิรภัสสร ต้นกลาง", room: "ม.5/7" },
+  "42519": { name: "นางสาว ศศิวิมล สุวรรณชีพ", room: "ม.5/7" },
+  "42520": { name: "นาย จักริน หมื่นบาง", room: "ม.5/7" },
+  "42521": { name: "นาย นพพล สุนันท์ต๊ะ", room: "ม.5/7" },
+  "42522": { name: "นางสาว รมิตา กาตัญญูคณานนท์", room: "ม.5/7" },
+  "42523": { name: "นาย นพรัตน์ สุยะวารี", room: "ม.5/7" },
+  "42525": { name: "นางสาว เขมจิรา บุญมาอุป", room: "ม.5/7" },
+
+  // --- ม.5/11 ---
+  "39854": { name: "นางสาว ปวรวรรณ เมินชัยภูมิ", room: "ม.5/11" },
+  "39917": { name: "นางสาว เยาวเรศ อภิวงศ์", room: "ม.5/11" },
+  "39923": { name: "นาย กรกฤษณ์ ยะใจ", room: "ม.5/11" },
+  "39927": { name: "นางสาว ชญาดา ลินฐูญ", room: "ม.5/11" },
+  "39929": { name: "นางสาว กชพร สงวนศักดิ์", room: "ม.5/11" },
+  "39938": { name: "นางสาว กุลสตรี จักขุเรือง", room: "ม.5/11" },
+  "39948": { name: "นาย กิตติพงศ์ แก้วปัน", room: "ม.5/11" },
+  "39950": { name: "นางสาว อริญชยา ตุ่นใจ", room: "ม.5/11" },
+  "39956": { name: "นาย วิชานาถ โยศรี", room: "ม.5/11" },
+  "39958": { name: "นางสาว ธัญชนก คำพิภาค", room: "ม.5/11" },
+  "39965": { name: "นางสาว ณัฐฐณิชา อินออม", room: "ม.5/11" },
+  "39968": { name: "นางสาว ภัควัลญชน์ กันทะวรรณ์", room: "ม.5/11" },
+  "39973": { name: "นาย ปกรณ์ ศรีบุญกอง", room: "ม.5/11" },
+  "39998": { name: "นางสาว วิมลณัฐ วสุรัช", room: "ม.5/11" },
+  "40002": { name: "นางสาว ไอยรัศฏ์ อินต๊ะปัน", room: "ม.5/11" },
+  "40011": { name: "นางสาว อภิชญา ผาด่านสกุล", room: "ม.5/11" },
+  "40014": { name: "นางสาว กวินตรา วรรณโชค", room: "ม.5/11" },
+  "40025": { name: "นางสาว ธัญญลักษณ์ วงค์จันทร์", room: "ม.5/11" },
+  "40242": { name: "นางสาว กรวรรณ กันธาทรัพย์", room: "ม.5/11" },
+  "40282": { name: "นาย ณัฐปกรณ์ ตุ่นไชย", room: "ม.5/11" },
+  "40414": { name: "นางสาว สิริภาพร บัวงาม", room: "ม.5/11" },
+  "40453": { name: "นางสาว ชนกนันท์ พรมเสพสัก", room: "ม.5/11" },
+  "42487": { name: "นาย จักรภพ พรมชัย", room: "ม.5/11" },
+  "42488": { name: "นาย ต้นธาร ปัญโญชาติดี", room: "ม.5/11" },
+  "42489": { name: "นางสาว จุฬาลักษณ์ จิตจักร", room: "ม.5/11" },
+  "42490": { name: "นางสาว กรรณิการ์ ศรีเกื้อกลิ่น", room: "ม.5/11" },
+  "42491": { name: "นางสาว ณัฐธิดา แสนคำ", room: "ม.5/11" }, 
+  "42492": { name: "นางสาว ธิตินันท์ ไชยเขื่อน", room: "ม.5/11" },
+  "42493": { name: "นาย พีรพล ทองแดง", room: "ม.5/11" },
+  "42494": { name: "นางสาว ณณิชา สุขสวัสดิ์", room: "ม.5/11" }
+};
+ 
+const departments = [
+  "ประธานคณะสี","ผู้ช่วยคณะสี","รองประธานคณะสี",
+  "เลขานุการ","ฝ่ายสวัสดิการ","เหรัญญิก",
+  "แสตนเชียร์","อัฒจันทร์","ขบวนพาเหรด",
+  "กีฬา","กรีฑา","สปอตแดนซ์",
+  "เชียร์หลีดเดอร์","ฝ่ายอุปกรณ์","ปฏิคม"
+];
+ 
+let currentId   = null;
+let currentName = null;
+let currentDept = null;
+
+// 🌟 3. สั่งวาดปุ่มเมนูเมื่อ DOM โหลดเสร็จเรียบร้อย
+document.addEventListener("DOMContentLoaded", () => {
+  const deptGrid = document.getElementById('deptGrid');
+  if (deptGrid) {
+    deptGrid.innerHTML = ''; 
+    departments.forEach(d => {
+      const btn = document.createElement('button');
+      btn.className = 'dept-btn';
+      btn.textContent = d;
+      btn.onclick = () => window.selectDept(d);
+      deptGrid.appendChild(btn);
+    });
+  }
+});
  
 function hideAllCheckin() {
   ['errorBox', 'nameBox', 'roomSection', 'deptSection', 'successBox'].forEach(id => {
