@@ -872,12 +872,134 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-// 🌟 1. ย้ายฟังก์ชันขึ้นมาประกาศไว้บนสุดทันที เพื่อให้ HTML เรียกใช้งานได้ทันทีไม่ว่าจะโหลดช้าหรือเร็ว
+// 📍 1. ตั้งค่าลิงก์พิกัดและระยะทางของคณะสี
+const GOOGLE_MAPS_URL = "https://www.google.com/maps/dir/18.5791586,99.0239452/%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%A3%E0%B8%B5%E0%B8%A2%E0%B8%99%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%A3%E0%B8%84%E0%B9%8D%E0%B8%B2%E0%B8%84%E0%B8%93%E0%B8%B2%E0%B8%97%E0%B8%A3/data=!4m6!4m5!1m0!1m2!1m1!1s0x30dbd2aadd7b605f:0x32d89249057f38eb!3e0?sa=X&ved=1t:196274&ictx=111"; 
+const MAX_DISTANCE_METERS = 100000; // 🎯 ขยายรัศมีเป็น 100 กิโลให้ครอบคลุมทั่วโรงเรียน
+
+// 📍 ตั้งค่าพิกัดเริ่มต้นเป็นของ โรงเรียนจักรคำคณาทร ลำพูน (Lat: 18.586, Lng: 99.039)
+let SCHOOL_LAT = 18.586221; 
+let SCHOOL_LNG = 99.039017;
+
+let currentId   = null;
+let currentName = null;
+let currentDept = null;
+let base64Image = ""; 
+let isLocationValid = false; 
+let userCurrentLat = null;
+let userCurrentLng = null;
+
+// แกะรอยพิกัดโรงเรียนจากลิงก์อัตโนมัติ
+function extractCoordsFromUrl(url) {
+  try {
+    // 1. ตรวจสอบว่าถ้าเป็นลิงก์โรงเรียนจักรคำคณาทรตามที่ส่งมา ให้ล็อกพิกัดโรงเรียนโดยตรง
+    if (url.includes("%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%A3%E0%B8%B5%E0%B8%A2%E0%B8%99%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%A3%E0%B8%84%E0%B9%8D%E0%B8%B2")) {
+      SCHOOL_LAT = 18.586221;
+      SCHOOL_LNG = 99.039017;
+      console.log(`📍 ล็อกตำแหน่ง: โรงเรียนจักรคำคณาทร (Lat ${SCHOOL_LAT}, Lng ${SCHOOL_LNG})`);
+      return;
+    }
+
+    // 2. แบบปกติ (ถ้าเป็นลิงก์ยาวที่มีเครื่องหมาย @)
+    const match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (match) {
+      SCHOOL_LAT = parseFloat(match[1]);
+      SCHOOL_LNG = parseFloat(match[2]);
+      console.log(`📍 ดึงพิกัดจากลิงก์สำเร็จ: Lat ${SCHOOL_LAT}, Lng ${SCHOOL_LNG}`);
+    }
+  } catch (e) {
+    console.error("❌ ไม่สามารถแกะพิกัดจากลิงก์ได้", e);
+  }
+}
+extractCoordsFromUrl(GOOGLE_MAPS_URL);
+
+// คำนวณระยะห่างระหว่างจุด 2 จุด
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371e3; 
+  const phi1 = lat1 * Math.PI/180;
+  const phi2 = lat2 * Math.PI/180;
+  const deltaPhi = (lat2-lat1) * Math.PI/180;
+  const deltaLambda = (lon2-lon1) * Math.PI/180;
+
+  const a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) +
+            Math.cos(phi1) * Math.cos(phi2) *
+            Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c; 
+}
+
+// ตรวจสอบตำแหน่งพิกัดปัจจุบันของนักเรียน
+function verifyLocation() {
+  const statusEl = document.getElementById('locationStatus');
+  if (!navigator.geolocation) {
+    statusEl.innerHTML = "❌ เบราว์เซอร์ไม่รองรับการเช็คพิกัด GPS";
+    return;
+  }
+
+  statusEl.innerHTML = "⏳ กำลังดึงพิกัดจากดาวเทียม...";
+  
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      userCurrentLat = position.coords.latitude;
+      userCurrentLng = position.coords.longitude;
+      
+      const distance = calculateDistance(userCurrentLat, userCurrentLng, SCHOOL_LAT, SCHOOL_LNG);
+      
+      if (distance <= MAX_DISTANCE_METERS) {
+        statusEl.innerHTML = `✅ พิกัดถูกต้อง! อยู่ในเขตกิจกรรม (ห่างจากจุดนัดหมาย ${Math.round(distance)} เมตร)`;
+        statusEl.style.color = "green";
+        isLocationValid = true;
+        window.checkFormReady();
+      } else {
+        statusEl.innerHTML = `❌ คุณอยู่ห่างเกินไป (${Math.round(distance)} เมตร) ไม่อนุญาตให้เช็คชื่อนอกพื้นที่งานครับ`;
+        statusEl.style.color = "red";
+        isLocationValid = false;
+        document.getElementById('confirmBtn').style.display = 'none';
+      }
+    },
+    (error) => {
+      statusEl.innerHTML = "❌ ไม่สามารถเข้าถึงพิกัดได้ กรุณาเปิด Location/GPS บนมือถือและยินยอมให้สิทธิ์";
+      statusEl.style.color = "red";
+      isLocationValid = false;
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+// ดูตัวอย่างภาพที่ถ่าย
+window.previewImage = function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    base64Image = e.target.result; 
+    document.getElementById('imagePreview').src = base64Image;
+    document.getElementById('imagePreviewContainer').style.display = 'block';
+    window.checkFormReady();
+  };
+  reader.readAsDataURL(file);
+};
+
+// ตรวจเงื่อนไขความพร้อมปุ่มยืนยัน
+window.checkFormReady = function() {
+  const room = document.getElementById('roomSelect').value;
+  if (currentId && currentDept && room && isLocationValid && base64Image) {
+    document.getElementById('confirmBtn').style.display = 'block';
+  } else {
+    document.getElementById('confirmBtn').style.display = 'none';
+  }
+};
+
+// ฟังก์ชันค้นหารายชื่อ
 window.searchStudent = async function () {
   const id = document.getElementById('studentId').value.trim();
   window.hideAllCheckin();
   currentDept = null;
+  base64Image = "";
+  isLocationValid = false;
   document.getElementById('roomSelect').value = "";
+  document.getElementById('imageInput').value = "";
+  document.getElementById('imagePreviewContainer').style.display = 'none';
   window.resetDeptBtns();
   if (!id) return;
  
@@ -892,39 +1014,40 @@ window.searchStudent = async function () {
   
   document.getElementById('nameId').textContent   = '🎓 เลขประจำตัว ' + id;
   document.getElementById('nameText').textContent = currentName;
-  
-  // เลือกห้องเรียนอัตโนมัติจากข้อมูล
   document.getElementById('roomSelect').value = studentData.room;
 
   document.getElementById('nameBox').style.display     = 'block';
   document.getElementById('roomSection').style.display = 'block';
   document.getElementById('deptSection').style.display = 'block';
+  document.getElementById('verificationSection').style.display = 'block';
+
+  verifyLocation();
 };
 
+// ฟังก์ชันบันทึกข้อมูลและส่งค่าไปยังคอลัมน์ต่างๆ บนชีต
 window.confirmCheckIn = async function () {
   const room = document.getElementById('roomSelect').value;
- 
-  if (!currentId || !currentDept) return;
-  if (!room) {
-    window.showCheckinToast('⚠️ กรุณาเลือกห้องเรียนก่อนครับ');
+  if (!currentId || !currentDept || !room || !isLocationValid || !base64Image) {
+    window.showCheckinToast('⚠️ ข้อมูลไม่ครบถ้วน หรือ พิกัดไม่อยู่ในเขตพื้นที่งาน');
     return;
   }
  
   const now  = new Date();
   const time = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
   const date = now.toLocaleDateString('th-TH');
+  
+  // แปลงพิกัดจริงของเครื่องนักเรียนให้กลายเป็นลิงก์ Google Maps พร้อมระบุหมุดนำทาง
+  const studentMapUrl = `https://www.google.com/maps?q=${userCurrentLat},${userCurrentLng}`;
  
   const btn = document.getElementById('confirmBtn');
   btn.disabled = true;
-  btn.textContent = '⏳ กำลังบันทึก...';
+  btn.textContent = '⏳ กำลังบันทึกข้อมูลและรูปภาพ...';
  
   try {
     if (typeof set === 'function' && typeof ref === 'function' && typeof db !== 'undefined') {
         await set(ref(db, 'checkin/' + currentId), {
-          name: currentName,
-          room: room,
-          dept: currentDept,
-          time, date,
+          name: currentName, room: room, dept: currentDept,
+          time, date, photo: base64Image, studentLocation: studentMapUrl,
           timestamp: now.getTime()
         });
     }
@@ -932,7 +1055,7 @@ window.confirmCheckIn = async function () {
     const params = new URLSearchParams({
       sheet: 'เช็คชื่อ', id: currentId,
       name: currentName, room: room, dept: currentDept,
-      time, date
+      time: time, date: date, maps: studentMapUrl, photo: base64Image 
     });
  
     await fetch(GAS_URL, {
@@ -948,13 +1071,12 @@ window.confirmCheckIn = async function () {
     document.getElementById('successBox').style.display = 'block';
     document.getElementById('studentId').value = '';
     
-    window.showCheckinToast('✅ เช็คชื่อสำเร็จ! ' + currentName);
-    
-    currentId = currentName = currentDept = null;
+    window.showCheckinToast('✅ เช็คชื่อพร้อมหลักฐานสำเร็จ! ' + currentName);
+    currentId = currentName = currentDept = base64Image = userCurrentLat = userCurrentLng = null;
  
   } catch (err) {
     console.error(err);
-    window.showCheckinToast('❌ เกิดข้อผิดพลาดกับ Google Sheets กรุณาตรวจสอบ URL การ deploy');
+    window.showCheckinToast('❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล');
   } finally {
     btn.disabled = false;
     btn.textContent = '✅ ยืนยันเช็คชื่อ';
@@ -966,13 +1088,14 @@ window.hideAllCheckin = function() {
   document.getElementById('nameBox').style.display = 'none';
   document.getElementById('roomSection').style.display = 'none';
   document.getElementById('deptSection').style.display = 'none';
+  document.getElementById('verificationSection').style.display = 'none';
   document.getElementById('confirmBtn').style.display = 'none';
   document.getElementById('successBox').style.display = 'none';
 }
 
 window.resetDeptBtns = function() {
   document.querySelectorAll('.dept-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('confirmBtn').style.display = 'none';
+  window.checkFormReady();
 }
 
 window.selectDept = function(dept) {
@@ -981,10 +1104,9 @@ window.selectDept = function(dept) {
   [...document.querySelectorAll('.dept-btn')]
     .find(b => b.textContent === dept)
     ?.classList.add('selected');
-  document.getElementById('confirmBtn').style.display = 'block';
+  window.checkFormReady();
 }
 
-// 🌟 สร้างฟังก์ชันรองรับการแสดง Toast (กล่องเด้งเตือน) ป้องกันปัญหาฟังก์ชันนี้พังในโค้ดเก่า
 window.showCheckinToast = function(msg) {
   const toastEl = document.getElementById('toast');
   if (toastEl) {
@@ -992,9 +1114,27 @@ window.showCheckinToast = function(msg) {
     toastEl.classList.add('show');
     setTimeout(() => { toastEl.classList.remove('show'); }, 3000);
   } else {
-    alert(msg); // ถ้าไม่เจอกล่อง toast ให้ alert แทนเพื่อความปลอดภัย
+    alert(msg);
   }
 }
+
+// ผูกตัวแปรเลือกห้องเข้ากับตัวเช็คความพร้อม
+document.addEventListener("DOMContentLoaded", () => {
+  const roomSel = document.getElementById('roomSelect');
+  if(roomSel) roomSel.onchange = window.checkFormReady;
+
+  const deptGrid = document.getElementById('deptGrid');
+  if (deptGrid) {
+    deptGrid.innerHTML = ''; 
+    departments.forEach(d => {
+      const btn = document.createElement('button');
+      btn.className = 'dept-btn';
+      btn.textContent = d;
+      btn.onclick = () => window.selectDept(d);
+      deptGrid.appendChild(btn);
+    });
+  }
+});
 
  
 function hideAllCheckin() {
