@@ -726,132 +726,6 @@ if (inputField) {
    เช็คชื่อเข้าร่วมกิจกรรม (ม.5)
 ========================= */
 
-// 🌟 1. ย้ายฟังก์ชันขึ้นมาประกาศไว้บนสุดทันที เพื่อให้ HTML เรียกใช้งานได้ทันทีไม่ว่าจะโหลดช้าหรือเร็ว
-window.searchStudent = async function () {
-  const id = document.getElementById('studentId').value.trim();
-  window.hideAllCheckin();
-  currentDept = null;
-  document.getElementById('roomSelect').value = "";
-  window.resetDeptBtns();
-  if (!id) return;
- 
-  const studentData = students[id];
-  if (!studentData) {
-    document.getElementById('errorBox').style.display = 'block';
-    return;
-  }
- 
-  currentId   = id;
-  currentName = studentData.name;
-  
-  document.getElementById('nameId').textContent   = '🎓 เลขประจำตัว ' + id;
-  document.getElementById('nameText').textContent = currentName;
-  
-  // เลือกห้องเรียนอัตโนมัติจากข้อมูล
-  document.getElementById('roomSelect').value = studentData.room;
-
-  document.getElementById('nameBox').style.display     = 'block';
-  document.getElementById('roomSection').style.display = 'block';
-  document.getElementById('deptSection').style.display = 'block';
-};
-
-window.confirmCheckIn = async function () {
-  const room = document.getElementById('roomSelect').value;
- 
-  if (!currentId || !currentDept) return;
-  if (!room) {
-    window.showCheckinToast('⚠️ กรุณาเลือกห้องเรียนก่อนครับ');
-    return;
-  }
- 
-  const now  = new Date();
-  const time = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-  const date = now.toLocaleDateString('th-TH');
- 
-  const btn = document.getElementById('confirmBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ กำลังบันทึก...';
- 
-  try {
-    if (typeof set === 'function' && typeof ref === 'function' && typeof db !== 'undefined') {
-        await set(ref(db, 'checkin/' + currentId), {
-          name: currentName,
-          room: room,
-          dept: currentDept,
-          time, date,
-          timestamp: now.getTime()
-        });
-    }
- 
-    const params = new URLSearchParams({
-      sheet: 'เช็คชื่อ', id: currentId,
-      name: currentName, room: room, dept: currentDept,
-      time, date
-    });
- 
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: params
-    });
- 
-    window.hideAllCheckin();
-    document.getElementById('successName').textContent = currentName;
-    document.getElementById('successRoomBadge').textContent = '🏫 ' + room;
-    document.getElementById('successDeptBadge').textContent = '🏮 ' + currentDept;
-    document.getElementById('successBox').style.display = 'block';
-    document.getElementById('studentId').value = '';
-    
-    window.showCheckinToast('✅ เช็คชื่อสำเร็จ! ' + currentName);
-    
-    currentId = currentName = currentDept = null;
- 
-  } catch (err) {
-    console.error(err);
-    window.showCheckinToast('❌ เกิดข้อผิดพลาดกับ Google Sheets กรุณาตรวจสอบ URL การ deploy');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '✅ ยืนยันเช็คชื่อ';
-  }
-};
-
-window.hideAllCheckin = function() {
-  document.getElementById('errorBox').style.display = 'none';
-  document.getElementById('nameBox').style.display = 'none';
-  document.getElementById('roomSection').style.display = 'none';
-  document.getElementById('deptSection').style.display = 'none';
-  document.getElementById('confirmBtn').style.display = 'none';
-  document.getElementById('successBox').style.display = 'none';
-}
-
-window.resetDeptBtns = function() {
-  document.querySelectorAll('.dept-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('confirmBtn').style.display = 'none';
-}
-
-window.selectDept = function(dept) {
-  currentDept = dept;
-  window.resetDeptBtns();
-  [...document.querySelectorAll('.dept-btn')]
-    .find(b => b.textContent === dept)
-    ?.classList.add('selected');
-  document.getElementById('confirmBtn').style.display = 'block';
-}
-
-// 🌟 สร้างฟังก์ชันรองรับการแสดง Toast (กล่องเด้งเตือน) ป้องกันปัญหาฟังก์ชันนี้พังในโค้ดเก่า
-window.showCheckinToast = function(msg) {
-  const toastEl = document.getElementById('toast');
-  if (toastEl) {
-    toastEl.textContent = msg;
-    toastEl.classList.add('show');
-    setTimeout(() => { toastEl.classList.remove('show'); }, 3000);
-  } else {
-    alert(msg); // ถ้าไม่เจอกล่อง toast ให้ alert แทนเพื่อความปลอดภัย
-  }
-}
-
-// ----------------------------------------------------------------
-// 2. ตัวแปรและข้อมูลระบบ (วางไว้ถัดมา)
 const GAS_URL = "https://script.google.com/macros/s/AKfycbyLQfyGwNAzPurlESWsi5VgbuQN6T21MrkIIRUMYlWLv64EHCZt5W416YGftPptR6Ry/exec";
  
 const students = {
@@ -998,6 +872,130 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+// 🌟 1. ย้ายฟังก์ชันขึ้นมาประกาศไว้บนสุดทันที เพื่อให้ HTML เรียกใช้งานได้ทันทีไม่ว่าจะโหลดช้าหรือเร็ว
+window.searchStudent = async function () {
+  const id = document.getElementById('studentId').value.trim();
+  window.hideAllCheckin();
+  currentDept = null;
+  document.getElementById('roomSelect').value = "";
+  window.resetDeptBtns();
+  if (!id) return;
+ 
+  const studentData = students[id];
+  if (!studentData) {
+    document.getElementById('errorBox').style.display = 'block';
+    return;
+  }
+ 
+  currentId   = id;
+  currentName = studentData.name;
+  
+  document.getElementById('nameId').textContent   = '🎓 เลขประจำตัว ' + id;
+  document.getElementById('nameText').textContent = currentName;
+  
+  // เลือกห้องเรียนอัตโนมัติจากข้อมูล
+  document.getElementById('roomSelect').value = studentData.room;
+
+  document.getElementById('nameBox').style.display     = 'block';
+  document.getElementById('roomSection').style.display = 'block';
+  document.getElementById('deptSection').style.display = 'block';
+};
+
+window.confirmCheckIn = async function () {
+  const room = document.getElementById('roomSelect').value;
+ 
+  if (!currentId || !currentDept) return;
+  if (!room) {
+    window.showCheckinToast('⚠️ กรุณาเลือกห้องเรียนก่อนครับ');
+    return;
+  }
+ 
+  const now  = new Date();
+  const time = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+  const date = now.toLocaleDateString('th-TH');
+ 
+  const btn = document.getElementById('confirmBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลังบันทึก...';
+ 
+  try {
+    if (typeof set === 'function' && typeof ref === 'function' && typeof db !== 'undefined') {
+        await set(ref(db, 'checkin/' + currentId), {
+          name: currentName,
+          room: room,
+          dept: currentDept,
+          time, date,
+          timestamp: now.getTime()
+        });
+    }
+ 
+    const params = new URLSearchParams({
+      sheet: 'เช็คชื่อ', id: currentId,
+      name: currentName, room: room, dept: currentDept,
+      time, date
+    });
+ 
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: params
+    });
+ 
+    window.hideAllCheckin();
+    document.getElementById('successName').textContent = currentName;
+    document.getElementById('successRoomBadge').textContent = '🏫 ' + room;
+    document.getElementById('successDeptBadge').textContent = '🏮 ' + currentDept;
+    document.getElementById('successBox').style.display = 'block';
+    document.getElementById('studentId').value = '';
+    
+    window.showCheckinToast('✅ เช็คชื่อสำเร็จ! ' + currentName);
+    
+    currentId = currentName = currentDept = null;
+ 
+  } catch (err) {
+    console.error(err);
+    window.showCheckinToast('❌ เกิดข้อผิดพลาดกับ Google Sheets กรุณาตรวจสอบ URL การ deploy');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✅ ยืนยันเช็คชื่อ';
+  }
+};
+
+window.hideAllCheckin = function() {
+  document.getElementById('errorBox').style.display = 'none';
+  document.getElementById('nameBox').style.display = 'none';
+  document.getElementById('roomSection').style.display = 'none';
+  document.getElementById('deptSection').style.display = 'none';
+  document.getElementById('confirmBtn').style.display = 'none';
+  document.getElementById('successBox').style.display = 'none';
+}
+
+window.resetDeptBtns = function() {
+  document.querySelectorAll('.dept-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('confirmBtn').style.display = 'none';
+}
+
+window.selectDept = function(dept) {
+  currentDept = dept;
+  window.resetDeptBtns();
+  [...document.querySelectorAll('.dept-btn')]
+    .find(b => b.textContent === dept)
+    ?.classList.add('selected');
+  document.getElementById('confirmBtn').style.display = 'block';
+}
+
+// 🌟 สร้างฟังก์ชันรองรับการแสดง Toast (กล่องเด้งเตือน) ป้องกันปัญหาฟังก์ชันนี้พังในโค้ดเก่า
+window.showCheckinToast = function(msg) {
+  const toastEl = document.getElementById('toast');
+  if (toastEl) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    setTimeout(() => { toastEl.classList.remove('show'); }, 3000);
+  } else {
+    alert(msg); // ถ้าไม่เจอกล่อง toast ให้ alert แทนเพื่อความปลอดภัย
+  }
+}
+
  
 function hideAllCheckin() {
   ['errorBox', 'nameBox', 'roomSection', 'deptSection', 'successBox'].forEach(id => {
