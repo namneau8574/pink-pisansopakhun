@@ -1778,3 +1778,323 @@ body::before {
     color: #fff;
     border-color: #333;
 }
+
+/* ==========================================
+   🌸 PINK PISANSOPAKHUN CYBER STYLE (2026)
+   ========================================== */
+
+/* 1. Reset & Base Fonts */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Prompt', 'Kanit', -apple-system, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
+    color: #4a4a4a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px 10px;
+}
+
+/* 2. Layout Container */
+.checkin-section {
+    background: #ffffff;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto cubic-bezier(0.1, 0.8, 0.3, 1);
+    padding: 30px 20px;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(255, 182, 193, 0.3);
+    border: 1px solid rgba(255, 192, 203, 0.5);
+}
+
+/* 3. Header Section */
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    font-size: 24px;
+    color: #ff5e7e;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.header p {
+    font-size: 14px;
+    color: #a1888f;
+    letter-spacing: 0.5px;
+}
+
+/* 4. Input Elements & Fields */
+.input-label, .dept-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b5b60;
+    margin-bottom: 8px;
+    margin-top: 18px;
+}
+
+.input-wrap {
+    display: flex;
+    gap: 8px;
+}
+
+#studentId {
+    flex: 1;
+    padding: 14px 16px;
+    border: 2px solid #ffe4e6;
+    border-radius: 12px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.2s ease;
+    background-color: #fffafb;
+}
+
+#studentId:focus {
+    border-color: #ffb6c1;
+    box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.4);
+    background-color: #fff;
+}
+
+/* 5. Buttons Base Style */
+button {
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.input-wrap button {
+    padding: 0 20px;
+    background-color: #ff7597;
+    color: white;
+    font-size: 15px;
+}
+
+.input-wrap button:hover {
+    background-color: #ff5e7e;
+}
+
+/* 6. Dropdown (Room Selection) */
+.room-select {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #ffe4e6;
+    border-radius: 12px;
+    font-size: 15px;
+    background-color: #fffafb;
+    outline: none;
+    color: #555;
+    cursor: pointer;
+}
+
+.room-select:focus {
+    border-color: #ffb6c1;
+}
+
+/* 7. Department Choice Grid (ฝ่าย) */
+.dept-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.dept-btn {
+    padding: 12px 6px;
+    background-color: #fff5f6;
+    border: 1px solid #ffe1e5;
+    color: #d65a7f;
+    font-size: 13px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.dept-btn:hover {
+    background-color: #ffe4e8;
+}
+
+.dept-btn.selected {
+    background-color: #ff7597;
+    border-color: #ff7597;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 117, 151, 0.3);
+}
+
+/* 8. Name Panel Display */
+.name-box {
+    background: linear-gradient(to right, #fff5f6, #fff0f2);
+    padding: 16px;
+    border-radius: 14px;
+    border-left: 5px solid #ff7597;
+    margin-top: 15px;
+}
+
+.name-id {
+    font-size: 12px;
+    color: #b58391;
+    text-transform: uppercase;
+}
+
+.name-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: #4a2832;
+    margin-top: 2px;
+}
+
+/* 9. Alerts & Errors */
+.error-box {
+    background-color: #fff0f0;
+    color: #e53e3e;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-top: 12px;
+    text-align: center;
+    border: 1px solid #fed7d7;
+}
+
+/* 10. Verification (GPS & Camera) */
+#locationStatus {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+/* Big Action Submit Button */
+.confirm-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(to right, #ff7597, #ff5e7e);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 25px;
+    box-shadow: 0 6px 20px rgba(255, 94, 126, 0.4);
+}
+
+.confirm-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 94, 126, 0.5);
+}
+
+.confirm-btn:disabled {
+    background: #cbd5e1;
+    color: #94a3b8;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* 11. Success Modal Card */
+.success-box {
+    text-align: center;
+    padding: 30px 10px 10px 10px;
+    animation: scaleUp 0.4s ease-out;
+}
+
+.success-icon {
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+
+.success-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.success-info {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.success-badge {
+    background-color: #e6fffa;
+    color: #234e52;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #b2f5ea;
+}
+
+#successDeptBadge {
+    background-color: #fff5f5;
+    color: #742a2a;
+    border-color: #fed7d7;
+}
+
+.success-sub {
+    font-size: 14px;
+    color: #718096;
+    margin-top: 5px;
+}
+
+/* 12. Toast Notification */
+.toast {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background-color: rgba(45, 55, 72, 0.95);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    white-space: nowrap;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* 13. Footer Design */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 10px;
+}
+
+footer h2 {
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: #ff9ebb;
+    font-weight: 800;
+}
+
+footer p {
+    font-size: 10px;
+    color: #c7a4b0;
+    margin-top: 2px;
+}
+
+/* Animations */
+@keyframes scaleUp {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Responsive adjustment for small mobiles */
+@media (max-width: 380px) {
+    .dept-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
