@@ -529,7 +529,19 @@ required
             <div class="dept-grid" id="deptGrid"></div>
         </div>
 
-        <!-- 🌟 เปลี่ยนมาเรียกผ่าน window.confirmCheckIn() -->
+        <!-- ส่วนตรวจสอบพิกัดและถ่ายรูปยืนยันตัวตน -->
+        <div class="dept-section" id="verificationSection" style="display: none; margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 15px;">
+            <label class="dept-label">📍 ตรวจสอบตำแหน่ง (GPS)</label>
+            <div id="locationStatus" style="font-size: 14px; color: #666; margin-bottom: 10px;">⏳ กำลังตรวจสอบพิกัดของคุณ...</div>
+            
+            <label class="dept-label">📸 ถ่ายภาพหน้าตัวเองคู่กับงาน</label>
+            <input type="file" id="imageInput" accept="image/*" capture="user" style="display: none;" onchange="window.previewImage(event)">
+            <button type="button" onclick="document.getElementById('imageInput').click()" style="background-color: #e0e0e0; color: #333; margin-bottom: 10px; padding: 8px 15px; border-radius: 6px; border: 1px solid #ccc; cursor: pointer;">📷 เปิดกล้องถ่ายภาพ</button>
+            <div id="imagePreviewContainer" style="display: none; text-align: center; margin-bottom: 10px;">
+                <img id="imagePreview" src="" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid #ffb6c1;">
+            </div>
+        </div>
+        
         <button class="confirm-btn" id="confirmBtn" onclick="window.confirmCheckIn()" style="display: none;">✅ ยืนยันเช็คชื่อ</button>
 
         <div class="success-box" id="successBox" style="display: none;">
