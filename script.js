@@ -244,7 +244,7 @@ registerForm.addEventListener('submit', (e) => {
 
     // ส่งข้อมูลไป Google Sheets แบบเบื้องหลัง
     fetch(
-        "https://script.google.com/macros/s/AKfycbyj87N25owTqm6nT6ewdnvBbsFbdBRHsPyEZXW93NEoOBnJ1iKR0CcQgKJE58H0CjQr/exec",
+        "https://script.google.com/macros/s/AKfycbxjdfQSUS6clXl7-uEkjwINlLQfAYxgsAPare0o-LcvKTA_Ok-DmaatFy5cJcvcMDU0/exec",
         {
             method: "POST",
             mode: "no-cors",
@@ -943,7 +943,7 @@ if (checkStatusBtn) {
 
         resultBox.innerHTML = '<p>⏳ กำลังตรวจสอบข้อมูล กรุณารอสักครู่...</p>';
         try {
-            const baseUrl = "https://script.google.com/macros/s/AKfycbyj87N25owTqm6nT6ewdnvBbsFbdBRHsPyEZXW93NEoOBnJ1iKR0CcQgKJE58H0CjQr/exec"
+            const baseUrl = "https://script.google.com/macros/s/AKfycbxjdfQSUS6clXl7-uEkjwINlLQfAYxgsAPare0o-LcvKTA_Ok-DmaatFy5cJcvcMDU0/exec"
             const url = `${baseUrl}?name=${encodeURIComponent(name)}&room=${encodeURIComponent(room)}`;
             const res = await fetch(url);
             const data = await res.json();
