@@ -943,7 +943,7 @@ if (checkStatusBtn) {
 
         resultBox.innerHTML = '<p>⏳ กำลังตรวจสอบข้อมูล กรุณารอสักครู่...</p>';
         try {
-            const baseUrl = "https://script.google.com/macros/s/AKfycby5ym0X5PvdVXoqUlDdkEmK6qVLcg_L4lFOu69Qdi0Lia8Qn_G2mhmmUnm4lEWNQ5TZ/exec"
+            const baseUrl = "https://script.google.com/macros/s/AKfycby_8OJR0yB6BD73FMsnuXwbULDSV3Zd9qxqLLXBN4_BA5VBsZDOQ1fthsY2KizQLfnY/exec"
             const url = `${baseUrl}?name=${encodeURIComponent(name)}&room=${encodeURIComponent(room)}`;
             const res = await fetch(url);
             const data = await res.json();
