@@ -439,16 +439,23 @@ section {
   box-shadow: 0 4px 20px rgba(232,0,90,.06);
 }
 
-/* กล่องรูป */
+/* กล่องรูป — โชว์เต็มรูปตามสัดส่วนจริง ไม่ซูมไม่ครอป */
 .card img,
 .jersey-img{
     width:100%;
-    aspect-ratio:3/4;      /* ทุกรูปสูงเท่ากัน */
-    object-fit:cover;
+    height:auto;         /* ให้สูงตามสัดส่วนจริงของรูป ไม่บังคับ aspect-ratio */
     display:block;
     border-radius:14px;
     border:1px solid rgba(200,146,10,.2);
     margin-bottom:18px;
+}
+
+/* การ์ด */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  align-items: start;   /* เปลี่ยนจาก stretch เพราะการ์ดอาจสูงไม่เท่ากันแล้ว */
 }
 
 /* หัวข้อ */
