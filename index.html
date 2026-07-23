@@ -279,64 +279,70 @@
 <section id="vote">
 <h2 class="title">
 🔥 โหวตชุดกีฬา
-</h2>
+<!--
+  VOTE SECTION — 5 การ์ด ขนาดเท่ากันทุกช่อง
+  รูปแสดงเต็มภาพ (ไม่ครอปตัด) โดยใช้ object-fit: contain
+  แก้ไข CSS ใน style.css เดิม ส่วน .card img, .jersey-img
+  เปลี่ยนจาก object-fit: cover → object-fit: contain
+  แล้วเพิ่ม background ให้ช่องว่างรอบรูปดูสวย ไม่ใช่พื้นขาวโล่ง
+-->
 
-<div class="cards">
+<style>
+/* แก้เฉพาะกฎรูปภาพ ให้โชว์เต็มรูปโดยไม่ครอป แต่ยังคงกรอบขนาดเท่ากันทุกใบ */
+.card img,
+.jersey-img{
+    width:100%;
+    aspect-ratio:3/4;       /* กรอบขนาดเท่ากันทุกใบ */
+    object-fit:contain;     /* โชว์เต็มรูป ไม่ตัดขอบภาพ */
+    background: var(--gold-pale, #fffbe8); /* พื้นหลังรองรับรูปที่สัดส่วนไม่พอดี */
+    display:block;
+    border-radius:14px;
+    border:1px solid rgba(200,146,10,.2);
+    margin-bottom:18px;
+}
 
-<div class="card">
+/* ปรับ grid ให้รองรับ 5 การ์ดสวยงามบนจอกว้าง */
+.cards{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap:24px;
+}
+</style>
 
-<img src="6F299224-0498-4F11-BA73-98D0F6458CE8.jpeg">
+<section id="vote">
+  <h2 class="title">โหวตทีมที่คุณชื่นชอบ</h2>
 
-<h3>SHADOW PINK</h3>
+  <div class="cards">
 
-<p>
+    <div class="card">
+      <img src="6F299224-0498-4F11-BA73-98D0F6458CE8.jpeg" class="jersey-img">
+      <h3>1</h3>
+      <p></p>
+      <button onclick="voteTeam('Shadow Pink')">VOTE NOW</button>
+    </div>
 
-</p>
+    <div class="card">
+      <img src="AECCFC75-86A7-42BB-BA86-B5AE44016008.jpeg" class="jersey-img">
+      <h3>2</h3>
+      <p></p>
+      <button onclick="voteTeam('Neon Void')">VOTE NOW</button>
+    </div>
 
-<button onclick="voteTeam('Shadow Pink')">
-VOTE NOW
-</button>
+    <div class="card">
+      <img src="30CB9082-00C8-4DE7-B33C-B7B3F91346E2.jpeg" class="jersey-img">
+      <h3>3/h3>
+      <p></p>
+      <button onclick="voteTeam('Cyber Storm')">VOTE NOW</button>
+    </div>
 
-</div>
+    <div class="card">
+      <img src="ใส่ชื่อไฟล์รูปที่ 4.jpeg" class="jersey-img">
+      <h3>4</h3>
+      <p></p>
+      <button onclick="voteTeam('ชื่อทีมที่ 4')">VOTE NOW</button>
+    </div>
 
-<div class="card featured">
-
-<div class="cards">
-</div>
-
-<img src="AECCFC75-86A7-42BB-BA86-B5AE44016008.jpeg">
-
-<h3>NEON VOID</h3>
-
-<p>
-
-</p>
-
-<button onclick="voteTeam('Neon Void')">
-VOTE NOW
-</button>
-
-</div>
-
-<div class="card">
-
-<img src="30CB9082-00C8-4DE7-B33C-B7B3F91346E2.jpeg" class="jersey-img">
-
-<h3>CYBER STORM</h3>
-
-<p>
-
-</p>
-
-<button onclick="voteTeam('Cyber Storm')">
-VOTE NOW
-</button>
-
-</div>
-
-</div>
-
-</section>
+  </div>
 
 <!-- COMMENT -->
 
