@@ -120,51 +120,42 @@ getDatabase(app);
 /* =========================
    VOTE SYSTEM
 ========================= */
-window.voteTeam = async function(team) {
+/* =========================
+   VOTE SYSTEM
+   (โหวตได้ 1 ครั้ง / 365 วัน)
+========================= */
+
+window.voteTeam = async function (team) {
+
+  // 🚧 ปิดโหวตชั่วคราว — ลบ 2 บรรทัดนี้ทิ้งตอนพร้อมเปิดโหวตจริง
   alert("⏳ ยังไม่เปิดโหวตครับ กรุณารอก่อนนะครับ 🙏");
   return;
 
-  // ----- โค้ดเดิมด้านล่างนี้จะไม่ถูกรันจนกว่าจะเปิดโหวต -----
   try {
-    const NOW = Date.now();
-    const COOLDOWN_TIME = 10 * 60 * 1000;
 
-    const lastVoteTime = localStorage.getItem('lastVoteTime');
-    const votedTeam = localStorage.getItem('votedTeam') || 'ทีมก่อนหน้านี้';
+    const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
 
-    if (lastVoteTime) {
-      const timeElapsed = NOW - parseInt(lastVoteTime, 10);
+    // ตรวจสอบข้อมูลการโหวต
+    const voteData = JSON.parse(localStorage.getItem("voteData"));
 
-      if (timeElapsed < COOLDOWN_TIME) {
-        const timeRemainingMs = COOLDOWN_TIME - timeElapsed;
-        const minutesLeft = Math.floor(timeRemainingMs / (60 * 1000));
-        const secondsLeft = Math.floor((timeRemainingMs % (60 * 1000)) / 1000);
+    if (voteData) {
 
-        alert(`⛔ คุณเพิ่งโหวตให้ "${votedTeam}" ไปไม่นานนี้\nกรุณารออีก ${minutesLeft} นาที ${secondsLeft} วินาที จึงจะโหวตใหม่ได้ครับ`);
+      const diff = Date.now() - voteData.time;
+
+      if (diff < ONE_YEAR) {
+
+        const nextVote = new Date(voteData.time + ONE_YEAR);
+
+        alert(
+          `⛔ คุณโหวตให้ "${voteData.team}" ไปแล้ว\n\n` +
+          `สามารถโหวตได้อีกวันที่\n${nextVote.toLocaleDateString("th-TH")}`
+        );
+
         return;
       }
+
     }
 
-    localStorage.setItem('votedTeam', team);
-    localStorage.setItem('lastVoteTime', NOW);
-
-    playSound();
-    voteAnimation(team);
-
-    const voteRef = ref(db, 'votes/' + team);
-    const snapshot = await get(voteRef);
-    let current = snapshot.exists() ? snapshot.val() : 0;
-    await set(voteRef, current + 1);
-
-    alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${current + 1} คะแนน`);
-
-    fireEffect();
-
-  } catch (error) {
-    console.error(error);
-    alert("❌ โหวตไม่สำเร็จ");
-  }
-};
 /* =========================
    COMMENT SYSTEM
 ========================= */
