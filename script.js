@@ -125,64 +125,41 @@ getDatabase(app);
    (โหวตได้ 1 ครั้ง / 365 วัน)
 ========================= */
 window.voteTeam = async function (team) {
-
   // 🚧 ปิดโหวตชั่วคราว — ลบ 2 บรรทัดนี้ทิ้งตอนพร้อมเปิดโหวตจริง
   alert("⏳ ยังไม่เปิดโหวตครับ กรุณารอก่อนนะครับ 🙏");
   return;
 
   try {
-
     const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
-
-    // ตรวจสอบข้อมูลการโหวต
     const voteData = JSON.parse(localStorage.getItem("voteData"));
-
     if (voteData) {
-
       const diff = Date.now() - voteData.time;
-
       if (diff < ONE_YEAR) {
-
         const nextVote = new Date(voteData.time + ONE_YEAR);
-
         alert(
           `⛔ คุณโหวตให้ "${voteData.team}" ไปแล้ว\n\n` +
           `สามารถโหวตได้อีกวันที่\n${nextVote.toLocaleDateString("th-TH")}`
         );
-
         return;
       }
-
     }
-
-    // บันทึกเวลาที่โหวต
     localStorage.setItem("voteData", JSON.stringify({
       team: team,
       time: Date.now()
     }));
-
     playSound();
     voteAnimation(team);
-
     const voteRef = ref(db, "votes/" + team);
     const snapshot = await get(voteRef);
-
     let current = snapshot.exists() ? snapshot.val() : 0;
-
     await set(voteRef, current + 1);
-
     alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${current + 1} คะแนน`);
-
     fireEffect();
-
   } catch (error) {
-
     console.error(error);
     alert("❌ โหวตไม่สำเร็จ");
-
   }
-
-};
+}; 
 /* =========================
    FIRE EFFECT
 ========================= */
