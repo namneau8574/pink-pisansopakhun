@@ -291,6 +291,9 @@ nav a:hover::after { width: 100%; }
 
 .hero-glow {
   position: absolute;
+  top: 50%;                          /* ➕ เพิ่ม */
+  left: 50%;                         /* ➕ เพิ่ม */
+  transform: translate(-50%, -50%);  /* ➕ เพิ่ม */
   width: 600px; height: 600px;
   background: radial-gradient(circle, rgba(232,0,90,0.12), transparent 70%);
   border-radius: 50%;
@@ -1790,25 +1793,6 @@ body::before {
    🌸 PINK PISANSOPAKHUN CYBER STYLE (2026)
    ========================================== */
 
-/* 1. Reset & Base Fonts */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Prompt', 'Kanit', -apple-system, sans-serif;
-}
-
-body {
-    background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
-    color: #4a4a4a;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 20px 10px;
-}
-
-/* 2. Layout Container */
 .checkin-section {
     background: #ffffff;
     max-width: 480px;
@@ -2241,4 +2225,16 @@ footer p {
   .dept-grid {
     grid-template-columns: 1fr;
   }
+}
+
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
 }
