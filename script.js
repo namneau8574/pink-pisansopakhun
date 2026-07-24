@@ -154,7 +154,7 @@ window.voteTeam = async function (team) {
         return;
       }
 
-    }
+    };
 
 /* =========================
    COMMENT SYSTEM
