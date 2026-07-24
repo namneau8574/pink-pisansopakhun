@@ -2105,3 +2105,140 @@ footer p {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
+
+/* ==========================================
+   📱 MOBILE FULL-WIDTH OVERHAUL
+   ========================================== */
+@media (max-width: 640px) {
+
+  /* ให้ section ใช้พื้นที่เต็มจอ ลด padding ข้างให้แคบลง */
+  section {
+    padding: 60px 16px;
+  }
+
+  /* Hero: ใช้ clamp ให้ตัวอักษรพอดีทุกขนาดจอ ไม่ล้นไม่เล็กเกิน */
+  .hero {
+    padding: 80px 16px;
+    min-height: 90vh;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
+    line-height: 1.35;
+  }
+  .hero p {
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+  }
+  .hero button {
+    width: 100%;
+    padding: 16px;
+    font-size: 1rem;
+  }
+
+  /* Title หัวข้อ section */
+  .title {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+
+  /* NAVBAR: เต็มความกว้าง ไม่มี padding เยอะ */
+  nav {
+    padding: 0 16px;
+    height: 64px;
+  }
+  nav span {
+    font-size: 0.95rem;
+  }
+
+  /* CARDS (โหวต): เต็มจอ 1 คอลัมน์ ไม่เหลือขอบเยอะ */
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .card {
+    padding: 16px;
+  }
+  .card img,
+  .jersey-img {
+    height: auto;
+  }
+
+  /* FORM: input/textarea/select เต็มความกว้างจอ ตัวอักษรไม่เล็ก */
+  input, textarea, select, form button {
+    font-size: 16px; /* กัน iOS auto-zoom ตอนโฟกัส input */
+    padding: 14px 16px;
+  }
+
+  /* REGISTER: จัดเรียงเป็นคอลัมน์เดียว ลด padding กล่องให้ใช้พื้นที่เต็มจอ */
+  .register-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .register-info,
+  .register-form {
+    padding: 24px 18px;
+  }
+  .register-info h3 {
+    font-size: 1.4rem;
+  }
+
+  /* GATE BOX (หน้าล็อกอิน): เต็มจอ ไม่มีขอบขาวเหลือเยอะ */
+  .gate-box {
+    max-width: 92vw;
+    padding: 36px 20px;
+    border-radius: 20px;
+  }
+  .gate-box h2 {
+    font-size: 1.35rem;
+  }
+
+  /* QR POPUP: เต็มจอมากขึ้น */
+  .qr-box {
+    width: 92vw;
+    padding: 28px 20px;
+  }
+  .qr-box img {
+    width: 180px;
+    height: 180px;
+  }
+
+  /* CHECK STATUS SECTION */
+  #checkStatusSection {
+    margin: 20px 8px;
+    padding: 20px 16px;
+    max-width: 100%;
+  }
+
+  /* CHECKIN SECTION: เต็มความกว้างจอ ไม่มีขอบขาวเหลือ */
+  .checkin-section {
+    max-width: 100%;
+    padding: 24px 16px;
+    border-radius: 18px;
+  }
+  .dept-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Video section เต็มจอ ไม่มีขอบข้าง */
+  .video-section {
+    padding: 40px 12px;
+  }
+
+  /* ปิดลูกเล่นหนุมานที่บังปุ่มบนมือถือ (มีอยู่แล้วในไฟล์เดิม แต่ย้ำอีกที) */
+  .thai-character-egg {
+    display: none;
+  }
+}
+
+/* จอเล็กมาก (iPhone SE ฯลฯ) */
+@media (max-width: 380px) {
+  .hero h1 {
+    font-size: 1.6rem;
+  }
+  section {
+    padding: 48px 12px;
+  }
+  .dept-grid {
+    grid-template-columns: 1fr;
+  }
+}
