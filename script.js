@@ -124,13 +124,12 @@ getDatabase(app);
    VOTE SYSTEM
    (โหวตได้ 1 ครั้ง / 365 วัน)
 ========================= */
-
 window.voteTeam = async function (team) {
 
   // 🚧 ปิดโหวตชั่วคราว — ลบ 2 บรรทัดนี้ทิ้งตอนพร้อมเปิดโหวตจริง
   alert("⏳ ยังไม่เปิดโหวตครับ กรุณารอก่อนนะครับ 🙏");
   return;
-};
+
   try {
 
     const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
@@ -154,34 +153,36 @@ window.voteTeam = async function (team) {
         return;
       }
 
-    };
+    }
 
-/* =========================
-   COMMENT SYSTEM
-========================= */
+    // บันทึกเวลาที่โหวต
+    localStorage.setItem("voteData", JSON.stringify({
+      team: team,
+      time: Date.now()
+    }));
 
-commentForm.addEventListener('submit',(e)=>{
-  e.preventDefault();
+    playSound();
+    voteAnimation(team);
 
-  const name = document.getElementById('commentName').value.trim() || 'ANONYMOUS';
-  const text = document.getElementById('commentText').value.trim();
+    const voteRef = ref(db, "votes/" + team);
+    const snapshot = await get(voteRef);
 
-  if(text === ''){
-    alert('กรุณาพิมพ์ข้อความ');
-    return;
+    let current = snapshot.exists() ? snapshot.val() : 0;
+
+    await set(voteRef, current + 1);
+
+    alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${current + 1} คะแนน`);
+
+    fireEffect();
+
+  } catch (error) {
+
+    console.error(error);
+    alert("❌ โหวตไม่สำเร็จ");
+
   }
 
-  push(ref(db,'comments'),{
-    name: name,
-    text: text,
-    time: Date.now()
-  });
-
-  alert('💬 ส่งความคิดเห็นแล้ว');
-  commentForm.reset();
-
-  fireEffect(); // 🔥 เพิ่มบรรทัดนี้
-});
+};
 /* =========================
    FIRE EFFECT
 ========================= */
