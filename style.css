@@ -38,21 +38,18 @@ body {
   overflow-x: hidden;
 }
 
-/* ลายกนกพื้นหลัง (SVG pattern) */
-body {
-  font-family: 'Anuphan', sans-serif;
-  body {
-    background:
-        radial-gradient(circle at top right, #fff0f7 0%, transparent 35%),
-        radial-gradient(circle at bottom left, #ffeaf5 0%, transparent 30%),
-        #ffffff;
-}
-  color: var(--text);
-  overflow-x: hidden;
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='140' height='140' viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke-width='1'%3E%3Cpath d='M40 20 L42 28 L50 30 L42 32 L40 40 L38 32 L30 30 L38 28 Z' fill='%23ec6bae' opacity='0.18'/%3E%3Cpath d='M105 55 L107 61 L113 63 L107 65 L105 71 L103 65 L97 63 L103 61 Z' fill='%23d4af37' opacity='0.22'/%3E%3Cpath d='M65 95 L67 101 L73 103 L67 105 L65 111 L63 105 L57 103 L63 101 Z' fill='%23c9a2e0' opacity='0.2'/%3E%3Ccircle cx='20' cy='90' r='2' fill='%23ec6bae' opacity='0.3'/%3E%3Ccircle cx='120' cy='20' r='2' fill='%23c9a2e0' opacity='0.3'/%3E%3Ccircle cx='90' cy='120' r='2' fill='%23d4af37' opacity='0.3'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
 }
 
-
-/* กรอบทองริมหน้า */
+/* กรอบขอบหน้า (เผื่อใช้งานในอนาคต) */
 body::after {
   content: '';
   position: fixed;
@@ -165,21 +162,59 @@ body::after {
   z-index: 1;
 }
 
+/* แต่ละ span คือผีเสื้อ 1 ตัว วาดด้วย ::before/::after เป็นปีกซ้าย-ขวา */
 .particles span {
   position: absolute;
-  bottom: -120px;
-  width: 1px;
-  height: 80px;
-  background: linear-gradient(rgba(232, 0, 90, 0.5), transparent);
-  animation: matrix linear infinite;
-  opacity: 0.3;
-  border-radius: 999px;
+  bottom: -60px;
+  width: 22px;
+  height: 18px;
+  opacity: 0;
+  animation: butterflyFly linear infinite, butterflySway ease-in-out infinite alternate;
 }
 
-@keyframes matrix {
-  0%   { transform: translateY(0);      opacity: 0; }
-  10%  { opacity: 0.4; }
-  100% { transform: translateY(-120vh); opacity: 0; }
+.particles span::before,
+.particles span::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 11px;
+  height: 16px;
+  background: radial-gradient(ellipse at 30% 30%, var(--pink-light), var(--pink) 70%);
+  opacity: 0.55;
+  animation: wingFlap 0.35s ease-in-out infinite alternate;
+}
+
+.particles span::before {
+  left: 0;
+  border-radius: 100% 60% 100% 40%;
+  transform-origin: right center;
+}
+
+.particles span::after {
+  right: 0;
+  border-radius: 60% 100% 40% 100%;
+  transform-origin: left center;
+  animation-delay: 0.05s;
+  background: radial-gradient(ellipse at 70% 30%, var(--lilac-light), var(--lilac) 70%);
+}
+
+@keyframes butterflyFly {
+  0%   { transform: translateY(0);       opacity: 0; }
+  8%   { opacity: 0.7; }
+  92%  { opacity: 0.6; }
+  100% { transform: translateY(-115vh);  opacity: 0; }
+}
+
+/* แกว่งซ้าย-ขวาระหว่างบิน ให้ดูเหมือนล่องลอยตามลม ไม่ใช่พุ่งตรง */
+@keyframes butterflySway {
+  0%   { margin-left: -40px; }
+  100% { margin-left: 40px; }
+}
+
+/* ปีกกระพือ */
+@keyframes wingFlap {
+  0%   { transform: rotateY(0deg)   scaleX(1); }
+  100% { transform: rotateY(70deg)  scaleX(0.35); }
 }
 
 /* =========================
