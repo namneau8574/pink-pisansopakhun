@@ -186,6 +186,186 @@ function fireEffect() {
     setTimeout(() => fire.remove(), 1600);
   }
 }
+
+/* ============================================================
+   สรุปผลโหวตแบบวงกลม (Donut Chart) — เวอร์ชันสวยขึ้น
+   ต่อท้ายไฟล์ script.js เดิม
+   ------------------------------------------------------------
+   วิธีเชื่อมกับระบบโหวตจริงของคุณ:
+
+   1) แก้ getVoteCounts() ด้านล่าง ให้ดึงยอดโหวตจริงจากที่ที่
+      ปุ่ม VOTE NOW เดิมของคุณบันทึกข้อมูลไป (เช่น Google Sheets
+      ผ่าน Apps Script, Firebase, หรือ backend อื่น ๆ)
+
+   2) ในฟังก์ชัน voteTeam(id) ที่มีอยู่แล้ว หลังบันทึกโหวตสำเร็จ
+      ให้เรียก window.registerVote(index) ทันที เพื่ออัปเดตวงกลม
+      และเล่นเอฟเฟกต์ confetti โดยไม่ต้องรอ interval
+
+   3) ถ้าอยากให้เห็นคนอื่นโหวตแบบสด ๆ ด้วย ให้ใช้ realtime listener
+      ของ backend (เช่น Firebase onValue) แทนการ setInterval poll
+      ที่ใส่ไว้เป็นตัวอย่างด้านล่าง
+   ============================================================ */
+
+(function () {
+  // สีของแต่ละแบบเสื้อ เรียงตามลำดับการ์ดโหวต 4 แบบ
+  const VR_COLORS = ["#c9920a", "#e8005a", "#f0c14b", "#a80048"];
+
+  // ชื่อ label ของแต่ละแบบเสื้อ แก้ให้ตรงกับของจริง
+  const VR_LABELS = ["แบบที่ 1", "แบบที่ 2", "แบบที่ 3", "แบบที่ 4"];
+
+  // สีพื้นเหรียญอันดับ 1-3 และป้ายอันดับที่เหลือ
+  const MEDAL_BG = [
+    "linear-gradient(135deg,#f0c14b,#c9920a)",
+    "linear-gradient(135deg,#d9d9d9,#a8a8a8)",
+    "linear-gradient(135deg,#e0a877,#b5713e)",
+    "#d8c9a8"
+  ];
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let displayedTotal = 0;
+
+  // 🔌 จุดเชื่อมต่อข้อมูลจริง: แก้ฟังก์ชันนี้ให้ดึงยอดโหวตจริงจากระบบของคุณ
+  function getVoteCounts() {
+    const saved = localStorage.getItem('voteCounts');
+    if (saved) return JSON.parse(saved);
+    return [0, 0, 0, 0]; // ค่าเริ่มต้นตอนยังไม่มีใครโหวต
+  }
+
+  function saveVoteCounts(counts) {
+    localStorage.setItem('voteCounts', JSON.stringify(counts));
+  }
+
+  function animateTotal(target) {
+    const el = document.getElementById('totalVotes');
+    if (!el) return;
+    if (reduceMotion) { el.textContent = target; displayedTotal = target; return; }
+    const start = displayedTotal;
+    const duration = 500;
+    const t0 = performance.now();
+    function step(now) {
+      const p = Math.min(1, (now - t0) / duration);
+      const val = Math.round(start + (target - start) * (1 - Math.pow(1 - p, 3)));
+      el.textContent = val;
+      if (p < 1) requestAnimationFrame(step);
+      else displayedTotal = target;
+    }
+    requestAnimationFrame(step);
+  }
+
+  function renderDonut(counts) {
+    const donut = document.getElementById('donutChart');
+    const glow = document.getElementById('donutGlow');
+    const legend = document.getElementById('legend');
+    const updatedEl = document.getElementById('updatedAt');
+    const leaderBadge = document.getElementById('leaderBadge');
+    const leaderText = document.getElementById('leaderText');
+    if (!donut || !legend) return; // section ยังไม่ถูกใส่ในหน้านี้
+
+    const total = counts.reduce((a, b) => a + b, 0);
+    animateTotal(total);
+
+    // สร้าง conic-gradient ตามสัดส่วนโหวต
+    let gradientParts = [];
+    let cursor = 0;
+    counts.forEach((count, i) => {
+      const pct = total === 0 ? 0 : (count / total) * 100;
+      const end = cursor + pct * 3.6;
+      gradientParts.push(`${VR_COLORS[i]} ${cursor}deg ${end}deg`);
+      cursor = end;
+    });
+    const bg = total === 0 ? '#e8e0cc' : `conic-gradient(${gradientParts.join(', ')})`;
+    donut.style.background = bg;
+    if (glow) glow.style.background = bg;
+
+    // จัดอันดับจากมากไปน้อย
+    const ranked = counts
+      .map((count, i) => ({ i, count, pct: total === 0 ? 0 : (count / total) * 100 }))
+      .sort((a, b) => b.count - a.count);
+
+    if (leaderBadge && leaderText) {
+      if (total > 0) {
+        leaderBadge.style.display = 'flex';
+        leaderText.textContent = `กำลังนำ: ${VR_LABELS[ranked[0].i]}`;
+      } else {
+        leaderBadge.style.display = 'none';
+      }
+    }
+
+    legend.innerHTML = '';
+    ranked.forEach((item, rank) => {
+      const row = document.createElement('div');
+      row.className = 'vr-legend-row' + (rank === 0 && total > 0 ? ' is-leader' : '');
+      const medalHtml = rank < 3
+        ? `<div class="vr-medal" style="background:${MEDAL_BG[rank]}">${rank + 1}</div>`
+        : `<div class="vr-medal" style="background:${MEDAL_BG[3]}; color:#7a6a52;">${rank + 1}</div>`;
+      row.innerHTML = `
+        ${medalHtml}
+        <div class="vr-legend-swatch" style="background:${VR_COLORS[item.i]}"></div>
+        <div class="vr-legend-info">
+          <div class="vr-legend-top">
+            <span class="vr-name">${VR_LABELS[item.i]}</span>
+            <span class="vr-pct">${item.pct.toFixed(1)}% · ${item.count}</span>
+          </div>
+          <div class="vr-legend-bar">
+            <div class="vr-legend-bar-fill" style="width:${item.pct}%; background:${VR_COLORS[item.i]}"></div>
+          </div>
+        </div>
+      `;
+      legend.appendChild(row);
+    });
+
+    if (updatedEl) {
+      updatedEl.textContent = `อัปเดตล่าสุด ${new Date().toLocaleTimeString('th-TH')}`;
+    }
+  }
+
+  function burstConfetti() {
+    if (reduceMotion) return;
+    const target = document.getElementById('donutChart');
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2;
+    const originY = rect.top + rect.height / 2;
+
+    for (let i = 0; i < 14; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'vr-confetti-piece';
+      piece.style.background = VR_COLORS[i % VR_COLORS.length];
+      piece.style.left = originX + 'px';
+      piece.style.top = originY + 'px';
+      document.body.appendChild(piece);
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 60 + Math.random() * 90;
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist - 40;
+      const rot = Math.random() * 360;
+      piece.animate([
+        { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+        { transform: `translate(${dx}px, ${dy + 160}px) rotate(${rot}deg)`, opacity: 0 }
+      ], { duration: 900 + Math.random() * 400, easing: 'cubic-bezier(.2,.8,.4,1)' });
+      setTimeout(() => piece.remove(), 1400);
+    }
+  }
+
+  // เรียกฟังก์ชันนี้จาก voteTeam(id) ของคุณหลังบันทึกโหวตสำเร็จ
+  // ตัวอย่าง: window.registerVote(0) สำหรับแบบที่ 1
+  window.registerVote = function (index) {
+    const counts = getVoteCounts();
+    counts[index]++;
+    saveVoteCounts(counts);
+    renderDonut(counts);
+    burstConfetti();
+  };
+
+  window.renderDonut = renderDonut;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderDonut(getVoteCounts());
+    // เดโม/สำรอง: sync ทุก 3 วิ เผื่อมีคนโหวตจากเครื่องอื่น (ถ้ามี backend จริง
+    // ให้เปลี่ยนเป็น realtime listener แทนบรรทัดนี้)
+    setInterval(() => renderDonut(getVoteCounts()), 3000);
+  });
+})();
 /* =========================
    REGISTER SYSTEM
 ========================= */
