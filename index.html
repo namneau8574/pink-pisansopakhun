@@ -337,7 +337,34 @@
     </div>
 
   </div>
+<!-- ============================================================
+     สรุปผลโหวตแบบวงกลม (Donut Chart) — เวอร์ชันสวยขึ้น
+     วางส่วนนี้ต่อจาก </section> ของ #vote ในไฟล์ index.html เดิม
+     ============================================================ -->
+<section id="voteResults">
+  <div class="vr-inner">
+    <div class="vr-eyebrow"><span class="vr-dot"></span>ผลโหวตสด</div>
+    <h2 class="title">สรุปผลโหวตเสื้อคณะสี</h2>
+    <p class="vr-sub">อัปเดตทันทีทุกครั้งที่มีคนโหวต</p>
 
+    <div class="vr-leader-badge" id="leaderBadge" style="display:none;">
+      <span class="vr-crown">👑</span><span id="leaderText">กำลังนำ: —</span>
+    </div>
+
+    <div class="vr-donut-wrap">
+      <div class="vr-donut-glow" id="donutGlow"></div>
+      <div class="vr-donut" id="donutChart">
+        <div class="vr-donut-hole">
+          <div class="vr-total" id="totalVotes">0</div>
+          <div class="vr-total-label">โหวตทั้งหมด</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vr-legend" id="legend"></div>
+    <div class="vr-updated-at" id="updatedAt"></div>
+  </div>
+</section>
 <!-- COMMENT -->
 <section id="comment">
 <h2 class="title">
