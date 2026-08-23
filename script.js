@@ -1348,3 +1348,353 @@ function normalizeRoom(str) {
     .replace(/^ม\.?/, '')          // ลบ "ม." หรือ "ม" ที่นำหน้า (เช่น ม.4/7 -> 4/7, ม4/7 -> 4/7)
     .replace(/^m\.?/, '');         // เผื่อกรณีพิมพ์ภาษาอังกฤษ m.4/7 -> 4/7
 }
+
+
+
+
+const SYSTEM_ENABLED = false; 
+
+/* =========================
+   ORDER SHIRT SYSTEM
+========================= */
+// 🔗 แทนที่ด้วย Web app URL ที่ได้จากขั้นตอน Deploy Apps Script
+const ORDER_GAS_URL = "https://script.google.com/macros/s/AKfycbxMa8txjlSW_LDokzHb21uwzW3T2WVylsKYETXNv9MbUDc8MUCGT6k2eknUSw5QEjwn/exec";
+
+/* =========================
+   เลือกระดับชั้น → ห้อง
+========================= */
+const orderRoomsByLevel = {
+    "ม.1": ["1/2", "1/7", "1/15"],
+    "ม.2": ["2/1", "2/8", "2/13"],
+    "ม.3": ["3/1", "3/4", "3/5"],
+    "ม.4": ["4/1", "4/6", "4/13"],
+    "ม.5": ["5/3", "5/7", "5/11"],
+    "ม.6": ["6/7", "6/9", "6/14"]
+};
+
+const orderLevelGrid = document.getElementById('orderLevelGrid');
+const orderRoomGrid = document.getElementById('orderRoomGrid');
+const orderRoomSection = document.getElementById('orderRoomSection');
+const orderRoomInput = document.getElementById('orderRoom');
+
+if (orderLevelGrid) {
+    orderLevelGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.pick-btn');
+        if (!btn) return;
+
+        const selectedLevel = btn.dataset.level;
+
+        orderLevelGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+
+        orderRoomInput.value = '';
+
+        const rooms = orderRoomsByLevel[selectedLevel] || [];
+        orderRoomGrid.innerHTML = '';
+        rooms.forEach(room => {
+            const roomBtn = document.createElement('button');
+            roomBtn.type = 'button';
+            roomBtn.className = 'pick-btn';
+            roomBtn.dataset.room = room;
+            roomBtn.textContent = room;
+            orderRoomGrid.appendChild(roomBtn);
+        });
+
+        orderRoomSection.style.display = 'block';
+    });
+}
+
+if (orderRoomGrid) {
+    orderRoomGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.pick-btn');
+        if (!btn) return;
+
+        orderRoomGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+
+        orderRoomInput.value = btn.dataset.room;
+    });
+}
+
+/* =========================
+   เลือกไซร์
+========================= */
+const sizeGrid = document.getElementById('sizeGrid');
+const orderSizeInput = document.getElementById('orderSize');
+
+if (sizeGrid) {
+  sizeGrid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.pick-btn');
+    if (!btn) return;
+    sizeGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    orderSizeInput.value = btn.dataset.size;
+  });
+}
+
+/* =========================
+   จำกัดให้ช่องเบอร์หลังเสื้อกรอกได้เฉพาะตัวเลข
+========================= */
+const orderBackNumberInput = document.getElementById('orderBackNumber');
+if (orderBackNumberInput) {
+  orderBackNumberInput.addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+  });
+}
+
+/* =========================
+   ส่งฟอร์มสั่งเสื้อ
+========================= */
+const orderForm = document.getElementById('orderForm');
+if (orderForm) {
+  // ปิด native validation ของเบราว์เซอร์ไว้ก่อน
+  // เพื่อกันไม่ให้ event 'submit' ถูกเบราว์เซอร์สกัดไว้ก่อนโค้ดข้างล่างจะได้รัน
+  // (ไม่งั้นถ้ามีช่องที่ required แล้วกรอกไม่ครบ ปุ่มจะไม่ยิง submit event เลย
+  //  ทำให้ข้อความ "ระบบยังไม่เปิด" ไม่ขึ้น)
+  orderForm.noValidate = true;
+ 
+  orderForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+ 
+    // 🚧 ระบบยังไม่เปิดให้สั่งจองจริง — เช็คเป็นด่านแรกสุดเสมอ ไม่ว่าจะกรอกอะไรมาหรือไม่
+    if (!SYSTEM_ENABLED) {
+      alert('🚧 ระบบสั่งจองเสื้อยังไม่เปิดให้ใช้งานในขณะนี้ กรุณารอประกาศอีกครั้ง');
+      return;
+    }
+    const name = document.getElementById('orderName').value.trim();
+    const room = document.getElementById('orderRoom').value.trim();
+    const rollNo = document.getElementById('orderRollNo') ? document.getElementById('orderRollNo').value.trim() : '';
+    const backName = document.getElementById('orderBackName') ? document.getElementById('orderBackName').value.trim() : '';
+    const backNumber = document.getElementById('orderBackNumber') ? document.getElementById('orderBackNumber').value.trim() : '';
+    const size = orderSizeInput ? orderSizeInput.value : '';
+
+    if (!name || !room || !rollNo || !size) {
+      alert('⚠️ กรุณากรอกชื่อ เลือกระดับชั้น/ห้อง เลขที่ และเลือกไซซ์ให้ครบ');
+      return;
+    }
+
+    const btn = document.getElementById('orderSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ กำลังส่งข้อมูล...';
+
+    try {
+      const payload = {
+        name: name,
+        room: room,
+        rollNo: rollNo,
+        backName: backName,
+        backNumber: backNumber,
+        size: size
+      };
+
+      const response = await fetch(ORDER_GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert('✅ สั่งจองเสื้อสำเร็จ! ขอบคุณครับ 🌸');
+        orderForm.reset();
+
+        if (orderLevelGrid) {
+          orderLevelGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+        }
+        if (orderRoomGrid) {
+          orderRoomGrid.innerHTML = '';
+        }
+        if (orderRoomSection) {
+          orderRoomSection.style.display = 'none';
+        }
+        if (sizeGrid) {
+          sizeGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+        }
+      } else {
+        alert('❌ เกิดข้อผิดพลาดจากระบบ: ' + data.error);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '⚡ ยืนยันการสั่งจอง';
+    }
+  });
+}
+
+/* =========================
+   PAYMENT SYSTEM (ค้นหาชื่อ -> จ่ายเงิน -> แนบสลิป)
+========================= */
+
+
+// ใช้ URL เดียวกับตอนสั่งจองเสื้อ (Apps Script ตัวเดียวกัน)
+const PAY_GAS_URL = "https://script.google.com/macros/s/AKfycbxMa8txjlSW_LDokzHb21uwzW3T2WVylsKYETXNv9MbUDc8MUCGT6k2eknUSw5QEjwn/exec";
+
+let paySelectedRowIndex = null;
+let paySlipBase64 = "";
+
+const paySearchForm = document.getElementById('paySearchForm');
+const payErrorBox = document.getElementById('payErrorBox');
+const payMatchList = document.getElementById('payMatchList');
+const paymentSection = document.getElementById('paymentSection');
+const payOrderSummary = document.getElementById('payOrderSummary');
+const paySuccessBox = document.getElementById('paySuccessBox');
+
+function payResetBoxes() {
+  if (payErrorBox) { payErrorBox.style.display = 'none'; payErrorBox.textContent = ''; }
+  if (payMatchList) { payMatchList.style.display = 'none'; payMatchList.innerHTML = ''; }
+  if (paymentSection) paymentSection.style.display = 'none';
+  if (paySuccessBox) { paySuccessBox.style.display = 'none'; paySuccessBox.innerHTML = ''; }
+  paySelectedRowIndex = null;
+  paySlipBase64 = "";
+}
+
+function payShowOrder(match) {
+  paySelectedRowIndex = match.rowIndex;
+
+  if (payOrderSummary) {
+    payOrderSummary.innerHTML = `
+      <p>👤 <strong>${match.name}</strong></p>
+    
+     <p>👕 Size ${match.size} ${match.backName ? '· หลังเสื้อ: ' + match.backName + ' ' + match.backNumber : ''}</p>
+      ${match.paid ? '<p style="color:#c9920a;">⚠️ รายการนี้เคยแนบสลิปแล้ว แนบซ้ำจะเขียนทับของเดิม</p>' : ''}
+    `;
+  }
+
+  if (paymentSection) paymentSection.style.display = 'block';
+  if (payMatchList) payMatchList.style.display = 'none';
+}
+
+if (paySearchForm) {
+  paySearchForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    payResetBoxes();
+
+    const name = document.getElementById('payName').value.trim();
+    if (!name) return;
+
+    const searchBtn = document.getElementById('paySearchBtn');
+    searchBtn.disabled = true;
+    searchBtn.textContent = '⏳ กำลังค้นหา...';
+
+    try {
+      const url = `${PAY_GAS_URL}?action=search&name=${encodeURIComponent(name)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (!data.success) {
+        payErrorBox.textContent = '❌ ' + (data.error || 'เกิดข้อผิดพลาด');
+        payErrorBox.style.display = 'block';
+        return;
+      }
+
+      const matches = data.matches || [];
+
+      if (matches.length === 0) {
+        payErrorBox.textContent = '❌ ไม่พบคำสั่งจองของชื่อนี้ กรุณาตรวจสอบการสะกดชื่ออีกครั้ง';
+        payErrorBox.style.display = 'block';
+        return;
+      }
+
+      if (matches.length === 1) {
+        payShowOrder(matches[0]);
+        return;
+      }
+
+      // เจอชื่อซ้ำหลายรายการ ให้เลือกอันที่ใช่
+      payMatchList.innerHTML = '<p style="margin-bottom:10px;">พบหลายรายการ กรุณาเลือกรายการของคุณ:</p>';
+      matches.forEach(m => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pay-match-btn';
+        btn.textContent = `${m.name} — ${m.room} เลขที่ ${m.rollNo} (ไซซ์ ${m.size})`;
+        btn.onclick = () => payShowOrder(m);
+        payMatchList.appendChild(btn);
+      });
+      payMatchList.style.display = 'block';
+
+    } catch (err) {
+      console.error(err);
+      payErrorBox.textContent = '❌ เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่';
+      payErrorBox.style.display = 'block';
+    } finally {
+      searchBtn.disabled = false;
+      searchBtn.textContent = '🔍 ค้นหาคำสั่งจอง';
+    }
+  });
+}
+
+// แนบรูปสลิป
+const paySlipInput = document.getElementById('paySlipInput');
+const payUploadDrop = document.getElementById('payUploadDrop');
+
+if (paySlipInput) {
+  paySlipInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+      paySlipBase64 = ev.target.result;
+      const previewEl = document.getElementById('paySlipPreview');
+      const previewBox = document.getElementById('paySlipPreviewBox');
+
+      if (previewEl) previewEl.src = paySlipBase64;
+      if (previewBox) previewBox.classList.add('show');
+      if (payUploadDrop) payUploadDrop.querySelector('.upload-text').textContent = '✅ แนบสลิปแล้ว (แตะเพื่อเปลี่ยน)';
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ยืนยันการชำระเงิน
+const payConfirmBtn = document.getElementById('payConfirmBtn');
+if (payConfirmBtn) {
+  payConfirmBtn.addEventListener('click', async () => {
+    if (!paySelectedRowIndex) {
+      alert('⚠️ กรุณาค้นหาและเลือกรายการก่อน');
+      return;
+    }
+    if (!paySlipBase64) {
+      alert('⚠️ กรุณาแนบรูปสลิปโอนเงิน');
+      return;
+    }
+
+    payConfirmBtn.disabled = true;
+    payConfirmBtn.textContent = '⏳ กำลังบันทึกสลิป...';
+
+    try {
+      const payload = {
+        action: 'pay',
+        rowIndex: paySelectedRowIndex,
+        photo: paySlipBase64
+      };
+
+      const response = await fetch(PAY_GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        paymentSection.style.display = 'none';
+        paySuccessBox.innerHTML = '<p>✅ แนบสลิปสำเร็จ! ขอบคุณสำหรับการชำระเงิน 🌸</p>';
+        paySuccessBox.style.display = 'block';
+      } else {
+        alert('❌ เกิดข้อผิดพลาดจากระบบ: ' + data.error);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+    } finally {
+      payConfirmBtn.disabled = false;
+      payConfirmBtn.textContent = '⚡ ยืนยันการชำระเงิน';
+    }
+  });
+}
