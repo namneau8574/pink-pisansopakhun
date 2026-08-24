@@ -2803,7 +2803,10 @@ img, video {
   letter-spacing: 0.05em;
 }
 
-/* ปุ่มเลือกไซซ์ (ใช้ .btn-grid / .pick-btn เดิม แต่ปรับสีเฉพาะจุดนี้) */
+/* =========================================================
+   ปุ่มเลือก (ระดับชั้น / ห้อง / ไซซ์) — ใช้ .btn-grid / .pick-btn ร่วมกัน
+========================================================= */
+
 #ordershirt .btn-grid {
   display: flex;
   flex-wrap: wrap;
@@ -2829,11 +2832,20 @@ img, video {
   background: var(--pink-pale);
 }
 
+#ordershirt .pick-btn:active {
+  transform: scale(0.97);
+}
+
 #ordershirt .pick-btn.selected {
   background: linear-gradient(135deg, var(--pink), var(--pink-light));
   border-color: var(--pink);
   color: #fff;
   box-shadow: 0 4px 14px rgba(255, 46, 136, 0.3);
+}
+
+/* ยังไม่ได้เลือกระดับชั้น -> ยังไม่โชว์ห้อง (คุมด้วย JS ใส่ display:block ทีหลัง) */
+#ordershirt #orderRoomSection {
+  display: none;
 }
 
 /* อัปโหลดสลิป */
@@ -2944,16 +2956,13 @@ img, video {
 
 /* ===== RESPONSIVE ===== */
 
-/* แท็บเล็ต / จอแคบ: เปลี่ยนเลย์เอาต์ 2 คอลัมน์ -> 1 คอลัมน์ */
+/* แท็บเล็ต / มือถือ: เปลี่ยนเลย์เอาต์ 2 คอลัมน์ -> 1 คอลัมน์ */
 @media (max-width: 900px) {
   #ordershirt .order-layout {
     grid-template-columns: 1fr;
     gap: 28px;
   }
-}
 
-/* มือถือทั่วไป */
-@media (max-width: 640px) {
   #ordershirt .order-header {
     margin-bottom: 32px;
   }
@@ -3006,21 +3015,39 @@ img, video {
     padding: 8px 20px;
   }
 
-  /* ปุ่มไซซ์ให้กดง่ายขึ้นและกระจายเต็มความกว้าง */
-  #ordershirt .btn-grid {
-    gap: 8px;
-  }
-
-  #ordershirt .pick-btn {
-    flex: 1 1 calc(33.333% - 8px);
-    padding: 11px 8px;
-    font-size: 0.85rem;
-    text-align: center;
-  }
-
   #ordershirt #orderSubmitBtn {
     font-size: 0.95rem;
     padding: 16px;
+  }
+
+  /* ---------- ปุ่มเลือก: ทำให้ดูง่าย กดง่ายบนมือถือ ---------- */
+
+  /* ระดับชั้น (ม.1–ม.6): ตรึงไว้ 3 ปุ่มต่อแถวเสมอ (3x2) */
+  #ordershirt #orderLevelGrid.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  /* ไซซ์ (S–3xL): จัดเป็นกริดขนาดพอดี แถวละ 2-3 ปุ่มอัตโนมัติ */
+  #ordershirt #sizeGrid.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+    gap: 10px;
+  }
+
+  /* ห้อง: มีแค่ 3 ตัวเลือกต่อระดับชั้น แต่ข้อความยาว (เช่น 2/13) -> เรียงลงมาเต็มแถวให้อ่านง่าย */
+  #ordershirt #orderRoomGrid.btn-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  #ordershirt .pick-btn {
+    width: 100%;
+    padding: 13px 10px;
+    font-size: 1rem;
+    text-align: center;
   }
 }
 
@@ -3053,8 +3080,9 @@ img, video {
     text-align: left;
   }
 
-  #ordershirt .pick-btn {
-    flex: 1 1 calc(50% - 8px);
+  /* จอเล็กมาก: ไซซ์เหลือ 2 ปุ่มต่อแถวพอ ไม่บีบจนอ่านยาก (ระดับชั้นคงไว้ที่ 3 ต่อแถวเหมือนเดิม) */
+  #ordershirt #sizeGrid.btn-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   #ordershirt .step-label {
