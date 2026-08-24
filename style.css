@@ -2538,7 +2538,7 @@ img, video {
 
 
 /* =========================================================
-   ORDER SHIRT SECTION (#ordershirt)
+   ORDER SHIRT SECTION (#ordershirt) — ปรับให้กะทัดรัด + ปุ่มกดง่ายบนมือถือ
 ========================================================= */
 
 #ordershirt {
@@ -2749,7 +2749,7 @@ img, video {
 
 #ordershirt .step-fields {
   flex: 1;
-  min-width: 0; /* ป้องกัน flex item ดันล้นจอมือถือ */
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -2769,7 +2769,7 @@ img, video {
   border: 1.5px solid rgba(232, 166, 201, 0.35);
   background: var(--gold-pale);
   color: var(--text);
-  font-size: 16px; /* ป้องกัน iOS Safari auto-zoom เวลาโฟกัส input */
+  font-size: 16px;
   font-family: 'Anuphan', sans-serif;
   outline: none;
   transition: 0.25s;
@@ -2785,7 +2785,6 @@ img, video {
   box-shadow: 0 0 0 3px rgba(255, 46, 136, 0.1);
 }
 
-/* แถวชื่อ-เบอร์หลังเสื้อ ให้อยู่บรรทัดเดียวกัน */
 #ordershirt .name-number-row {
   display: flex;
   gap: 10px;
@@ -2804,7 +2803,7 @@ img, video {
 }
 
 /* =========================================================
-   ปุ่มเลือก (ระดับชั้น / ห้อง / ไซซ์) — ใช้ .btn-grid / .pick-btn ร่วมกัน
+   ปุ่มเลือก (ระดับชั้น / ห้อง / ไซซ์)
 ========================================================= */
 
 #ordershirt .btn-grid {
@@ -2824,7 +2823,7 @@ img, video {
   font-family: 'Anuphan', sans-serif;
   cursor: pointer;
   transition: 0.2s;
-  min-height: 44px; /* touch target ที่กดง่ายบนมือถือ */
+  min-height: 44px;
 }
 
 #ordershirt .pick-btn:hover {
@@ -2843,7 +2842,6 @@ img, video {
   box-shadow: 0 4px 14px rgba(255, 46, 136, 0.3);
 }
 
-/* ยังไม่ได้เลือกระดับชั้น -> ยังไม่โชว์ห้อง (คุมด้วย JS ใส่ display:block ทีหลัง) */
 #ordershirt #orderRoomSection {
   display: none;
 }
@@ -2916,7 +2914,7 @@ img, video {
   transition: 0.3s;
   position: relative;
   overflow: hidden;
-  min-height: 48px; /* touch target */
+  min-height: 48px;
 }
 
 #ordershirt #orderSubmitBtn::before {
@@ -2939,7 +2937,6 @@ img, video {
   transform: none;
 }
 
-/* รายการคำสั่งจอง (ถ้ามีการ์ดโชว์ผลเพิ่มเข้ามาแบบไดนามิก) */
 #ordershirt #orderContainer {
   margin-top: 36px;
   display: grid;
@@ -2954,124 +2951,133 @@ img, video {
   border-left: 4px solid var(--pink-light);
 }
 
-/* ===== RESPONSIVE ===== */
 
-/* แท็บเล็ต / มือถือ: เปลี่ยนเลย์เอาต์ 2 คอลัมน์ -> 1 คอลัมน์ */
+/* แท็บเล็ต / มือถือ */
 @media (max-width: 900px) {
   #ordershirt .order-layout {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 24px;
   }
 
   #ordershirt .order-header {
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
   #ordershirt .order-sub {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     padding: 0 8px;
   }
 
+  /* การ์ดกะทัดรัดลง ไม่ใหญ่คับจอ */
   #ordershirt .order-form {
-    padding: 26px 20px;
-    gap: 22px;
-    border-radius: 22px;
+    padding: 22px 18px;
+    gap: 20px;
+    border-radius: 20px;
   }
 
   #ordershirt .shirt-card,
   #ordershirt .qr-card {
-    padding: 22px 18px;
-    border-radius: 20px;
+    padding: 18px 16px;
+    border-radius: 18px;
   }
 
   #ordershirt .shirt-img {
-    max-width: 200px;
+    max-width: 180px;
+    margin: 8px auto 14px;
+  }
+
+  #ordershirt .shirt-info h3 {
+    font-size: 1.2rem;
   }
 
   #ordershirt .form-step {
-    gap: 12px;
+    gap: 10px;
   }
 
   #ordershirt .step-num {
-    width: 28px;
-    height: 28px;
-    font-size: 0.85rem;
+    width: 26px;
+    height: 26px;
+    font-size: 0.8rem;
   }
 
   #ordershirt .qr-img {
-    width: 160px;
-    height: 160px;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 10px;
   }
 
   #ordershirt .winner-ribbon {
-    font-size: 0.65rem;
-    padding: 5px 38px;
-    top: 16px;
+    font-size: 0.62rem;
+    padding: 5px 36px;
+    top: 14px;
     left: -36px;
   }
 
   #ordershirt .price-tag {
-    font-size: 0.9rem;
-    padding: 8px 20px;
+    font-size: 0.85rem;
+    padding: 7px 18px;
   }
 
   #ordershirt #orderSubmitBtn {
-    font-size: 0.95rem;
-    padding: 16px;
+    font-size: 0.92rem;
+    padding: 15px;
   }
 
-  /* ---------- ปุ่มเลือก: ทำให้ดูง่าย กดง่ายบนมือถือ ---------- */
+  /* ---------- ปุ่มเลือก: โล่งขึ้น ไม่บีบ ปรับตามความยาวข้อความ ---------- */
 
-  /* ระดับชั้น (ม.1–ม.6): ตรึงไว้ 3 ปุ่มต่อแถวเสมอ (3x2) */
-  #ordershirt #orderLevelGrid.btn-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
+  /* ระดับชั้น (ม.1–ม.6): auto-fit แทนบังคับ 3 คอลัมน์ ป้องกันข้อความถูกบีบ */
 
-  /* ไซซ์ (S–3xL): จัดเป็นกริดขนาดพอดี แถวละ 2-3 ปุ่มอัตโนมัติ */
+#ordershirt #orderLevelGrid.btn-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+  /* ไซซ์ (S–3xL) */
   #ordershirt #sizeGrid.btn-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
     gap: 10px;
   }
 
-  /* ห้อง: มีแค่ 3 ตัวเลือกต่อระดับชั้น แต่ข้อความยาว (เช่น 2/13) -> เรียงลงมาเต็มแถวให้อ่านง่าย */
+  /* ห้อง: 2 ปุ่มต่อแถวพอมีที่หายใจ ไม่เรียงเต็มแถวจนดูยาวเกิน */
   #ordershirt #orderRoomGrid.btn-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     gap: 10px;
   }
 
   #ordershirt .pick-btn {
     width: 100%;
-    padding: 13px 10px;
-    font-size: 1rem;
+    padding: 12px 8px;
+    font-size: 0.92rem;
     text-align: center;
+    border-radius: 14px;
   }
 }
 
 /* มือถือจอเล็ก (iPhone SE และเล็กกว่า) */
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   #ordershirt .order-form {
-    padding: 20px 16px;
+    padding: 16px 14px;
+    border-radius: 18px;
   }
 
   #ordershirt .shirt-card,
   #ordershirt .qr-card {
-    padding: 18px 14px;
+    padding: 14px 12px;
+    border-radius: 16px;
   }
 
   #ordershirt .shirt-img {
-    max-width: 170px;
+    max-width: 150px;
   }
 
   #ordershirt .qr-img {
-    width: 140px;
-    height: 140px;
+    width: 130px;
+    height: 130px;
   }
 
-  /* แถวชื่อ-เบอร์หลังเสื้อ ยุบเป็นแนวตั้งเมื่อจอแคบมาก กันช่องเบอร์บีบเกินไป */
   #ordershirt .name-number-row {
     flex-direction: column;
   }
@@ -3080,23 +3086,38 @@ img, video {
     text-align: left;
   }
 
-  /* จอเล็กมาก: ไซซ์เหลือ 2 ปุ่มต่อแถวพอ ไม่บีบจนอ่านยาก (ระดับชั้นคงไว้ที่ 3 ต่อแถวเหมือนเดิม) */
+  #ordershirt #orderLevelGrid.btn-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   #ordershirt #sizeGrid.btn-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  #ordershirt #orderRoomGrid.btn-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #ordershirt .pick-btn {
+    font-size: 0.85rem;
+    padding: 11px 6px;
+    min-height: 42px;
+  }
+
   #ordershirt .step-label {
-    font-size: 0.88rem;
+    font-size: 0.85rem;
   }
 
   #ordershirt .upload-drop {
-    padding: 22px 12px;
+    padding: 20px 10px;
   }
 }
 
 
+
 /* =========================================================
-   PAYMENT SECTION (#payment) — Enhanced Edition
+   PAYMENT SECTION (#payment)
+   ค้นหาชื่อ -> จ่ายเงิน -> แนบสลิป
    วิธีใช้: เพิ่มใน <head>
    <link rel="stylesheet" href="payment.css">
 ========================================================= */
@@ -3108,11 +3129,11 @@ img, video {
 
 #payment .order-header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 30px;
 }
 
 #payment .order-header .title {
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   background: linear-gradient(135deg, var(--pink), #ff7cb8);
   -webkit-background-clip: text;
   background-clip: text;
@@ -3123,7 +3144,9 @@ img, video {
 
 #payment .order-header .order-sub {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
+  max-width: 420px;
+  margin: 0 auto;
 }
 
 #payment .payment-layout {
@@ -3131,15 +3154,15 @@ img, video {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
-/* ฟอร์มค้นหาชื่อ */
+/* ===== ฟอร์มค้นหาชื่อ ===== */
+
 #payment .pay-search-form {
   display: flex;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(10px);
+  gap: 8px;
+  background: var(--white);
   padding: 8px;
   border-radius: 20px;
   border: 1.5px solid rgba(232, 166, 201, 0.35);
@@ -3160,6 +3183,10 @@ img, video {
   transition: 0.25s ease;
 }
 
+#payment .pay-search-form input::placeholder {
+  color: rgba(181, 103, 154, 0.55);
+}
+
 #payment .pay-search-form input:focus {
   border-color: var(--pink);
   background: var(--white);
@@ -3173,12 +3200,14 @@ img, video {
   background: linear-gradient(135deg, var(--pink), var(--pink-light));
   color: #fff;
   font-weight: 700;
+  font-size: 0.9rem;
   font-family: 'Anuphan', sans-serif;
   cursor: pointer;
   white-space: nowrap;
   box-shadow: 0 6px 18px rgba(255, 46, 136, 0.28);
   transition: 0.25s ease;
-  min-height: 48px; /* touch target */
+  min-height: 48px;
+  flex-shrink: 0;
 }
 
 #payment .pay-search-form button:hover {
@@ -3197,25 +3226,40 @@ img, video {
   box-shadow: none;
 }
 
-/* กล่องแจ้งเตือน error */
+/* ===== กล่องแจ้งเตือน error ===== */
+
 #payment .pay-error-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   background: rgba(255, 46, 136, 0.08);
   color: var(--pink);
   border-left: 4px solid var(--pink);
   padding: 14px 18px;
   border-radius: 12px;
   font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1.5;
   animation: payFadeIn 0.3s ease;
 }
 
-/* กรณีชื่อซ้ำหลายรายการ */
+/* ===== กรณีชื่อซ้ำหลายรายการ ===== */
+
 #payment .pay-match-list {
   background: var(--white);
   border: 1px solid rgba(232, 166, 201, 0.3);
-  border-radius: 18px;
-  padding: 18px;
+  border-radius: 20px;
+  padding: 16px;
   color: var(--text);
+  box-shadow: 0 8px 24px rgba(255, 46, 136, 0.08);
   animation: payFadeIn 0.3s ease;
+}
+
+#payment .pay-match-list > p:first-child {
+  font-weight: 700;
+  color: var(--dark);
+  font-size: 0.92rem;
+  margin: 2px 0 12px;
 }
 
 #payment .pay-match-btn {
@@ -3224,15 +3268,17 @@ img, video {
   text-align: left;
   padding: 13px 16px;
   margin-bottom: 8px;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1.5px solid rgba(232, 166, 201, 0.35);
   background: var(--gold-pale);
   color: var(--text);
   font-family: 'Anuphan', sans-serif;
   font-weight: 600;
+  font-size: 0.88rem;
+  line-height: 1.4;
   cursor: pointer;
   transition: 0.2s ease;
-  min-height: 44px; /* touch target */
+  min-height: 44px;
 }
 
 #payment .pay-match-btn:last-child {
@@ -3245,25 +3291,31 @@ img, video {
   transform: translateX(4px);
 }
 
-/* สรุปคำสั่งจองที่เจอ + การ์ดจ่ายเงิน */
+#payment .pay-match-btn:active {
+  transform: translateX(2px) scale(0.99);
+}
+
+/* ===== การ์ดสรุปคำสั่งจอง + จ่ายเงิน ===== */
+
 #payment .payment-section {
   background: var(--white);
   border: 1px solid rgba(232, 166, 201, 0.35);
   border-radius: 24px;
-  padding: 28px;
+  padding: 26px;
   box-shadow: 0 14px 40px rgba(255, 46, 136, 0.12);
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
   animation: payFadeIn 0.4s ease;
 }
 
 #payment .pay-order-summary {
   background: linear-gradient(135deg, var(--pink-pale), var(--gold-pale));
   border-radius: 16px;
-  padding: 18px 20px;
+  padding: 16px 20px;
   color: var(--text);
-  line-height: 1.8;
+  line-height: 1.9;
+  font-size: 0.92rem;
   border: 1px solid rgba(232, 166, 201, 0.3);
 }
 
@@ -3277,12 +3329,13 @@ img, video {
   font-weight: 700;
 }
 
-/* การ์ด QR */
+/* ===== การ์ด QR ===== */
+
 #payment .qr-card {
   background: var(--white);
   border: 1px solid rgba(232, 166, 201, 0.35);
-  border-radius: 22px;
-  padding: 26px;
+  border-radius: 20px;
+  padding: 22px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -3299,24 +3352,36 @@ img, video {
   pointer-events: none;
 }
 
+/* มุมประดับ ให้เข้าธีมเดียวกับการ์ดสั่งเสื้อ */
+#payment .qr-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 32px; height: 32px;
+  border-top: 2px solid var(--gold-light);
+  border-left: 2px solid var(--gold-light);
+  border-radius: 20px 0 0 0;
+  pointer-events: none;
+}
+
 #payment .qr-label {
   font-weight: 700;
   color: var(--dark);
-  margin-bottom: 16px;
-  font-size: 0.95rem;
+  margin-bottom: 14px;
+  font-size: 0.92rem;
   position: relative;
 }
 
 #payment .qr-img {
-  width: 190px;
-  height: 190px;
+  width: 170px;
+  height: 170px;
   object-fit: contain;
   background: #fff;
-  padding: 12px;
-  border-radius: 18px;
+  padding: 10px;
+  border-radius: 16px;
   border: 1.5px solid rgba(232, 166, 201, 0.4);
   box-shadow: 0 6px 22px rgba(255, 46, 136, 0.14);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   position: relative;
 }
 
@@ -3332,19 +3397,20 @@ img, video {
 #payment .bank-info span:first-child {
   color: var(--pink);
   font-weight: 700;
-  font-size: 0.98rem;
+  font-size: 0.95rem;
 }
 
-/* แนบสลิป */
+/* ===== แนบสลิป ===== */
+
 #payment .upload-drop {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 30px 16px;
+  gap: 8px;
+  padding: 24px 16px;
   border: 2px dashed rgba(255, 46, 136, 0.4);
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--gold-pale);
   cursor: pointer;
   text-align: center;
@@ -3358,11 +3424,11 @@ img, video {
 }
 
 #payment .upload-icon {
-  font-size: 2rem;
+  font-size: 1.8rem;
 }
 
 #payment .upload-text {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--text-muted);
   font-weight: 600;
 }
@@ -3382,28 +3448,40 @@ img, video {
 
 #payment .slip-preview-box img {
   width: 100%;
-  max-height: 260px;
+  max-height: 240px;
   object-fit: contain;
   background: var(--gold-pale);
   display: block;
 }
 
-/* ปุ่มยืนยันจ่ายเงิน */
+/* ===== ปุ่มยืนยันจ่ายเงิน ===== */
+
 #payment #payConfirmBtn {
   width: 100%;
-  padding: 18px;
+  padding: 17px;
   border: none;
   border-radius: 50px;
   background: linear-gradient(135deg, var(--pink), var(--pink-light));
   color: #fff;
   font-family: 'Anuphan', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: 0.08em;
+  font-size: 0.98rem;
+  letter-spacing: 0.06em;
   cursor: pointer;
   box-shadow: 0 10px 28px rgba(255, 46, 136, 0.32);
   transition: 0.3s ease;
-  min-height: 48px; /* touch target */
+  min-height: 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+#payment #payConfirmBtn::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 49px;
+  border: 1px solid rgba(255, 196, 224, 0.5);
+  pointer-events: none;
 }
 
 #payment #payConfirmBtn:hover {
@@ -3422,20 +3500,25 @@ img, video {
   box-shadow: none;
 }
 
-/* กล่องสำเร็จ */
+/* ===== กล่องสำเร็จ ===== */
+
 #payment .pay-success-box {
   max-width: 520px;
-  margin: 18px auto 0;
+  margin: 6px auto 0;
   background: linear-gradient(135deg, var(--white), var(--pink-pale));
   border: 1px solid rgba(232, 166, 201, 0.4);
   border-radius: 20px;
-  padding: 26px;
+  padding: 24px;
   text-align: center;
   color: var(--pink);
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 1rem;
   box-shadow: 0 12px 30px rgba(255, 46, 136, 0.14);
   animation: payFadeIn 0.4s ease;
+}
+
+#payment .pay-success-box p {
+  margin: 0;
 }
 
 @keyframes payFadeIn {
@@ -3453,13 +3536,22 @@ img, video {
 
 /* มือถือทั่วไป */
 @media (max-width: 640px) {
+  #payment .order-header {
+    margin-bottom: 22px;
+  }
+
   #payment .order-header .title {
     font-size: 1.35rem;
   }
 
+  #payment .order-header .order-sub {
+    font-size: 0.85rem;
+    padding: 0 10px;
+  }
+
   #payment .payment-layout {
     max-width: 100%;
-    gap: 16px;
+    gap: 14px;
   }
 
   #payment .pay-search-form {
@@ -3473,39 +3565,9 @@ img, video {
   }
 
   #payment .payment-section {
-    padding: 22px;
+    padding: 18px;
     border-radius: 20px;
-    gap: 18px;
-  }
-
-  #payment .qr-card {
-    padding: 20px;
-  }
-
-  #payment .qr-img {
-    width: 160px;
-    height: 160px;
-  }
-
-  #payment .pay-order-summary {
-    padding: 16px;
-    font-size: 0.92rem;
-  }
-
-  #payment .pay-success-box {
-    padding: 20px;
-    font-size: 0.95rem;
-  }
-}
-
-/* มือถือจอเล็ก (iPhone SE และเล็กกว่า) */
-@media (max-width: 400px) {
-  #payment .order-header .title {
-    font-size: 1.2rem;
-  }
-
-  #payment .payment-section {
-    padding: 16px;
+    gap: 16px;
   }
 
   #payment .qr-card {
@@ -3517,12 +3579,42 @@ img, video {
     height: 140px;
   }
 
+  #payment .pay-order-summary {
+    padding: 14px 16px;
+    font-size: 0.88rem;
+  }
+
+  #payment .pay-success-box {
+    padding: 18px;
+    font-size: 0.92rem;
+  }
+}
+
+/* มือถือจอเล็ก (iPhone SE และเล็กกว่า) */
+@media (max-width: 400px) {
+  #payment .order-header .title {
+    font-size: 1.2rem;
+  }
+
+  #payment .payment-section {
+    padding: 14px;
+  }
+
+  #payment .qr-card {
+    padding: 14px;
+  }
+
+  #payment .qr-img {
+    width: 120px;
+    height: 120px;
+  }
+
   #payment .upload-drop {
-    padding: 22px 12px;
+    padding: 18px 10px;
   }
 
   #payment .pay-match-btn {
     padding: 11px 12px;
-    font-size: 0.9rem;
+    font-size: 0.82rem;
   }
 }
