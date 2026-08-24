@@ -2952,8 +2952,11 @@ img, video {
 }
 
 
-/* แท็บเล็ต / มือถือ */
+/* ================================
+   แท็บเล็ต / มือถือ
+================================ */
 @media (max-width: 900px) {
+
   #ordershirt .order-layout {
     grid-template-columns: 1fr;
     gap: 24px;
@@ -2968,7 +2971,6 @@ img, video {
     padding: 0 8px;
   }
 
-  /* การ์ดกะทัดรัดลง ไม่ใหญ่คับจอ */
   #ordershirt .order-form {
     padding: 22px 18px;
     gap: 20px;
@@ -3023,41 +3025,61 @@ img, video {
     padding: 15px;
   }
 
-  /* ---------- ปุ่มเลือก: โล่งขึ้น ไม่บีบ ปรับตามความยาวข้อความ ---------- */
 
-  /* ระดับชั้น (ม.1–ม.6): auto-fit แทนบังคับ 3 คอลัมน์ ป้องกันข้อความถูกบีบ */
+  /* ================================
+     ปุ่มเลือกระดับชั้น
+  ================================= */
 
 #ordershirt #orderLevelGrid.btn-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
   gap: 10px;
 }
 
-  /* ไซซ์ (S–3xL) */
+  /* ================================
+     ปุ่มเลือกไซซ์
+  ================================= */
+
   #ordershirt #sizeGrid.btn-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
     gap: 10px;
   }
 
-  /* ห้อง: 2 ปุ่มต่อแถวพอมีที่หายใจ ไม่เรียงเต็มแถวจนดูยาวเกิน */
+
+  /* ================================
+     ปุ่มเลือกห้อง
+  ================================= */
+
   #ordershirt #orderRoomGrid.btn-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
     gap: 10px;
   }
 
+
+  /* ================================
+     ปุ่มทั้งหมด
+  ================================= */
+
   #ordershirt .pick-btn {
     width: 100%;
-    padding: 12px 8px;
+    min-height: 48px;
+    padding: 12px 10px;
     font-size: 0.92rem;
     text-align: center;
-    border-radius: 14px;
+    white-space: nowrap;
   }
+
 }
 
-/* มือถือจอเล็ก (iPhone SE และเล็กกว่า) */
+
+/* ================================
+   มือถือจอเล็ก
+   iPhone SE และเล็กกว่า
+================================ */
 @media (max-width: 480px) {
+
   #ordershirt .order-form {
     padding: 16px 14px;
     border-radius: 18px;
@@ -3086,22 +3108,48 @@ img, video {
     text-align: left;
   }
 
+
+  /* ================================
+     ระดับชั้น
+     2 คอลัมน์ เพื่อไม่ให้บีบ
+  ================================= */
+
   #ordershirt #orderLevelGrid.btn-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap: 10px;
   }
+
+
+  /* ================================
+     ไซซ์
+  ================================= */
 
   #ordershirt #sizeGrid.btn-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(80px, 1fr));
+    gap: 10px;
   }
+
+
+  /* ================================
+     ห้อง
+  ================================= */
 
   #ordershirt #orderRoomGrid.btn-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap: 10px;
   }
 
+
+  /* ================================
+     ปุ่ม
+  ================================= */
+
   #ordershirt .pick-btn {
-    font-size: 0.85rem;
-    padding: 11px 6px;
-    min-height: 42px;
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 12px 8px;
+    min-height: 46px;
+    white-space: nowrap;
   }
 
   #ordershirt .step-label {
@@ -3111,8 +3159,8 @@ img, video {
   #ordershirt .upload-drop {
     padding: 20px 10px;
   }
-}
 
+}
 
 
 /* =========================================================
