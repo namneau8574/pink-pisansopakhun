@@ -2539,6 +2539,8 @@ img, video {
 
 /* =========================================================
    ORDER SHIRT SECTION (#ordershirt) — ปรับให้กะทัดรัด + ปุ่มกดง่ายบนมือถือ
+   (ฉบับปรับปรุง: รวม media query ที่ซ้ำ, ใช้ clamp() ลดจำนวนจุดที่ต้องแก้,
+    เพิ่ม touch target และความลื่นไหลบนจอเล็ก)
 ========================================================= */
 
 #ordershirt {
@@ -2548,7 +2550,7 @@ img, video {
 
 #ordershirt .order-header {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: clamp(28px, 6vw, 50px);
 }
 
 #ordershirt .order-eyebrow {
@@ -2570,10 +2572,11 @@ img, video {
 
 #ordershirt .order-sub {
   color: var(--text-muted);
-  font-size: 1rem;
+  font-size: clamp(0.88rem, 2vw, 1rem);
   letter-spacing: 0.03em;
   max-width: 520px;
   margin: 0 auto;
+  padding: 0 8px;
 }
 
 /* ===== LAYOUT ===== */
@@ -2581,10 +2584,16 @@ img, video {
 #ordershirt .order-layout {
   display: grid;
   grid-template-columns: 1fr 1.1fr;
-  gap: 40px;
+  gap: clamp(24px, 4vw, 40px);
   align-items: start;
   max-width: 1100px;
   margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  #ordershirt .order-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ===== SHOWCASE (ซ้าย) ===== */
@@ -2599,8 +2608,8 @@ img, video {
 #ordershirt .qr-card {
   background: var(--white);
   border: 1px solid rgba(232, 166, 201, 0.35);
-  border-radius: 24px;
-  padding: 28px;
+  border-radius: clamp(16px, 3vw, 24px);
+  padding: clamp(14px, 3vw, 28px);
   position: relative;
   text-align: center;
   box-shadow: 0 10px 34px rgba(255, 46, 136, 0.1);
@@ -2635,17 +2644,17 @@ img, video {
   transform: rotate(-45deg);
   background: linear-gradient(135deg, var(--pink), var(--pink-light));
   color: #fff;
-  font-size: 0.72rem;
+  font-size: clamp(0.62rem, 1.5vw, 0.72rem);
   font-weight: 700;
   letter-spacing: 0.05em;
-  padding: 6px 44px;
+  padding: 5px 40px;
   box-shadow: 0 4px 12px rgba(255, 46, 136, 0.35);
   z-index: 2;
 }
 
 #ordershirt .shirt-img {
   width: 100%;
-  max-width: 260px;
+  max-width: clamp(150px, 30vw, 260px);
   height: auto;
   display: block;
   margin: 10px auto 20px;
@@ -2657,7 +2666,7 @@ img, video {
 #ordershirt .shirt-info h3 {
   font-family: 'Noto Serif Thai', serif;
   color: var(--pink);
-  font-size: 1.4rem;
+  font-size: clamp(1.15rem, 3vw, 1.4rem);
   letter-spacing: 0.05em;
   margin-bottom: 6px;
 }
@@ -2673,8 +2682,8 @@ img, video {
   background: linear-gradient(135deg, var(--pink), var(--pink-light));
   color: #fff;
   font-weight: 700;
-  font-size: 0.95rem;
-  padding: 9px 26px;
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  padding: clamp(7px, 1.5vw, 9px) clamp(18px, 4vw, 26px);
   border-radius: 999px;
   box-shadow: 0 6px 18px rgba(255, 46, 136, 0.25);
   letter-spacing: 0.03em;
@@ -2688,8 +2697,8 @@ img, video {
 }
 
 #ordershirt .qr-img {
-  width: 190px;
-  height: 190px;
+  width: clamp(130px, 30vw, 190px);
+  height: clamp(130px, 30vw, 190px);
   object-fit: contain;
   background: #fff;
   padding: 10px;
@@ -2718,29 +2727,29 @@ img, video {
 #ordershirt .order-form {
   background: var(--white);
   border: 1px solid rgba(232, 166, 201, 0.35);
-  border-radius: 26px;
-  padding: 36px 32px;
+  border-radius: clamp(18px, 3vw, 26px);
+  padding: clamp(16px, 3vw, 36px) clamp(14px, 3vw, 32px);
   box-shadow: 0 10px 34px rgba(255, 46, 136, 0.1);
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: clamp(18px, 3vw, 26px);
 }
 
 #ordershirt .form-step {
   display: flex;
-  gap: 16px;
+  gap: clamp(10px, 2vw, 16px);
   align-items: flex-start;
 }
 
 #ordershirt .step-num {
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+  width: clamp(26px, 5vw, 32px);
+  height: clamp(26px, 5vw, 32px);
   border-radius: 50%;
   background: linear-gradient(135deg, var(--pink), var(--pink-light));
   color: #fff;
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: clamp(0.8rem, 2vw, 0.95rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2758,7 +2767,7 @@ img, video {
 #ordershirt .step-label {
   font-weight: 700;
   color: var(--dark);
-  font-size: 0.95rem;
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
   letter-spacing: 0.03em;
 }
 
@@ -2769,7 +2778,7 @@ img, video {
   border: 1.5px solid rgba(232, 166, 201, 0.35);
   background: var(--gold-pale);
   color: var(--text);
-  font-size: 16px;
+  font-size: 16px; /* กัน iOS auto-zoom ตอน focus */
   font-family: 'Anuphan', sans-serif;
   outline: none;
   transition: 0.25s;
@@ -2802,14 +2811,34 @@ img, video {
   letter-spacing: 0.05em;
 }
 
+@media (max-width: 480px) {
+  #ordershirt .name-number-row {
+    flex-direction: column;
+  }
+  #ordershirt .name-number-row #orderBackNumber {
+    text-align: left;
+  }
+}
+
 /* =========================================================
    ปุ่มเลือก (ระดับชั้น / ห้อง / ไซซ์)
+   — จอ ≤900px ให้ทุกกริดเรียง 2 คอลัมน์อัตโนมัติ (รวมกฎซ้ำเป็นจุดเดียว)
 ========================================================= */
 
 #ordershirt .btn-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+@media (max-width: 900px) {
+  #ordershirt #orderLevelGrid.btn-grid,
+  #ordershirt #sizeGrid.btn-grid,
+  #ordershirt #orderRoomGrid.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
 }
 
 #ordershirt .pick-btn {
@@ -2823,7 +2852,8 @@ img, video {
   font-family: 'Anuphan', sans-serif;
   cursor: pointer;
   transition: 0.2s;
-  min-height: 44px;
+  min-height: 44px; /* touch target มาตรฐาน iOS/Android */
+  -webkit-tap-highlight-color: transparent;
 }
 
 #ordershirt .pick-btn:hover {
@@ -2842,6 +2872,27 @@ img, video {
   box-shadow: 0 4px 14px rgba(255, 46, 136, 0.3);
 }
 
+@media (max-width: 900px) {
+  #ordershirt .pick-btn {
+    width: 100%;
+    min-height: 50px;
+    padding: 13px 10px;
+    font-size: 0.92rem;
+    text-align: center;
+    border-radius: 14px;
+    white-space: nowrap;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  #ordershirt .pick-btn {
+    min-height: 48px;
+    padding: 12px 8px;
+    font-size: 0.9rem;
+  }
+}
+
 #ordershirt #orderRoomSection {
   display: none;
 }
@@ -2853,16 +2904,18 @@ img, video {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 28px 16px;
+  padding: clamp(18px, 4vw, 28px) 16px;
   border: 2px dashed rgba(255, 46, 136, 0.35);
   border-radius: 16px;
   background: var(--gold-pale);
   cursor: pointer;
   text-align: center;
   transition: 0.25s;
+  -webkit-tap-highlight-color: transparent;
 }
 
-#ordershirt .upload-drop:hover {
+#ordershirt .upload-drop:hover,
+#ordershirt .upload-drop:active {
   border-color: var(--pink);
   background: var(--pink-pale);
 }
@@ -2900,14 +2953,14 @@ img, video {
 /* ปุ่มยืนยัน */
 #ordershirt #orderSubmitBtn {
   width: 100%;
-  padding: 17px;
+  padding: clamp(14px, 3vw, 17px);
   border: none;
   border-radius: 50px;
   background: linear-gradient(135deg, var(--pink), var(--pink-light));
   color: #fff;
   font-family: 'Anuphan', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 2vw, 1rem);
   letter-spacing: 0.08em;
   cursor: pointer;
   box-shadow: 0 8px 25px rgba(255, 46, 136, 0.3);
@@ -2915,6 +2968,7 @@ img, video {
   position: relative;
   overflow: hidden;
   min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #ordershirt #orderSubmitBtn::before {
@@ -2929,6 +2983,10 @@ img, video {
 #ordershirt #orderSubmitBtn:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(255, 46, 136, 0.4);
+}
+
+#ordershirt #orderSubmitBtn:active {
+  transform: translateY(0);
 }
 
 #ordershirt #orderSubmitBtn:disabled {
@@ -2951,217 +3009,23 @@ img, video {
   border-left: 4px solid var(--pink-light);
 }
 
-
-/* ================================
-   แท็บเล็ต / มือถือ
-================================ */
-@media (max-width: 900px) {
-
-  #ordershirt .order-layout {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
-  #ordershirt .order-header {
-    margin-bottom: 28px;
-  }
-
-  #ordershirt .order-sub {
-    font-size: 0.88rem;
-    padding: 0 8px;
-  }
-
-  #ordershirt .order-form {
-    padding: 22px 18px;
-    gap: 20px;
-    border-radius: 20px;
-  }
-
+/* =========================================
+   จอเล็กมาก (iPhone SE และเล็กกว่า)
+   — เหลือแค่ค่าที่ clamp() คุมไม่ถึง
+========================================= */
+@media (max-width: 480px) {
+  #ordershirt .order-form,
   #ordershirt .shirt-card,
   #ordershirt .qr-card {
-    padding: 18px 16px;
-    border-radius: 18px;
-  }
-
-  #ordershirt .shirt-img {
-    max-width: 180px;
-    margin: 8px auto 14px;
-  }
-
-  #ordershirt .shirt-info h3 {
-    font-size: 1.2rem;
-  }
-
-  #ordershirt .form-step {
-    gap: 10px;
-  }
-
-  #ordershirt .step-num {
-    width: 26px;
-    height: 26px;
-    font-size: 0.8rem;
-  }
-
-  #ordershirt .qr-img {
-    width: 150px;
-    height: 150px;
-    margin-bottom: 10px;
+    padding-left: 14px;
+    padding-right: 14px;
   }
 
   #ordershirt .winner-ribbon {
-    font-size: 0.62rem;
-    padding: 5px 36px;
     top: 14px;
     left: -36px;
   }
-
-  #ordershirt .price-tag {
-    font-size: 0.85rem;
-    padding: 7px 18px;
-  }
-
-  #ordershirt #orderSubmitBtn {
-    font-size: 0.92rem;
-    padding: 15px;
-  }
-
-
-  /* ================================
-     ปุ่มเลือกระดับชั้น
-  ================================= */
-
-#ordershirt #orderLevelGrid.btn-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
-  gap: 10px;
 }
-
-  /* ================================
-     ปุ่มเลือกไซซ์
-  ================================= */
-
-  #ordershirt #sizeGrid.btn-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
-    gap: 10px;
-  }
-
-
-  /* ================================
-     ปุ่มเลือกห้อง
-  ================================= */
-
-  #ordershirt #orderRoomGrid.btn-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(140px, 1fr));
-    gap: 10px;
-  }
-
-
-  /* ================================
-     ปุ่มทั้งหมด
-  ================================= */
-
-  #ordershirt .pick-btn {
-    width: 100%;
-    min-height: 48px;
-    padding: 12px 10px;
-    font-size: 0.92rem;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-}
-
-
-/* ================================
-   มือถือจอเล็ก
-   iPhone SE และเล็กกว่า
-================================ */
-@media (max-width: 480px) {
-
-  #ordershirt .order-form {
-    padding: 16px 14px;
-    border-radius: 18px;
-  }
-
-  #ordershirt .shirt-card,
-  #ordershirt .qr-card {
-    padding: 14px 12px;
-    border-radius: 16px;
-  }
-
-  #ordershirt .shirt-img {
-    max-width: 150px;
-  }
-
-  #ordershirt .qr-img {
-    width: 130px;
-    height: 130px;
-  }
-
-  #ordershirt .name-number-row {
-    flex-direction: column;
-  }
-
-  #ordershirt .name-number-row #orderBackNumber {
-    text-align: left;
-  }
-
-
-  /* ================================
-     ระดับชั้น
-     2 คอลัมน์ เพื่อไม่ให้บีบ
-  ================================= */
-
-  #ordershirt #orderLevelGrid.btn-grid {
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
-    gap: 10px;
-  }
-
-
-  /* ================================
-     ไซซ์
-  ================================= */
-
-  #ordershirt #sizeGrid.btn-grid {
-    grid-template-columns: repeat(2, minmax(80px, 1fr));
-    gap: 10px;
-  }
-
-
-  /* ================================
-     ห้อง
-  ================================= */
-
-  #ordershirt #orderRoomGrid.btn-grid {
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
-    gap: 10px;
-  }
-
-
-  /* ================================
-     ปุ่ม
-  ================================= */
-
-  #ordershirt .pick-btn {
-    width: 100%;
-    font-size: 0.9rem;
-    padding: 12px 8px;
-    min-height: 46px;
-    white-space: nowrap;
-  }
-
-  #ordershirt .step-label {
-    font-size: 0.85rem;
-  }
-
-  #ordershirt .upload-drop {
-    padding: 20px 10px;
-  }
-
-}
-
 
 /* =========================================================
    PAYMENT SECTION (#payment)
