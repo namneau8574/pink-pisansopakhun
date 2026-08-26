@@ -208,10 +208,10 @@ function fireEffect() {
 
 (function () {
   // สีของแต่ละแบบเสื้อ เรียงตามลำดับการ์ดโหวต 4 แบบ
-  const VR_COLORS = ["#c9920a", "#e8005a", "#f0c14b", "#a80048"];
+  const VR_COLORS = ["#02c5c5", "#e8005a", "#f0c14b", "#a80048","#132a9a", "#279b44"];
 
   // ชื่อ label ของแต่ละแบบเสื้อ แก้ให้ตรงกับของจริง
-  const VR_LABELS = ["แบบที่ 1", "แบบที่ 2", "แบบที่ 3", "แบบที่ 4"];
+  const VR_LABELS = ["แบบที่ 1", "แบบที่ 2", "แบบที่ 3", "แบบที่ 4", "แบบที่ 5", "แบบที่ 6"];
 
   // สีพื้นเหรียญอันดับ 1-3 และป้ายอันดับที่เหลือ
   const MEDAL_BG = [
@@ -226,10 +226,10 @@ function fireEffect() {
 
   // 🔌 จุดเชื่อมต่อข้อมูลจริง: แก้ฟังก์ชันนี้ให้ดึงยอดโหวตจริงจากระบบของคุณ
   function getVoteCounts() {
-    const saved = localStorage.getItem('voteCounts');
-    if (saved) return JSON.parse(saved);
-    return [0, 0, 0, 0]; // ค่าเริ่มต้นตอนยังไม่มีใครโหวต
-  }
+  const saved = localStorage.getItem('voteCounts');
+  if (saved) return JSON.parse(saved);
+  return [0, 0, 0, 0, 0, 0]; // ค่าเริ่มต้นตอนยังไม่มีใครโหวต
+}
 
   function saveVoteCounts(counts) {
     localStorage.setItem('voteCounts', JSON.stringify(counts));
