@@ -67,9 +67,12 @@ function playSound() {
   audio.play();
 }
 
-/* =========================
-   FIREBASE
-========================= */
+/* =========================================================
+   FIREBASE + VOTE SYSTEM
+   6 แบบเสื้อ
+   กันโหวตซ้ำ 1 ปี / เครื่อง
+   ใช้ Firebase Realtime Database
+========================================================= */
 
 import { initializeApp }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -77,144 +80,237 @@ import { initializeApp }
 import {
   getDatabase,
   ref,
-  push,
-  onValue,
   runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+
+/* =========================================================
+   FIREBASE CONFIG
+========================================================= */
+
 const firebaseConfig = {
+
   apiKey: "AIzaSyArJWaOHz8XJmqeEBGT8UR4yBgyZayykqQ",
+
   authDomain: "pink-dynasty.firebaseapp.com",
-  databaseURL: "https://pink-dynasty-default-rtdb.firebaseio.com",
+
+  databaseURL:
+    "https://pink-dynasty-default-rtdb.firebaseio.com",
+
   projectId: "pink-dynasty",
-  storageBucket: "pink-dynasty.firebasestorage.app",
-  messagingSenderId: "623669448137",
-  appId: "1:623669448137:web:c007625a7913fcb7f46c18"
+
+  storageBucket:
+    "pink-dynasty.firebasestorage.app",
+
+  messagingSenderId:
+    "623669448137",
+
+  appId:
+    "1:623669448137:web:c007625a7913fcb7f46c18"
 };
 
+
+/* =========================================================
+   INITIALIZE FIREBASE
+========================================================= */
+
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
 
-/* =========================
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+const ONE_YEAR =
+  365 * 24 * 60 * 60 * 1000;
+
+
+/* =========================================================
    VOTE SYSTEM
-   (แก้: เดิมกันโหวตซ้ำด้วย key 'lastVote' ตัวเดียว
-    ทำให้โหวตทีมนี้แล้ว ไปโหวตทีมอื่นก็โดนล็อกไปด้วย
-    เปลี่ยนเป็นล็อกแยกต่อทีม ผ่าน canVote(team))
-========================= */
-
-function canVote() {
-
-  const lastVote = localStorage.getItem('lastVote');
-
-  if (!lastVote) return true;
-
-  const diff = Date.now() - parseInt(lastVote);
-
-  return diff >= ONE_YEAR;
-}
-
-/* =========================
-   VOTE SYSTEM
-   กันโหวตซ้ำ 1 ปี
-========================= */
-
-const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
-
+========================================================= */
 
 window.voteTeam = async function (team) {
 
   try {
 
-    // =========================
-    // ตรวจสอบว่าเคยโหวตหรือยัง
-    // =========================
+    /* -----------------------------------------------------
+       ตรวจสอบว่า team ถูกต้อง
+    ----------------------------------------------------- */
+
+    const validTeams = [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6"
+    ];
+
+    team = String(team);
+
+    if (!validTeams.includes(team)) {
+
+      alert("❌ ไม่พบแบบเสื้อที่เลือก");
+
+      return;
+    }
+
+
+    /* -----------------------------------------------------
+       ตรวจสอบว่าเครื่องนี้เคยโหวตแล้วหรือยัง
+    ----------------------------------------------------- */
 
     const lastVote =
-      localStorage.getItem('lastVote');
+      localStorage.getItem("lastVote");
+
 
     if (lastVote) {
 
-      const diff =
-        Date.now() - parseInt(lastVote);
+      const lastVoteTime =
+        parseInt(lastVote, 10);
 
-      if (diff < ONE_YEAR) {
+      const elapsed =
+        Date.now() - lastVoteTime;
+
+
+      if (elapsed < ONE_YEAR) {
 
         const nextVote =
           new Date(
-            parseInt(lastVote) + ONE_YEAR
+            lastVoteTime + ONE_YEAR
           );
 
+
         const oldTeam =
-          localStorage.getItem('voteTeam');
+          localStorage.getItem("voteTeam") ||
+          "แบบที่เลือกไว้";
+
 
         alert(
-          `⛔ คุณโหวตให้ "${oldTeam}" ไปแล้ว\n\n` +
-          `สามารถโหวตได้อีกวันที่\n` +
-          `${nextVote.toLocaleDateString('th-TH')}`
+          "⛔ คุณโหวตไปแล้ว\n\n" +
+
+          `คุณโหวตให้ ${oldTeam}\n\n` +
+
+          "สามารถโหวตได้อีกวันที่\n" +
+
+          nextVote.toLocaleDateString(
+            "th-TH",
+            {
+              year: "numeric",
+              month: "long",
+              day: "numeric"
+            }
+          )
         );
+
 
         return;
       }
     }
 
 
-    // =========================
-    // Firebase
-    // เพิ่มคะแนนแบบ Transaction
-    // =========================
+    /* -----------------------------------------------------
+       ตำแหน่งคะแนนใน Firebase
+
+       votes
+        ├── 1
+        ├── 2
+        ├── 3
+        ├── 4
+        ├── 5
+        └── 6
+    ----------------------------------------------------- */
 
     const voteRef =
-      ref(db, 'votes/' + team);
+      ref(db, `votes/${team}`);
+
+
+    /* -----------------------------------------------------
+       เพิ่มคะแนนด้วย Transaction
+
+       ป้องกันกรณีหลายคนกดพร้อมกัน
+    ----------------------------------------------------- */
 
     const result =
       await runTransaction(
         voteRef,
-        (current) => {
 
-          return (current || 0) + 1;
+        (currentValue) => {
+
+          if (
+            typeof currentValue !== "number"
+          ) {
+
+            currentValue = 0;
+
+          }
+
+          return currentValue + 1;
 
         }
       );
 
 
+    /* -----------------------------------------------------
+       ตรวจสอบว่าบันทึกสำเร็จ
+    ----------------------------------------------------- */
+
     if (!result.committed) {
 
       throw new Error(
-        "บันทึกคะแนนไม่สำเร็จ"
+        "Firebase transaction ไม่สำเร็จ"
       );
 
     }
 
 
-    // คะแนนใหม่จาก Firebase
+    /* -----------------------------------------------------
+       คะแนนล่าสุด
+    ----------------------------------------------------- */
 
     const newScore =
       result.snapshot.val();
 
 
-    // =========================
-    // บันทึกว่าเครื่องนี้โหวตแล้ว
-    // 1 ปี
-    // =========================
+    /* -----------------------------------------------------
+       บันทึกว่าเครื่องนี้โหวตแล้ว
+       ล็อก 1 ปี
+    ----------------------------------------------------- */
 
     localStorage.setItem(
-      'lastVote',
-      Date.now()
+      "lastVote",
+      String(Date.now())
     );
 
+
     localStorage.setItem(
-      'voteTeam',
+      "voteTeam",
       team
     );
 
 
-    // =========================
-    // เอฟเฟกต์
-    // =========================
+    /* -----------------------------------------------------
+       เอฟเฟกต์
+    ----------------------------------------------------- */
 
-    playSound();
+    if (
+      typeof playSound === "function"
+    ) {
 
-    voteAnimation(team);
+      playSound();
+
+    }
+
+
+    if (
+      typeof voteAnimation === "function"
+    ) {
+
+      voteAnimation(team);
+
+    }
 
 
     if (
@@ -226,25 +322,28 @@ window.voteTeam = async function (team) {
     }
 
 
-    // =========================
-    // แจ้งผล
-    // =========================
+    /* -----------------------------------------------------
+       แจ้งผล
+    ----------------------------------------------------- */
 
     alert(
-      `🔥 โหวต "${team}" สำเร็จ!\n\n` +
-      `${team} = ${newScore} คะแนน`
+      `🔥 โหวตแบบที่ ${team} สำเร็จ!\n\n` +
+
+      `คะแนนปัจจุบัน: ${newScore} คะแนน`
     );
 
 
   } catch (error) {
 
     console.error(
-      "Vote error:",
+      "❌ Vote error:",
       error
     );
 
+
     alert(
-      "❌ โหวตไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
+      "❌ โหวตไม่สำเร็จ\n\n" +
+      "กรุณาลองใหม่อีกครั้ง"
     );
 
   }
