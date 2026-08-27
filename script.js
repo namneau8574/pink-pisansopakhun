@@ -77,6 +77,10 @@ audio.play();
    FIREBASE
 ========================= */
 
+/* ========================= 
+   FIREBASE CONFIGURATION
+========================= */
+
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
@@ -90,32 +94,23 @@ set
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
-
-apiKey: "AIzaSyArJWaOHz8XJmqeEBGT8UR4yBgyZayykqQ",
-
-authDomain: "pink-dynasty.firebaseapp.com",
-
-databaseURL:
-"https://pink-dynasty-default-rtdb.firebaseio.com",
-
-projectId: "pink-dynasty",
-
-storageBucket:
-"pink-dynasty.firebasestorage.app",
-
-messagingSenderId:
-"623669448137",
-
-appId:
-"1:623669448137:web:c007625a7913fcb7f46c18"
-
+  apiKey: "AIzaSyArJWaOHz8XJmqeEBGT8UR4yBgyZayykqQ",
+  authDomain: "pink-dynasty.firebaseapp.com",
+  databaseURL: "https://pink-dynasty-default-rtdb.firebaseio.com",
+  projectId: "pink-dynasty",
+  storageBucket: "pink-dynasty.firebasestorage.app",
+  messagingSenderId: "623669448137",
+  appId: "1:623669448137:web:c007625a7913fcb7f46c18"
 };
 
-const app =
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const db =
-getDatabase(app);
+/* ========================= 
+   EXPORT
+========================= */
+
+export { db, ref, get, set, onValue };
 
 /* =========================
    VOTE SYSTEM
