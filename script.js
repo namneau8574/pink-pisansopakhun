@@ -385,8 +385,6 @@ function fireEffect() {
 /* =========================
    FIRE EFFECT
 ========================= */
-function fireEffect() {
-  const count = 18;
 
   for(let i = 0; i < count; i++){
     const fire = document.createElement('div');
