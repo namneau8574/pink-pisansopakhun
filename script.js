@@ -1457,16 +1457,55 @@ if (orderRoomGrid) {
 ========================= */
 const sizeGrid = document.getElementById('sizeGrid');
 const orderSizeInput = document.getElementById('orderSize');
+const otherSizeInput = document.getElementById('otherSizeInput');
 
 if (sizeGrid) {
   sizeGrid.addEventListener('click', (e) => {
     const btn = e.target.closest('.pick-btn');
     if (!btn) return;
-    sizeGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+
+    // เอา selected ออกจากทุกปุ่ม
+    sizeGrid.querySelectorAll('.pick-btn').forEach(b => {
+      b.classList.remove('selected');
+    });
+
+    // เลือกปุ่มที่กด
     btn.classList.add('selected');
-    orderSizeInput.value = btn.dataset.size;
+
+    // ถ้าเลือก "อื่นๆ"
+    if (btn.dataset.size === 'OTHER') {
+
+      // แสดงช่องกรอกไซซ์พิเศษ
+      if (otherSizeInput) {
+        otherSizeInput.style.display = 'block';
+        otherSizeInput.focus();
+      }
+
+      orderSizeInput.value = '';
+
+    } else {
+
+      // ซ่อนช่องกรอกไซซ์พิเศษ
+      if (otherSizeInput) {
+        otherSizeInput.style.display = 'none';
+        otherSizeInput.value = '';
+      }
+
+      // บันทึกไซซ์ปกติ
+      orderSizeInput.value = btn.dataset.size;
+    }
   });
 }
+
+/* =========================
+   รับค่าไซซ์ "อื่นๆ"
+========================= */
+if (otherSizeInput) {
+  otherSizeInput.addEventListener('input', () => {
+    orderSizeInput.value = otherSizeInput.value.trim();
+  });
+}
+
 
 /* =========================
    จำกัดให้ช่องเบอร์หลังเสื้อกรอกได้เฉพาะตัวเลข
