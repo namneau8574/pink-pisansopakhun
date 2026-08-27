@@ -532,10 +532,19 @@
             <button type="button" class="pick-btn" data-size="XL">XL</button>
             <button type="button" class="pick-btn" data-size="2xL">2xL</button>
             <button type="button" class="pick-btn" data-size="3xL">3xL</button>
-          </div>
-          <input type="hidden" id="orderSize" required>
-        </div>
-      </div>
+          <button type="button" class="pick-btn" data-size="OTHER">อื่นๆ</button>
+    </div>
+
+    <input
+      type="text"
+      id="otherSizeInput"
+      placeholder="ระบุไซซ์ เช่น 4XL, 5XL, 6XL"
+      style="display:none;"
+    >
+
+    <input type="hidden" id="orderSize" required>
+  </div>
+</div>
 
      
 
@@ -588,28 +597,7 @@
   </div>
 <div id="paySuccessBox" class="pay-success-box" style="display:none;"></div>
 </section>
-<!-- COMMENT -->
-<section id="comment">
-<h2 class="title">
- แสดงความคิดเห็น💬
-</h2>
-<form id="commentForm">
-<input
-type="text"
-id="commentName"
-placeholder="ชื่อของคุณ..."
->
-<textarea
-id="commentText"
-placeholder="พิมพ์ความคิดเห็น..."
-required
-></textarea>
-<button type="submit">
- SEND MESSAGE⚡
-</button>
-</form>
-<div id="commentsContainer"></div>
-</section>
+
 <!-- REGISTER -->
 <section id="register">
 <h2 class="title">
