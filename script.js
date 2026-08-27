@@ -125,10 +125,6 @@ getDatabase(app);
    (โหวตได้ 1 ครั้ง / 365 วัน)
 ========================= */
 window.voteTeam = async function (team) {
-  // 🚧 ปิดโหวตชั่วคราว — ลบ 2 บรรทัดนี้ทิ้งตอนพร้อมเปิดโหวตจริง
-  alert("⏳ ยังไม่เปิดโหวตครับ กรุณารอก่อนนะครับ 🙏");
-  return;
-
   try {
     const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
     const voteData = JSON.parse(localStorage.getItem("voteData"));
