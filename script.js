@@ -127,35 +127,79 @@ getDatabase(app);
 window.voteTeam = async function (team) {
   try {
     const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
+
+    // ตรวจสอบว่าเคยโหวตหรือยัง
     const voteData = JSON.parse(localStorage.getItem("voteData"));
+
     if (voteData) {
       const diff = Date.now() - voteData.time;
+
       if (diff < ONE_YEAR) {
         const nextVote = new Date(voteData.time + ONE_YEAR);
+
         alert(
           `⛔ คุณโหวตให้ "${voteData.team}" ไปแล้ว\n\n` +
           `สามารถโหวตได้อีกวันที่\n${nextVote.toLocaleDateString("th-TH")}`
         );
+
         return;
       }
     }
-    localStorage.setItem("voteData", JSON.stringify({
-      team: team,
-      time: Date.now()
-    }));
+
+    // =========================
+    // บันทึกว่าเครื่องนี้โหวตแล้ว
+    // =========================
+    localStorage.setItem(
+      "voteData",
+      JSON.stringify({
+        team: team,
+        time: Date.now()
+      })
+    );
+
+    // =========================
+    // เอฟเฟกต์
+    // =========================
     playSound();
     voteAnimation(team);
+
+    // =========================
+    // บันทึกคะแนน Firebase
+    // =========================
     const voteRef = ref(db, "votes/" + team);
     const snapshot = await get(voteRef);
-    let current = snapshot.exists() ? snapshot.val() : 0;
+
+    let current = snapshot.exists()
+      ? snapshot.val()
+      : 0;
+
     await set(voteRef, current + 1);
-    alert(`🔥 โหวต "${team}" สำเร็จ!\n${team} = ${current + 1} คะแนน`);
+
+    // =========================
+    // ⭐ สำคัญมาก
+    // อัปเดต Donut Chart
+    // =========================
+    const index = Number(team) - 1;
+
+    if (typeof window.registerVote === "function") {
+      window.registerVote(index);
+    }
+
+    // =========================
+    // แจ้งผล
+    // =========================
+    alert(
+      `🔥 โหวต "${team}" สำเร็จ!\n\n` +
+      `${team} = ${current + 1} คะแนน`
+    );
+
     fireEffect();
+
   } catch (error) {
-    console.error(error);
-    alert("❌ โหวตไม่สำเร็จ");
+    console.error("Vote error:", error);
+    alert("❌ โหวตไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
   }
-}; 
+};
 /* =========================
    FIRE EFFECT
 ========================= */
