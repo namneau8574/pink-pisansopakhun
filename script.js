@@ -80,23 +80,18 @@ audio.play();
 /* ========================= 
    FIREBASE CONFIGURATION
 ========================= */
-
 /* =========================
-   FIREBASE
+   FIREBASE INITIALIZATION
 ========================= */
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getDatabase,
   ref,
-  push,
   onValue,
   runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-
+// ควรดึงผ่าน Environment Variables ในระบบ Build tool หรือจำกัด Domain ใน Firebase Console Security Rules
 const firebaseConfig = {
   apiKey: "AIzaSyArJWaOHz8XJmqeEBGTGT8UR4yBgyZayykqQ",
   authDomain: "pink-dynasty.firebaseapp.com",
@@ -110,123 +105,71 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-
 /* =========================
    VOTE SYSTEM
-   กันโหวตซ้ำ 1 ปี
+   กันโหวตซ้ำ 1 ปี (Client-side Restriction)
 ========================= */
+const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
-const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
-
-window.voteTeam = async function(team) {
+window.voteTeam = async function (teamId) {
+  // รองรับทั้ง Number หรือ String ID (เช่น 1 หรือ "1")
+  const normalizedTeam = String(teamId).trim();
 
   try {
-
-    // ตรวจสอบว่าเครื่องนี้เคยโหวตแล้วหรือยัง
     const lastVote = localStorage.getItem("lastVote");
 
     if (lastVote) {
-
       const diff = Date.now() - Number(lastVote);
 
-      if (diff < ONE_YEAR) {
-
-        const nextVote =
-          new Date(Number(lastVote) + ONE_YEAR);
-
-        const oldTeam =
-          localStorage.getItem("voteTeam");
+      if (diff < ONE_YEAR_MS) {
+        const nextVoteDate = new Date(Number(lastVote) + ONE_YEAR_MS);
+        const oldTeam = localStorage.getItem("voteTeam") || normalizedTeam;
 
         alert(
-          `⛔ คุณโหวตให้ "${oldTeam}" ไปแล้ว\n\n` +
-          `สามารถโหวตได้อีกวันที่\n` +
-          `${nextVote.toLocaleDateString("th-TH")}`
+          `⛔ คุณได้โหวตให้ "แบบที่ ${oldTeam}" ไปแล้ว\n\n` +
+          `สามารถโหวตใหม่ได้ในวันที่:\n` +
+          `${nextVoteDate.toLocaleDateString("th-TH")}`
         );
-
         return;
       }
     }
 
-
     /* =========================
-       FIREBASE
-       เพิ่มคะแนนแบบปลอดภัย
+       FIREBASE TRANSACTION
     ========================= */
+    const voteRef = ref(db, `votes/${normalizedTeam}`);
 
-    const voteRef = ref(db, "votes/" + team);
-
-    const result = await runTransaction(
-      voteRef,
-      current => (current || 0) + 1
-    );
-
+    const result = await runTransaction(voteRef, (current) => {
+      return (Number(current) || 0) + 1;
+    });
 
     if (!result.committed) {
-      throw new Error("บันทึกคะแนนไม่สำเร็จ");
+      throw new Error("Transaction not committed");
     }
-
 
     const newScore = result.snapshot.val();
 
+    // บันทึกสถานะลง LocalStorage
+    localStorage.setItem("lastVote", String(Date.now()));
+    localStorage.setItem("voteTeam", normalizedTeam);
 
-    /* =========================
-       ล็อกโหวต 1 ปี
-    ========================= */
+    // เรียกใช้ Sound & Visual Effects (ถ้ามี)
+    if (typeof window.playSound === "function") window.playSound();
+    if (typeof window.voteAnimation === "function") window.voteAnimation(normalizedTeam);
+    if (typeof window.fireEffect === "function") window.fireEffect();
 
-    localStorage.setItem(
-      "lastVote",
-      Date.now()
-    );
+    alert(`🔥 โหวต "แบบที่ ${normalizedTeam}" สำเร็จ!\n\nคะแนนปัจจุบัน: ${newScore} คะแนน`);
 
-    localStorage.setItem(
-      "voteTeam",
-      team
-    );
-
-
-    /* =========================
-       EFFECT
-    ========================= */
-
-    if (typeof playSound === "function") {
-      playSound();
-    }
-
-    if (typeof voteAnimation === "function") {
-      voteAnimation(team);
-    }
-
-    if (typeof fireEffect === "function") {
-      fireEffect();
-    }
-
-
-    alert(
-      `🔥 โหวต "${team}" สำเร็จ!\n\n` +
-      `${team} = ${newScore} คะแนน`
-    );
-
+  } catch (error) {
+    console.error("Vote Transaction Error:", error);
+    alert("❌ เกิดข้อผิดพลาดในการบันทึกคะแนน กรุณาลองใหม่อีกครั้ง");
   }
-
-  catch(error) {
-
-    console.error("Vote error:", error);
-
-    alert(
-      "❌ โหวตไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
-    );
-
-  }
-
 };
 
-
 /* ============================================================
-   DONUT CHART
+   DONUT CHART & REALTIME RENDERER
 ============================================================ */
-
-(function() {
-
+(function () {
   const VR_COLORS = [
     "#02c5c5",
     "#e8005a",
@@ -253,321 +196,173 @@ window.voteTeam = async function(team) {
   ];
 
   let displayedTotal = 0;
-
+  let animFrameId = null;
 
   /* =========================
-     ANIMATE TOTAL
+     ANIMATE TOTAL VOTES
   ========================= */
-
   function animateTotal(target) {
-
-    const el =
-      document.getElementById("totalVotes");
-
+    const el = document.getElementById("totalVotes");
     if (!el) return;
+
+    if (animFrameId) cancelAnimationFrame(animFrameId);
 
     const start = displayedTotal;
     const duration = 400;
     const startTime = performance.now();
 
     function step(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      // Ease-out cubic animation formula
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(start + (target - start) * easeProgress);
 
-      const progress =
-        Math.min(
-          1,
-          (now - startTime) / duration
-        );
-
-      const value =
-        Math.round(
-          start +
-          (target - start) *
-          (1 - Math.pow(1 - progress, 3))
-        );
-
-      el.textContent = value;
+      el.textContent = value.toLocaleString("th-TH");
 
       if (progress < 1) {
-
-        requestAnimationFrame(step);
-
+        animFrameId = requestAnimationFrame(step);
       } else {
-
         displayedTotal = target;
-
       }
     }
 
-    requestAnimationFrame(step);
+    animFrameId = requestAnimationFrame(step);
   }
 
-
   /* =========================
-     RENDER DONUT
+     RENDER DONUT CHART & LEGEND
   ========================= */
-
   function renderDonut(counts) {
-
-    const donut =
-      document.getElementById("donutChart");
-
-    const glow =
-      document.getElementById("donutGlow");
-
-    const legend =
-      document.getElementById("legend");
-
-    const updatedEl =
-      document.getElementById("updatedAt");
-
-    const leaderBadge =
-      document.getElementById("leaderBadge");
-
-    const leaderText =
-      document.getElementById("leaderText");
-
+    const donut = document.getElementById("donutChart");
+    const glow = document.getElementById("donutGlow");
+    const legend = document.getElementById("legend");
+    const updatedEl = document.getElementById("updatedAt");
+    const leaderBadge = document.getElementById("leaderBadge");
+    const leaderText = document.getElementById("leaderText");
 
     if (!donut || !legend) {
-      console.log("❌ ไม่พบ Donut HTML");
+      console.warn("⚠️ ไม่พบ Element #donutChart หรือ #legend ใน DOM");
       return;
     }
 
-
-    const total =
-      counts.reduce(
-        (a,b) => a + b,
-        0
-      );
-
-
+    const total = counts.reduce((sum, val) => sum + val, 0);
     animateTotal(total);
 
-
-    /* =========================
-       DONUT
-    ========================= */
-
-    let gradientParts = [];
+    /* --- DONUT CONIC GRADIENT --- */
+    const gradientParts = [];
     let cursor = 0;
 
-
-    counts.forEach((count,i) => {
-
-      const pct =
-        total === 0
-          ? 0
-          : (count / total) * 100;
-
-      const end =
-        cursor + pct * 3.6;
+    counts.forEach((count, i) => {
+      const pct = total === 0 ? 0 : (count / total) * 100;
+      const deg = pct * 3.6;
+      const end = cursor + deg;
 
       if (pct > 0) {
-
-        gradientParts.push(
-          `${VR_COLORS[i]} ${cursor}deg ${end}deg`
-        );
-
+        gradientParts.push(`${VR_COLORS[i]} ${cursor}deg ${end}deg`);
       }
-
       cursor = end;
-
     });
 
-
-    const bg =
-      total === 0
-        ? "#e8e0cc"
-        : `conic-gradient(${gradientParts.join(",")})`;
-
+    const bg = total === 0
+      ? "#e8e0cc"
+      : `conic-gradient(${gradientParts.join(",")})`;
 
     donut.style.background = bg;
+    if (glow) glow.style.background = bg;
 
-    if (glow) {
-      glow.style.background = bg;
-    }
-
-
-    /* =========================
-       RANKING
-    ========================= */
-
+    /* --- RANKING & LEADER SELECTION --- */
     const ranked = counts
-      .map((count,i) => ({
-        i,
+      .map((count, i) => ({
+        index: i,
         count,
-        pct:
-          total === 0
-            ? 0
-            : (count / total) * 100
+        pct: total === 0 ? 0 : (count / total) * 100
       }))
-      .sort(
-        (a,b) => b.count - a.count
-      );
-
-
-    /* =========================
-       LEADER
-    ========================= */
+      .sort((a, b) => b.count - a.count);
 
     if (leaderBadge && leaderText) {
-
-      if (total > 0) {
-
+      if (total > 0 && ranked[0].count > 0) {
         leaderBadge.style.display = "flex";
+        
+        // ตรวจสอบกรณีที่มีคะแนนนำเท่ากัน (Tie Case)
+        const topCount = ranked[0].count;
+        const leaders = ranked
+          .filter(item => item.count === topCount)
+          .map(item => VR_LABELS[item.index]);
 
-        leaderText.textContent =
-          `กำลังนำ: ${VR_LABELS[ranked[0].i]}`;
-
+        leaderText.textContent = leaders.length > 1
+          ? `คะแนนเท่ากัน: ${leaders.join(", ")}`
+          : `กำลังนำ: ${leaders[0]}`;
       } else {
-
         leaderBadge.style.display = "none";
-
       }
-
     }
 
+    /* --- OPTIMIZED LEGEND DOM RENDER --- */
+    const fragment = document.createDocumentFragment();
 
-    /* =========================
-       LEGEND
-    ========================= */
+    ranked.forEach((item, rank) => {
+      const isLeader = rank === 0 && total > 0;
+      const row = document.createElement("div");
+      row.className = `vr-legend-row ${isLeader ? "is-leader" : ""}`;
 
-    legend.innerHTML = "";
-
-
-    ranked.forEach((item,rank) => {
-
-      const row =
-        document.createElement("div");
-
-      row.className =
-        "vr-legend-row" +
-        (
-          rank === 0 && total > 0
-            ? " is-leader"
-            : ""
-        );
-
-
-      const medal =
-        rank < 3
-          ? `<div class="vr-medal"
-               style="background:${MEDAL_BG[rank]}">
-               ${rank + 1}
-             </div>`
-          : `<div class="vr-medal"
-               style="background:${MEDAL_BG[3]}">
-               ${rank + 1}
-             </div>`;
-
+      const medalBg = MEDAL_BG[Math.min(rank, 3)];
 
       row.innerHTML = `
-
-        ${medal}
-
-        <div
-          class="vr-legend-swatch"
-          style="background:${VR_COLORS[item.i]}"
-        ></div>
-
+        <div class="vr-medal" style="background:${medalBg}">${rank + 1}</div>
+        <div class="vr-legend-swatch" style="background:${VR_COLORS[item.index]}"></div>
         <div class="vr-legend-info">
-
           <div class="vr-legend-top">
-
-            <span class="vr-name">
-              ${VR_LABELS[item.i]}
-            </span>
-
-            <span class="vr-pct">
-              ${item.pct.toFixed(1)}% · ${item.count}
-            </span>
-
+            <span class="vr-name">${VR_LABELS[item.index]}</span>
+            <span class="vr-pct">${item.pct.toFixed(1)}% · ${item.count.toLocaleString("th-TH")} คะแนน</span>
           </div>
-
           <div class="vr-legend-bar">
-
             <div
               class="vr-legend-bar-fill"
-              style="
-                width:${item.pct}%;
-                background:${VR_COLORS[item.i]}
-              "
+              style="width:${item.pct}%; background:${VR_COLORS[item.index]}"
             ></div>
-
           </div>
-
         </div>
-
       `;
 
-
-      legend.appendChild(row);
-
+      fragment.appendChild(row);
     });
 
+    legend.innerHTML = "";
+    legend.appendChild(fragment);
 
     if (updatedEl) {
-
-      updatedEl.textContent =
-        `อัปเดตล่าสุด ${
-          new Date().toLocaleTimeString("th-TH")
-        }`;
-
+      updatedEl.textContent = `อัปเดตล่าสุด ${new Date().toLocaleTimeString("th-TH")}`;
     }
-
   }
 
+  /* =========================
+     REALTIME FIREBASE LISTENER
+  ========================= */
+  const votesRef = ref(db, "votes");
+  
+  const unsubscribe = onValue(
+    votesRef,
+    (snapshot) => {
+      const data = snapshot.val() || {};
 
-  /* ============================================================
-     ⭐ REALTIME FIREBASE
-     จุดสำคัญที่สุด
-  ============================================================ */
-
-  onValue(
-    ref(db,"votes"),
-    snapshot => {
-
-      const data =
-        snapshot.val() || {};
-
-
-      const counts = [
-
-        Number(data[1]) || 0,
-        Number(data[2]) || 0,
-        Number(data[3]) || 0,
-        Number(data[4]) || 0,
-        Number(data[5]) || 0,
-        Number(data[6]) || 0
-
-      ];
-
-
-      console.log(
-        "🔥 Firebase Votes:",
-        counts
-      );
-
+      // ดึงค่าอย่างปลอดภัย รองรับ Key ทั้งแบบ Number (1) และ String ("1")
+      const counts = Array.from({ length: 6 }, (_, index) => {
+        const key = index + 1;
+        return Number(data[key] ?? data[String(key)] ?? 0);
+      });
 
       renderDonut(counts);
-
     },
-
-    error => {
-
-      console.error(
-        "Firebase realtime error:",
-        error
-      );
-
+    (error) => {
+      console.error("Firebase Realtime Listener Error:", error);
     }
-
   );
 
-
+  // Expose Helper ไปยัง Global scope เท่าที่จำเป็น
   window.renderDonut = renderDonut;
-
+  window.stopVoteListener = unsubscribe; // คืนฟังก์ชันสำหรับ Unsubscribe เมื่อต้องการปิดหน้าเว็บ
 })();
-
 
 /* =========================
    FIRE EFFECT
