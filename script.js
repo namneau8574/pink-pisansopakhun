@@ -76,13 +76,9 @@ audio.play();
 /* =========================
    FIREBASE
 ========================= */
-
-/* ========================= 
-   FIREBASE CONFIGURATION
-========================= */
-/* =========================
-   FIREBASE INITIALIZATION
-========================= */
+/* ============================================================
+   FIREBASE INITIALIZATION & MODULE IMPORTS
+============================================================ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getDatabase,
@@ -91,7 +87,6 @@ import {
   runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// ควรดึงผ่าน Environment Variables ในระบบ Build tool หรือจำกัด Domain ใน Firebase Console Security Rules
 const firebaseConfig = {
   apiKey: "AIzaSyArJWaOHz8XJmqeEBGTGT8UR4yBgyZayykqQ",
   authDomain: "pink-dynasty.firebaseapp.com",
@@ -105,17 +100,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* =========================
+/* ============================================================
    VOTE SYSTEM
-   กันโหวตซ้ำ 1 ปี (Client-side Restriction)
-========================= */
+   ล็อกโหวตซ้ำ 1 ปี (Client-side Restriction) + Safe Transaction
+============================================================ */
 const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 window.voteTeam = async function (teamId) {
-  // รองรับทั้ง Number หรือ String ID (เช่น 1 หรือ "1")
   const normalizedTeam = String(teamId).trim();
 
   try {
+    // 1. ตรวจสอบประวัติการโหวตจาก LocalStorage
     const lastVote = localStorage.getItem("lastVote");
 
     if (lastVote) {
@@ -134,14 +129,9 @@ window.voteTeam = async function (teamId) {
       }
     }
 
-    /* =========================
-       FIREBASE TRANSACTION
-    ========================= */
+    // 2. ส่งคะแนนแบบ Atomic Transaction เข้า Firebase Realtime Database
     const voteRef = ref(db, `votes/${normalizedTeam}`);
-
-    const result = await runTransaction(voteRef, (current) => {
-      return (Number(current) || 0) + 1;
-    });
+    const result = await runTransaction(voteRef, (current) => (Number(current) || 0) + 1);
 
     if (!result.committed) {
       throw new Error("Transaction not committed");
@@ -149,11 +139,11 @@ window.voteTeam = async function (teamId) {
 
     const newScore = result.snapshot.val();
 
-    // บันทึกสถานะลง LocalStorage
+    // 3. บันทึกประวัติลง LocalStorage
     localStorage.setItem("lastVote", String(Date.now()));
     localStorage.setItem("voteTeam", normalizedTeam);
 
-    // เรียกใช้ Sound & Visual Effects (ถ้ามี)
+    // 4. แสดงผลลัพธ์และเรียกใช้ Visual Effects (ถ้ามี)
     if (typeof window.playSound === "function") window.playSound();
     if (typeof window.voteAnimation === "function") window.voteAnimation(normalizedTeam);
     if (typeof window.fireEffect === "function") window.fireEffect();
@@ -161,22 +151,22 @@ window.voteTeam = async function (teamId) {
     alert(`🔥 โหวต "แบบที่ ${normalizedTeam}" สำเร็จ!\n\nคะแนนปัจจุบัน: ${newScore} คะแนน`);
 
   } catch (error) {
-    console.error("Vote Transaction Error:", error);
+    console.error("Vote Error:", error);
     alert("❌ เกิดข้อผิดพลาดในการบันทึกคะแนน กรุณาลองใหม่อีกครั้ง");
   }
 };
 
 /* ============================================================
-   DONUT CHART & REALTIME RENDERER
+   DONUT CHART & REALTIME UI RENDERER
 ============================================================ */
 (function () {
   const VR_COLORS = [
-    "#02c5c5",
-    "#e8005a",
-    "#f0c14b",
-    "#e614b1",
-    "#132a9a",
-    "#279b44"
+    "#ff2a85", // ชมพูสดเข้ม (Theme Primary)
+    "#02c5c5", // ฟ้าอมเขียว
+    "#f0c14b", // เหลืองทอง
+    "#e614b1", // ม่วงชมพู
+    "#7b2cbf", // ม่วงเข้ม
+    "#279b44"  // เขียว
   ];
 
   const VR_LABELS = [
@@ -189,18 +179,16 @@ window.voteTeam = async function (teamId) {
   ];
 
   const MEDAL_BG = [
-    "linear-gradient(135deg,#f0c14b,#c9920a)",
-    "linear-gradient(135deg,#d9d9d9,#a8a8a8)",
-    "linear-gradient(135deg,#e0a877,#b5713e)",
-    "#d8c9a8"
+    "linear-gradient(135deg,#f0c14b,#c9920a)", // ทอง
+    "linear-gradient(135deg,#d9d9d9,#a8a8a8)", // เงิน
+    "linear-gradient(135deg,#e0a877,#b5713e)", // ทองแดง
+    "#d8c9a8"                                 // ทั่วไป
   ];
 
   let displayedTotal = 0;
   let animFrameId = null;
 
-  /* =========================
-     ANIMATE TOTAL VOTES
-  ========================= */
+  // Animate ตัวเลขคะแนนรวมแบบ Ease-Out
   function animateTotal(target) {
     const el = document.getElementById("totalVotes");
     if (!el) return;
@@ -214,7 +202,6 @@ window.voteTeam = async function (teamId) {
     function step(now) {
       const elapsed = now - startTime;
       const progress = Math.min(1, elapsed / duration);
-      // Ease-out cubic animation formula
       const easeProgress = 1 - Math.pow(1 - progress, 3);
       const value = Math.round(start + (target - start) * easeProgress);
 
@@ -230,9 +217,7 @@ window.voteTeam = async function (teamId) {
     animFrameId = requestAnimationFrame(step);
   }
 
-  /* =========================
-     RENDER DONUT CHART & LEGEND
-  ========================= */
+  // Render Donut Chart, Ranking และ Legend
   function renderDonut(counts) {
     const donut = document.getElementById("donutChart");
     const glow = document.getElementById("donutGlow");
@@ -241,15 +226,12 @@ window.voteTeam = async function (teamId) {
     const leaderBadge = document.getElementById("leaderBadge");
     const leaderText = document.getElementById("leaderText");
 
-    if (!donut || !legend) {
-      console.warn("⚠️ ไม่พบ Element #donutChart หรือ #legend ใน DOM");
-      return;
-    }
+    if (!donut || !legend) return;
 
     const total = counts.reduce((sum, val) => sum + val, 0);
     animateTotal(total);
 
-    /* --- DONUT CONIC GRADIENT --- */
+    // Dynamic Conic Gradient สำหรับ Donut Chart
     const gradientParts = [];
     let cursor = 0;
 
@@ -264,14 +246,11 @@ window.voteTeam = async function (teamId) {
       cursor = end;
     });
 
-    const bg = total === 0
-      ? "#e8e0cc"
-      : `conic-gradient(${gradientParts.join(",")})`;
-
+    const bg = total === 0 ? "#e8e0cc" : `conic-gradient(${gradientParts.join(",")})`;
     donut.style.background = bg;
     if (glow) glow.style.background = bg;
 
-    /* --- RANKING & LEADER SELECTION --- */
+    // คำนวณอันดับ และตรวจสอบกรณีคะแนนนำเท่ากัน (Tie Case)
     const ranked = counts
       .map((count, i) => ({
         index: i,
@@ -283,8 +262,6 @@ window.voteTeam = async function (teamId) {
     if (leaderBadge && leaderText) {
       if (total > 0 && ranked[0].count > 0) {
         leaderBadge.style.display = "flex";
-        
-        // ตรวจสอบกรณีที่มีคะแนนนำเท่ากัน (Tie Case)
         const topCount = ranked[0].count;
         const leaders = ranked
           .filter(item => item.count === topCount)
@@ -298,7 +275,7 @@ window.voteTeam = async function (teamId) {
       }
     }
 
-    /* --- OPTIMIZED LEGEND DOM RENDER --- */
+    // สร้าง DOM Legend ด้วย DocumentFragment ช่วยเพิ่ม Performance
     const fragment = document.createDocumentFragment();
 
     ranked.forEach((item, rank) => {
@@ -336,17 +313,12 @@ window.voteTeam = async function (teamId) {
     }
   }
 
-  /* =========================
-     REALTIME FIREBASE LISTENER
-  ========================= */
+  // Realtime Firebase Listener (รับข้อมูล Realtime สดทุกวินาที)
   const votesRef = ref(db, "votes");
-  
-  const unsubscribe = onValue(
+  onValue(
     votesRef,
     (snapshot) => {
       const data = snapshot.val() || {};
-
-      // ดึงค่าอย่างปลอดภัย รองรับ Key ทั้งแบบ Number (1) และ String ("1")
       const counts = Array.from({ length: 6 }, (_, index) => {
         const key = index + 1;
         return Number(data[key] ?? data[String(key)] ?? 0);
@@ -359,10 +331,9 @@ window.voteTeam = async function (teamId) {
     }
   );
 
-  // Expose Helper ไปยัง Global scope เท่าที่จำเป็น
   window.renderDonut = renderDonut;
-  window.stopVoteListener = unsubscribe; // คืนฟังก์ชันสำหรับ Unsubscribe เมื่อต้องการปิดหน้าเว็บ
 })();
+
 
 /* =========================
    FIRE EFFECT
