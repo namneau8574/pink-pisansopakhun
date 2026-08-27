@@ -220,14 +220,7 @@ function fireEffect() {
       pointer-events: none;
       animation: fireRise ${0.8 + Math.random()*0.8}s ease forwards;
       animation-delay: ${Math.random()*0.4}s;
-    `;
-
-    document.body.appendChild(fire);
-    setTimeout(() => fire.remove(), 1600);
-  }
-}
-
-/* ============================================================
+    `;/* ============================================================
    สรุปผลโหวตแบบวงกลม (Donut Chart) — เวอร์ชันสวยขึ้น
    ต่อท้ายไฟล์ script.js เดิม
    ------------------------------------------------------------
@@ -264,16 +257,7 @@ function fireEffect() {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let displayedTotal = 0;
 
-  // 🔌 จุดเชื่อมต่อข้อมูลจริง: แก้ฟังก์ชันนี้ให้ดึงยอดโหวตจริงจากระบบของคุณ
-  function getVoteCounts() {
-  const saved = localStorage.getItem('voteCounts');
-  if (saved) return JSON.parse(saved);
-  return [0, 0, 0, 0, 0, 0]; // ค่าเริ่มต้นตอนยังไม่มีใครโหวต
-}
-
-  function saveVoteCounts(counts) {
-    localStorage.setItem('voteCounts', JSON.stringify(counts));
-  }
+ 
 
   function animateTotal(target) {
     const el = document.getElementById('totalVotes');
@@ -386,26 +370,34 @@ function fireEffect() {
       setTimeout(() => piece.remove(), 1400);
     }
   }
+window.renderDonut = renderDonut;
+onValue(ref(db, 'votes'), (snapshot) => {
 
-  // เรียกฟังก์ชันนี้จาก voteTeam(id) ของคุณหลังบันทึกโหวตสำเร็จ
-  // ตัวอย่าง: window.registerVote(0) สำหรับแบบที่ 1
-  window.registerVote = function (index) {
-    const counts = getVoteCounts();
-    counts[index]++;
-    saveVoteCounts(counts);
-    renderDonut(counts);
-    burstConfetti();
-  };
+  const data = snapshot.val() || {};
 
-  window.renderDonut = renderDonut;
+  const counts = [
+    Number(data[1]) || 0,
+    Number(data[2]) || 0,
+    Number(data[3]) || 0,
+    Number(data[4]) || 0,
+    Number(data[5]) || 0,
+    Number(data[6]) || 0
+  ];
 
-  document.addEventListener('DOMContentLoaded', () => {
-    renderDonut(getVoteCounts());
-    // เดโม/สำรอง: sync ทุก 3 วิ เผื่อมีคนโหวตจากเครื่องอื่น (ถ้ามี backend จริง
-    // ให้เปลี่ยนเป็น realtime listener แทนบรรทัดนี้)
-    setInterval(() => renderDonut(getVoteCounts()), 3000);
-  });
+  renderDonut(counts);
+
+});
+   
+
+
 })();
+
+    document.body.appendChild(fire);
+    setTimeout(() => fire.remove(), 1600);
+  }
+}
+
+
 /* =========================
    REGISTER SYSTEM
 ========================= */
