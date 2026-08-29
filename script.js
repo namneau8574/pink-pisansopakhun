@@ -1781,7 +1781,7 @@ if (payConfirmBtn) {
    SASH ORDER SYSTEM
    ผ้าคาดคณะสี 35 บาท
 ========================= */
-
+const SASH_SYSTEM_ENABLED = false;
 const SASH_GAS_URL = 'https://script.google.com/macros/s/AKfycbzB0vxpjFjev_AserRtSn-l51CvBoxAncP6RV7zAm6-pagP8kRcXQqHcFqYfsa1r_mPkQ/exec';
 const sashLevelGrid = document.getElementById('sashLevelGrid');
 const sashRoomGrid  = document.getElementById('sashRoomGrid');
@@ -1960,7 +1960,11 @@ if (sashForm) {
 
   sashForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-
+ // 🚧 ระบบยังไม่เปิดให้สั่งซื้อจริง — เช็คเป็นด่านแรกสุดเสมอ
+    if (!SASH_SYSTEM_ENABLED) {
+      alert('🚧 ระบบสั่งซื้อผ้าคาดยังไม่เปิดให้ใช้งานในขณะนี้ กรุณารอประกาศอีกครั้ง');
+      return;
+    }
     const name    = sashNameInput.value.trim();
     const room    = sashRoomInput.value.trim();
     const rollNo  = sashRollNoInput.value.trim();
