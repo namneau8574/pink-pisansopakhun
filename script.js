@@ -1848,7 +1848,7 @@ if (payConfirmBtn) {
    SASH ORDER SYSTEM
    ผ้าคาดคณะสี 35 บาท
 ========================= */
-const SASH_SYSTEM_ENABLED = ture;
+const SASH_SYSTEM_ENABLED = true;
 const SASH_GAS_URL = 'https://script.google.com/macros/s/AKfycbzB0vxpjFjev_AserRtSn-l51CvBoxAncP6RV7zAm6-pagP8kRcXQqHcFqYfsa1r_mPkQ/exec';
 const sashLevelGrid = document.getElementById('sashLevelGrid');
 const sashRoomGrid  = document.getElementById('sashRoomGrid');
