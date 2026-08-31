@@ -1394,7 +1394,62 @@ const SYSTEM_ENABLED = false;
    ORDER SHIRT SYSTEM
 ========================= */
 // 🔗 แทนที่ด้วย Web app URL ที่ได้จากขั้นตอน Deploy Apps Script
-const ORDER_GAS_URL = "https://script.google.com/macros/s/AKfycbwLW3DN1v-gDmV_ON9M78TjAmKfMcK8afviXCt6EJilydS-_rJ2fs-zEB2JHSIMHFl4/exec";
+const ORDER_GAS_URL = "https://script.google.com/macros/s/AKfycbyCt8GrN2IqI1ezNSIZwIR8KRmefvoMFeogqHF4WNEOMsLCMpKj6ORIHoREbEAgPHeG/exec";
+
+/* =========================
+   เลือกแบบเสื้อ (แบบที่1 / แบบที่2)
+   - แบบที่1: ซ่อนเฉพาะช่อง "ชื่อหลังเสื้อ" (ช่องเบอร์ยังโชว์ปกติ)
+   - แบบที่2: โชว์ทั้งชื่อและเบอร์ตามปกติ
+   ⬇️ ต้องมีใน HTML:
+   <div id="orderDesignGrid" class="btn-grid">
+     <button type="button" class="pick-btn" data-design="1">แบบที่ 1</button>
+     <button type="button" class="pick-btn" data-design="2">แบบที่ 2</button>
+   </div>
+   <input type="hidden" id="orderDesign" required>
+========================= */
+const orderDesignGrid = document.getElementById('orderDesignGrid');
+const orderDesignInput = document.getElementById('orderDesign');
+
+function updateBackNameVisibility(design) {
+  // ⬇️ ห่อ input ชื่อหลังเสื้อด้วย wrapper ที่มี id="backNameField" ใน HTML
+  //    เช่น <div id="backNameField"><input id="orderBackName" ...></div>
+  const backNameField = document.getElementById('backNameField');
+  const backNameInputEl = document.getElementById('orderBackName');
+
+  if (design === '1') {
+    if (backNameField) {
+      backNameField.style.display = 'none';
+    } else if (backNameInputEl) {
+      // เผื่อยังไม่มี wrapper — ซ่อนแค่ input ตรงๆ ไปก่อน
+      backNameInputEl.style.display = 'none';
+    }
+    if (backNameInputEl) backNameInputEl.value = ''; // เคลียร์ค่าทิ้งกันข้อมูลค้าง
+  } else {
+    if (backNameField) {
+      backNameField.style.display = '';
+    } else if (backNameInputEl) {
+      backNameInputEl.style.display = '';
+    }
+  }
+  // หมายเหตุ: ช่องเบอร์ (orderBackNumber) ไม่ถูกแตะต้อง โชว์ตลอดทั้ง 2 แบบ
+}
+
+if (orderDesignGrid) {
+  orderDesignGrid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.pick-btn');
+    if (!btn) return;
+
+    orderDesignGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+
+    const design = btn.dataset.design;
+    if (orderDesignInput) orderDesignInput.value = design;
+    updateBackNameVisibility(design);
+  });
+
+  // ตั้งค่าเริ่มต้นตอนโหลดหน้า (ยังไม่เลือกแบบ -> ซ่อนช่องชื่อไว้ก่อนก็ได้ ป้องกัน layout กระโดด)
+  updateBackNameVisibility('1');
+}
 
 /* =========================
    เลือกระดับชั้น → ห้อง
@@ -1453,7 +1508,7 @@ if (orderRoomGrid) {
 }
 
 /* =========================
-   เลือกไซร์
+   เลือกไซซ์
 ========================= */
 const sizeGrid = document.getElementById('sizeGrid');
 const orderSizeInput = document.getElementById('orderSize');
@@ -1506,7 +1561,6 @@ if (otherSizeInput) {
   });
 }
 
-
 /* =========================
    จำกัดให้ช่องเบอร์หลังเสื้อกรอกได้เฉพาะตัวเลข
 ========================= */
@@ -1536,13 +1590,20 @@ if (orderForm) {
       alert('🚧 ระบบสั่งจองเสื้อยังไม่เปิดให้ใช้งานในขณะนี้ กรุณารอประกาศอีกครั้ง');
       return;
     }
+
+    const design = orderDesignInput ? orderDesignInput.value : '';
     const name = document.getElementById('orderName').value.trim();
     const room = document.getElementById('orderRoom').value.trim();
     const rollNo = document.getElementById('orderRollNo') ? document.getElementById('orderRollNo').value.trim() : '';
+    // ⬇️ แบบที่1 ไม่มีช่องชื่อ (ถูกซ่อน+เคลียร์ค่าไปแล้ว) จะได้ค่าว่างเสมอ ไม่ error
     const backName = document.getElementById('orderBackName') ? document.getElementById('orderBackName').value.trim() : '';
     const backNumber = document.getElementById('orderBackNumber') ? document.getElementById('orderBackNumber').value.trim() : '';
     const size = orderSizeInput ? orderSizeInput.value : '';
 
+    if (!design) {
+      alert('⚠️ กรุณาเลือกแบบเสื้อ');
+      return;
+    }
     if (!name || !room || !rollNo || !size) {
       alert('⚠️ กรุณากรอกชื่อ เลือกระดับชั้น/ห้อง เลขที่ และเลือกไซซ์ให้ครบ');
       return;
@@ -1554,6 +1615,7 @@ if (orderForm) {
 
     try {
       const payload = {
+        design: design,
         name: name,
         room: room,
         rollNo: rollNo,
@@ -1574,6 +1636,11 @@ if (orderForm) {
         alert('✅ สั่งจองเสื้อสำเร็จ! ขอบคุณครับ 🌸');
         orderForm.reset();
 
+        if (orderDesignGrid) {
+          orderDesignGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+          if (orderDesignInput) orderDesignInput.value = '';
+          updateBackNameVisibility('1');
+        }
         if (orderLevelGrid) {
           orderLevelGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
         }
@@ -1606,7 +1673,7 @@ if (orderForm) {
 
 
 // ใช้ URL เดียวกับตอนสั่งจองเสื้อ (Apps Script ตัวเดียวกัน)
-const PAY_GAS_URL = "https://script.google.com/macros/s/AKfycbwLW3DN1v-gDmV_ON9M78TjAmKfMcK8afviXCt6EJilydS-_rJ2fs-zEB2JHSIMHFl4/exec";
+const PAY_GAS_URL = "https://script.google.com/macros/s/AKfycbyCt8GrN2IqI1ezNSIZwIR8KRmefvoMFeogqHF4WNEOMsLCMpKj6ORIHoREbEAgPHeG/exec";
 
 let paySelectedRowIndex = null;
 let paySlipBase64 = "";
