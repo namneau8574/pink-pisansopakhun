@@ -540,6 +540,122 @@
   <div id="sashSuccessBox" class="pay-success-box" style="display:none;"></div>
 </section>
       
+
+
+<!-- REGISTER -->
+<section id="register">
+<h2 class="title">
+ ลงสมัครนักกีฬา⚔️
+</h2>
+<div class="register-layout">
+<div class="register-info">
+<h3>
+ PINK DYNASTY 🥇
+</h3>
+<p>
+ลงชื่อสมัครแข่งขัน
+</p>
+
+</div>
+
+<form id="registerForm" class="register-form">
+
+    <input type="text" id="name" placeholder="👤 ชื่อ" required>
+
+    <input type="hidden" id="level" required>
+    <input type="hidden" id="room" required>
+
+    <label>เลือกระดับชั้น</label>
+    <div id="levelGrid" class="btn-grid">
+        <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
+        <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
+        <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
+        <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
+        <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
+        <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
+    </div>
+
+    <div id="roomSection" style="display:none;">
+        <label>เลือกห้อง</label>
+        <div id="roomGrid" class="btn-grid"></div>
+    </div>
+
+    <!-- ฟิลด์อื่นๆ เดิมของคุณต่อจากนี้ -->
+<select id="level" required>
+<option value="">
+🎓 ระดับชั้น
+</option>
+<option>
+📘 มัธยมต้น
+</option>
+<option>
+📕 มัธยมปลาย
+</option>
+</select>
+<input
+type="text"
+id="contact"
+placeholder="📱 ช่องทางติดต่อ (LINE / IG / Facebook)"
+required
+>
+
+<select id="sport">
+  <option value="ฟุตบอลชาย">⚽ ฟุตบอลชาย</option>
+  <option value="บาสเกตบอลชาย">🏀 บาสเกตบอลชาย</option>
+  <option value="บาสเกตบอลหญิง">🏀 บาสเกตบอลหญิง</option>
+  <option value="วอลเลย์บอลชาย">🏐 วอลเลย์บอลชาย</option>
+  <option value="วอลเลย์บอลหญิง">🏐 วอลเลย์บอลหญิง</option>
+  <option value="แบดมินตันชาย">🏸 แบดมินตันชาย</option>
+  <option value="แบดมินตันหญิง">🏸 แบดมินตันหญิง</option>
+  <option value="แฮนด์บอลหญิง">🤾 แฮนด์บอลชาย</option>
+    <option value="แฮนด์บอลหญิง">🤾 แฮนด์บอลหญิง</option>
+  <option value="กรีฑาชาย">🏃 กรีฑาชาย</option>
+  <option value="กรีฑาหญิง">🏃 กรีฑาหญิง</option>
+  <option value="แชร์บอลชาย">🥅 แชร์บอลชาย</option>
+  <option value="แชร์บอลหญิง">🥅 แชร์บอลหญิง</option>
+  <option value="ตะกร้อชาย">🦵 ตะกร้อชาย</option>
+  <option value="ตะกร้อหญิง">🦵 ตะกร้อหญิง</option>
+  <option value="เปตองชาย">🎯 เปตองชาย</option>
+  <option value="เปตองหญิง">🎯 เปตองหญิง</option>
+  <option value="เทเบิลเทนนิสชาย">🏓 ปิงปองชาย</option>
+  <option value="เทเบิลเทนนิสหญิง">🏓 ปิงปองหญิง</option>
+</select>
+<button type="submit">
+ ENTER DYNASTY 🔥
+</button>
+
+</form>
+
+</div>
+
+<div id="registerContainer"></div>
+
+<!-- Popup แจ้งเตือน -->
+<div id="qrPopup" class="qr-popup">
+    <div class="qr-box">
+        <h2 id="qrTitle"></h2>
+        <img id="qrImage" src="" alt="QR Code">
+        <p>สแกนเพื่อเข้ากลุ่ม Messenger💥</p>
+        <a id="qrLink" href="#" target="_blank" rel="noopener noreferrer" class="qr-link-btn">
+            👉 กดที่นี่เพื่อเข้ากลุ่ม
+        </a>
+        <button onclick="closeQR()">ปิด</button>
+    </div>
+</div>
+
+<script type="module" src="script.js"></script>
+
+<div class="thai-character-egg"></div>
+
+<div id="checkStatusSection">
+    <h2>เช็คสถานะการสมัคร❤️‍🔥</h2>
+    <input type="text" id="checkName" placeholder="ชื่อ-นามสกุล ตามที่ได้กรอก">
+    <input type="text" id="checkRoom" placeholder="ห้องเรียน เช่น 6/1">
+    <button id="checkStatusBtn">ตรวจสอบ</button>
+
+    <div id="checkResult"></div>
+</div>
+
 <!-- ORDER SHIRT -->
 
 <form id="orderForm" class="order-form">
@@ -670,122 +786,6 @@
   </div>
 <div id="paySuccessBox" class="pay-success-box" style="display:none;"></div>
 </section>
-
-<!-- REGISTER -->
-<section id="register">
-<h2 class="title">
- ลงสมัครนักกีฬา⚔️
-</h2>
-<div class="register-layout">
-<div class="register-info">
-<h3>
- PINK DYNASTY 🥇
-</h3>
-<p>
-ลงชื่อสมัครแข่งขัน
-</p>
-
-</div>
-
-<form id="registerForm" class="register-form">
-
-    <input type="text" id="name" placeholder="👤 ชื่อ" required>
-
-    <input type="hidden" id="level" required>
-    <input type="hidden" id="room" required>
-
-    <label>เลือกระดับชั้น</label>
-    <div id="levelGrid" class="btn-grid">
-        <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
-        <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
-        <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
-        <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
-        <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
-        <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
-    </div>
-
-    <div id="roomSection" style="display:none;">
-        <label>เลือกห้อง</label>
-        <div id="roomGrid" class="btn-grid"></div>
-    </div>
-
-    <!-- ฟิลด์อื่นๆ เดิมของคุณต่อจากนี้ -->
-<select id="level" required>
-<option value="">
-🎓 ระดับชั้น
-</option>
-<option>
-📘 มัธยมต้น
-</option>
-<option>
-📕 มัธยมปลาย
-</option>
-</select>
-<input
-type="text"
-id="contact"
-placeholder="📱 ช่องทางติดต่อ (LINE / IG / Facebook)"
-required
->
-
-<select id="sport">
-  <option value="ฟุตบอลชาย">⚽ ฟุตบอลชาย</option>
-  <option value="บาสเกตบอลชาย">🏀 บาสเกตบอลชาย</option>
-  <option value="บาสเกตบอลหญิง">🏀 บาสเกตบอลหญิง</option>
-  <option value="วอลเลย์บอลชาย">🏐 วอลเลย์บอลชาย</option>
-  <option value="วอลเลย์บอลหญิง">🏐 วอลเลย์บอลหญิง</option>
-  <option value="แบดมินตันชาย">🏸 แบดมินตันชาย</option>
-  <option value="แบดมินตันหญิง">🏸 แบดมินตันหญิง</option>
-  <option value="แฮนด์บอลหญิง">🤾 แฮนด์บอลชาย</option>
-    <option value="แฮนด์บอลหญิง">🤾 แฮนด์บอลหญิง</option>
-  <option value="กรีฑาชาย">🏃 กรีฑาชาย</option>
-  <option value="กรีฑาหญิง">🏃 กรีฑาหญิง</option>
-  <option value="แชร์บอลชาย">🥅 แชร์บอลชาย</option>
-  <option value="แชร์บอลหญิง">🥅 แชร์บอลหญิง</option>
-  <option value="ตะกร้อชาย">🦵 ตะกร้อชาย</option>
-  <option value="ตะกร้อหญิง">🦵 ตะกร้อหญิง</option>
-  <option value="เปตองชาย">🎯 เปตองชาย</option>
-  <option value="เปตองหญิง">🎯 เปตองหญิง</option>
-  <option value="เทเบิลเทนนิสชาย">🏓 ปิงปองชาย</option>
-  <option value="เทเบิลเทนนิสหญิง">🏓 ปิงปองหญิง</option>
-</select>
-<button type="submit">
- ENTER DYNASTY 🔥
-</button>
-
-</form>
-
-</div>
-
-<div id="registerContainer"></div>
-
-<!-- Popup แจ้งเตือน -->
-<div id="qrPopup" class="qr-popup">
-    <div class="qr-box">
-        <h2 id="qrTitle"></h2>
-        <img id="qrImage" src="" alt="QR Code">
-        <p>สแกนเพื่อเข้ากลุ่ม Messenger💥</p>
-        <a id="qrLink" href="#" target="_blank" rel="noopener noreferrer" class="qr-link-btn">
-            👉 กดที่นี่เพื่อเข้ากลุ่ม
-        </a>
-        <button onclick="closeQR()">ปิด</button>
-    </div>
-</div>
-
-<script type="module" src="script.js"></script>
-
-<div class="thai-character-egg"></div>
-
-<div id="checkStatusSection">
-    <h2>เช็คสถานะการสมัคร❤️‍🔥</h2>
-    <input type="text" id="checkName" placeholder="ชื่อ-นามสกุล ตามที่ได้กรอก">
-    <input type="text" id="checkRoom" placeholder="ห้องเรียน เช่น 6/1">
-    <button id="checkStatusBtn">ตรวจสอบ</button>
-
-    <div id="checkResult"></div>
-</div>
-
-
  <!-- CHECKIN HTML -->
 <section id="checkin" class="checkin-section">
     <div class="header">
