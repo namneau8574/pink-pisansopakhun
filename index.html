@@ -454,108 +454,96 @@
      FIREBASE
 ============================================================ -->
 
-      <!-- ORDER SHIRT -->
       
-<section id="ordershirt">
+<!-- ORDER SHIRT -->
 
-  <div class="order-header">
+<form id="orderForm" class="order-form">
 
-    <h2 class="title">Pre-order เสื้อคณะสี 👕 </h2>
-    <p class="order-sub">โหวตเสร็จแล้ว เดี๋ยวเราจะประกาศแบบเสื้อที่ชนะ แล้วเปิดพรีออเดอร์ให้สั่งกันนะครับ ใครชอบแบบไหนอย่าลืมโหวตกันด้วยน้า</p>
+  <!-- Step : เลือกแบบเสื้อ -->
+  <div class="form-step">
+    <span class="step-num">1</span>
+    <div class="step-fields">
+      <label class="step-label">เลือกแบบเสื้อ</label>
+      <div id="orderDesignGrid" class="btn-grid design-grid">
+        <button type="button" class="pick-btn design-btn" data-design="1">
+          <img src="shirt1.png" alt="เสื้อแบบที่ 1" class="design-thumb">
+          <span>แบบที่ 1</span>
+        </button>
+        <button type="button" class="pick-btn design-btn" data-design="2">
+          <img src="shirt2.png" alt="เสื้อแบบที่ 2" class="design-thumb">
+          <span>แบบที่ 2</span>
+        </button>
+      </div>
+      <input type="hidden" id="orderDesign" required>
+    </div>
   </div>
 
-  <div class="order-layout">
+  <!-- Step : ข้อมูลผู้สั่งจอง -->
+  <div class="form-step">
+    <span class="step-num">2</span>
+    <div class="step-fields">
+      <label class="step-label">ข้อมูลผู้สั่งจอง</label>
+      <input type="text" id="orderName" placeholder="👤 ชื่อ-นามสกุล" required>
 
-    <div class="order-showcase">
-      <div class="shirt-card">
-        <span class="winner-ribbon">🏆 ชนะการโหวต</span>
-        <img src="s123.png" alt="เสื้อที่คะแนนโหวตเยอะที่สุด" class="shirt-img">
-        <div class="shirt-info">
-          <h3>จะมีการแจ้งประกาศในการสั่งจองภายหลัง</h3>
-          <p>เสื้อคณะสีชมพูพิศาลโสภาคุณ</p>
-          
-        </div>
+      <div id="orderLevelGrid" class="btn-grid">
+        <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
+        <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
+        <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
+        <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
+        <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
+        <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
       </div>
 
-   
-
-    <form id="orderForm" class="order-form">
-
-      <div class="form-step">
-        <span class="step-num">1</span>
-        <div class="step-fields">
-          <label class="step-label">ข้อมูลผู้สั่งจอง</label>
-          <input type="text" id="orderName" placeholder="👤 ชื่อ-นามสกุล" required>
-         <div class="form-step">
-
-    
-    <div id="orderLevelGrid" class="btn-grid">
-      <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
-      <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
-      <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
-      <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
-      <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
-      <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
-    </div>
-
-
-    
-      <div id="orderRoomGrid" class="btn-grid"></div>
-    </div>
-
-    <input type="hidden" id="orderRoom" required>
-<input type="text" id="orderRollNo" placeholder="🔢 เลขที่" inputmode="numeric" maxlength="3" required>
-  </div>
-</div>
-</div>
-
-      <!-- ✨ ใหม่: ชื่อ-เบอร์หลังเสื้อ -->
-      <div class="form-step">
-        <span class="step-num">2</span>
-        <div class="step-fields">
-          <label class="step-label">ชื่อ-เบอร์หลังเสื้อ </label>
-          <div class="name-number-row">
-            <input type="text" id="orderBackName" placeholder="✏️ ชื่อหลังเสื้อ" maxlength="20">
-            <input type="text" id="orderBackNumber" placeholder="🔢 เบอร์" inputmode="numeric" maxlength="3">
-          </div>
-        </div>
+      <div id="orderRoomSection">
+        <div id="orderRoomGrid" class="btn-grid"></div>
       </div>
 
-      <div class="form-step">
-        <span class="step-num">3</span>
-        <div class="step-fields">
-          <label class="step-label">เลือกไซร์</label>
-          <div id="sizeGrid" class="btn-grid">
-            <button type="button" class="pick-btn" data-size="S">S</button>
-            <button type="button" class="pick-btn" data-size="M">M</button>
-            <button type="button" class="pick-btn" data-size="L">L</button>
-            <button type="button" class="pick-btn" data-size="XL">XL</button>
-            <button type="button" class="pick-btn" data-size="2xL">2xL</button>
-            <button type="button" class="pick-btn" data-size="3xL">3xL</button>
-          <button type="button" class="pick-btn" data-size="OTHER">อื่นๆ</button>
+      <input type="hidden" id="orderRoom" required>
+      <input type="text" id="orderRollNo" placeholder="🔢 เลขที่" inputmode="numeric" maxlength="3" required>
     </div>
-
-    <input
-      type="text"
-      id="otherSizeInput"
-      placeholder="ระบุไซซ์ เช่น 4XL, 5XL, 6XL"
-      style="display:none;"
-    >
-
-    <input type="hidden" id="orderSize" required>
-  </div>
-</div>
-
-     
-
-      <button type="submit" id="orderSubmitBtn">⚡ ยืนยันการสั่งจอง</button>
-
-    </form>
-
   </div>
 
-  <div id="orderContainer"></div>
-</section>
+  <!-- Step : ชื่อ-เบอร์หลังเสื้อ -->
+  <div class="form-step">
+    <span class="step-num">3</span>
+    <div class="step-fields">
+      <label class="step-label">ชื่อ-เบอร์หลังเสื้อ</label>
+      <div class="name-number-row">
+        <div id="backNameField">
+          <input type="text" id="orderBackName" placeholder="✏️ ชื่อหลังเสื้อ" maxlength="20">
+        </div>
+        <input type="text" id="orderBackNumber" placeholder="🔢 เบอร์" inputmode="numeric" maxlength="3">
+      </div>
+    </div>
+  </div>
+
+  <!-- Step : เลือกไซซ์ -->
+  <div class="form-step">
+    <span class="step-num">4</span>
+    <div class="step-fields">
+      <label class="step-label">เลือกไซร์</label>
+      <div id="sizeGrid" class="btn-grid">
+        <button type="button" class="pick-btn" data-size="S">S</button>
+        <button type="button" class="pick-btn" data-size="M">M</button>
+        <button type="button" class="pick-btn" data-size="L">L</button>
+        <button type="button" class="pick-btn" data-size="XL">XL</button>
+        <button type="button" class="pick-btn" data-size="2xL">2xL</button>
+        <button type="button" class="pick-btn" data-size="3xL">3xL</button>
+        <button type="button" class="pick-btn" data-size="OTHER">อื่นๆ</button>
+      </div>
+
+      <input
+        type="text"
+        id="otherSizeInput"
+        placeholder="ระบุไซซ์ เช่น 4XL, 5XL, 6XL"
+        style="display:none;"
+      >
+
+      <input type="hidden" id="orderSize" required>
+    </div>
+  </div>
+
+  <button type="submit" id="orderSubmitBtn">⚡ ยืนยันการสั่งจอง</button>
 <!-- PAYMENT -->
 <section id="payment">
 
