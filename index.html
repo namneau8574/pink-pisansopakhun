@@ -449,27 +449,24 @@
 
 </section>
 
-
-<!-- ============================================================
-     FIREBASE
-============================================================ -->
 <!-- ผ้าคาดคณะสี -->
 <section id="sashorder">
 
   <div class="order-header">
     <h2 class="title">🎗️ สั่งซื้อผ้าคาดคณะสี</h2>
-    <p class="order-sub">ผ้าคาดคณะสีชมพูพิศาลโสภาคุณมาแล้วค้าบบบ กรอกข้อมูลแล้วก่อน สแกนจ่ายเงิน แนบสลิปได้เลยครับ</p>
+    <p class="order-sub">ผ้าคาดคณะสีชมพูพิศาลโสภาคุณ ราคาเพียง 35 บาท กรอกข้อมูลแล้วสแกนจ่ายเงิน แนบสลิปได้เลยครับ</p>
   </div>
 
   <div class="sash-layout">
 
     <div class="sash-showcase">
       <div class="shirt-card">
-        <span class="winner-ribbon">🎗️ ผ้าคาดคณะสีสีชมพูพิศาลโสภาคุณ</span>
-        <img src="headband.png" alt="ผ้าคาดคณะสีชมพูพิศาลโสภาคุณ" class="shirt-img">
+        <span class="winner-ribbon">🎗️ ผ้าคาดคณะสี</span>
+        <img src="sashdesign.png" alt="ผ้าคาดคณะสีชมพูพิศาลโสภาคุณ" class="shirt-img">
         <div class="shirt-info">
+          <h3>ผ้าคาดคณะสีชมพูพิศาลโสภาคุณ</h3>
           <p>ผ้าคาดผูกข้อมือ/คาดศีรษะ ลายคณะสี</p>
-          <span class="price-tag">35฿</span>
+          <span class="price-tag">฿35</span>
         </div>
       </div>
     </div>
@@ -502,7 +499,7 @@
         <span class="step-num">2</span>
         <div class="step-fields">
           <label class="step-label">ช่องทางติดต่อ</label>
-          <input type="text" id="sashContact" placeholder="📱 LINE / IG / Facebook เบอร์โทร " required>
+          <input type="text" id="sashContact" placeholder="📱 LINE / IG / Facebook" required>
         </div>
       </div>
 
@@ -512,10 +509,9 @@
           <label class="step-label">💳 ชำระเงิน 35 บาท</label>
           <div class="qr-card">
             <p class="qr-label">📱 สแกน QR เพื่อโอนเงิน</p>
-            <img src="qrpay2.jpg" alt="QR โอนเงินผ้าคาด" class="qr-img">
+            <img src="qrsash.png" alt="QR โอนเงินผ้าคาด" class="qr-img">
             <div class="bank-info">
-              <span>ธนาคารไทยพาณิชย์</span>
-                <p>501-4680290</p>
+              <span>ธนาคารกสิกรไทย</span>
               <span>น้ำเหนือ ศรีนาคำ</span>
             </div>
           </div>
@@ -539,122 +535,9 @@
 
   <div id="sashSuccessBox" class="pay-success-box" style="display:none;"></div>
 </section>
-      
-
-
-<!-- REGISTER -->
-<section id="register">
-<h2 class="title">
- ลงสมัครนักกีฬา⚔️
-</h2>
-<div class="register-layout">
-<div class="register-info">
-<h3>
- PINK DYNASTY 🥇
-</h3>
-<p>
-ลงชื่อสมัครแข่งขัน
-</p>
-
-</div>
-
-<form id="registerForm" class="register-form">
-
-    <input type="text" id="name" placeholder="👤 ชื่อ" required>
-
-    <input type="hidden" id="level" required>
-    <input type="hidden" id="room" required>
-
-    <label>เลือกระดับชั้น</label>
-    <div id="levelGrid" class="btn-grid">
-        <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
-        <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
-        <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
-        <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
-        <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
-        <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
-    </div>
-
-    <div id="roomSection" style="display:none;">
-        <label>เลือกห้อง</label>
-        <div id="roomGrid" class="btn-grid"></div>
-    </div>
-
-    <!-- ฟิลด์อื่นๆ เดิมของคุณต่อจากนี้ -->
-<select id="level" required>
-<option value="">
-🎓 ระดับชั้น
-</option>
-<option>
-📘 มัธยมต้น
-</option>
-<option>
-📕 มัธยมปลาย
-</option>
-</select>
-<input
-type="text"
-id="contact"
-placeholder="📱 ช่องทางติดต่อ (LINE / IG / Facebook)"
-required
->
-
-<select id="sport">
-  <option value="ฟุตบอลชาย">⚽ ฟุตบอลชาย</option>
-  <option value="บาสเกตบอลชาย">🏀 บาสเกตบอลชาย</option>
-  <option value="บาสเกตบอลหญิง">🏀 บาสเกตบอลหญิง</option>
-  <option value="วอลเลย์บอลชาย">🏐 วอลเลย์บอลชาย</option>
-  <option value="วอลเลย์บอลหญิง">🏐 วอลเลย์บอลหญิง</option>
-  <option value="แบดมินตันชาย">🏸 แบดมินตันชาย</option>
-  <option value="แบดมินตันหญิง">🏸 แบดมินตันหญิง</option>
-  <option value="แฮนด์บอลหญิง">🤾 แฮนด์บอลชาย</option>
-    <option value="แฮนด์บอลหญิง">🤾 แฮนด์บอลหญิง</option>
-  <option value="กรีฑาชาย">🏃 กรีฑาชาย</option>
-  <option value="กรีฑาหญิง">🏃 กรีฑาหญิง</option>
-  <option value="แชร์บอลชาย">🥅 แชร์บอลชาย</option>
-  <option value="แชร์บอลหญิง">🥅 แชร์บอลหญิง</option>
-  <option value="ตะกร้อชาย">🦵 ตะกร้อชาย</option>
-  <option value="ตะกร้อหญิง">🦵 ตะกร้อหญิง</option>
-  <option value="เปตองชาย">🎯 เปตองชาย</option>
-  <option value="เปตองหญิง">🎯 เปตองหญิง</option>
-  <option value="เทเบิลเทนนิสชาย">🏓 ปิงปองชาย</option>
-  <option value="เทเบิลเทนนิสหญิง">🏓 ปิงปองหญิง</option>
-</select>
-<button type="submit">
- ENTER DYNASTY 🔥
-</button>
-
-</form>
-
-</div>
-
-<div id="registerContainer"></div>
-
-<!-- Popup แจ้งเตือน -->
-<div id="qrPopup" class="qr-popup">
-    <div class="qr-box">
-        <h2 id="qrTitle"></h2>
-        <img id="qrImage" src="" alt="QR Code">
-        <p>สแกนเพื่อเข้ากลุ่ม Messenger💥</p>
-        <a id="qrLink" href="#" target="_blank" rel="noopener noreferrer" class="qr-link-btn">
-            👉 กดที่นี่เพื่อเข้ากลุ่ม
-        </a>
-        <button onclick="closeQR()">ปิด</button>
-    </div>
-</div>
-
-<script type="module" src="script.js"></script>
-
-<div class="thai-character-egg"></div>
-
-<div id="checkStatusSection">
-    <h2>เช็คสถานะการสมัคร❤️‍🔥</h2>
-    <input type="text" id="checkName" placeholder="ชื่อ-นามสกุล ตามที่ได้กรอก">
-    <input type="text" id="checkRoom" placeholder="ห้องเรียน เช่น 6/1">
-    <button id="checkStatusBtn">ตรวจสอบ</button>
-
-    <div id="checkResult"></div>
-</div>
+<!-- ============================================================
+     FIREBASE
+============================================================ -->
 
 <!-- ORDER SHIRT -->
 
@@ -745,6 +628,11 @@ required
   </div>
 
   <button type="submit" id="orderSubmitBtn">⚡ ยืนยันการสั่งจอง</button>
+
+</form>
+
+<div id="orderContainer"></div>
+</section>
 <!-- PAYMENT -->
 <section id="payment">
 
@@ -766,7 +654,7 @@ required
       <div class="pay-order-summary" id="payOrderSummary"></div>
       <div class="qr-card">
         <p class="qr-label">📱 สแกน QR เพื่อโอนเงิน</p>
-        <img src="qrcodepay1.jpg" alt="QR โอนเงิน" class="qr-img">
+        <img src="qrpayment.png" alt="QR โอนเงิน" class="qr-img">
         <div class="bank-info">
           <span>ธนาคารกสิกรไทย</span>
           <span>น้ำเหนือ ศรีนาคำ</span>
@@ -786,6 +674,122 @@ required
   </div>
 <div id="paySuccessBox" class="pay-success-box" style="display:none;"></div>
 </section>
+
+<!-- REGISTER -->
+<section id="register">
+<h2 class="title">
+ ลงสมัครนักกีฬา⚔️
+</h2>
+<div class="register-layout">
+<div class="register-info">
+<h3>
+ PINK DYNASTY 🥇
+</h3>
+<p>
+ลงชื่อสมัครแข่งขัน
+</p>
+
+</div>
+
+<form id="registerForm" class="register-form">
+
+    <input type="text" id="name" placeholder="👤 ชื่อ" required>
+
+<input type="hidden" id="registerLevel" required>
+<input type="hidden" id="registerRoom" required>
+
+    <label>เลือกระดับชั้น</label>
+    <div id="levelGrid" class="btn-grid">
+        <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
+        <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
+        <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
+        <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
+        <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
+        <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
+    </div>
+
+   <div id="registerRoomSection" style="display:none;">
+        <label>เลือกห้อง</label>
+        <div id="roomGrid" class="btn-grid"></div>
+    </div>
+
+    <!-- ฟิลด์อื่นๆ เดิมของคุณต่อจากนี้ -->
+<select id="level" required>
+<option value="">
+🎓 ระดับชั้น
+</option>
+<option>
+📘 มัธยมต้น
+</option>
+<option>
+📕 มัธยมปลาย
+</option>
+</select>
+<input
+type="text"
+id="contact"
+placeholder="📱 ช่องทางติดต่อ (LINE / IG / Facebook)"
+required
+>
+
+<select id="sport">
+  <option value="ฟุตบอลชาย">⚽ ฟุตบอลชาย</option>
+  <option value="บาสเกตบอลชาย">🏀 บาสเกตบอลชาย</option>
+  <option value="บาสเกตบอลหญิง">🏀 บาสเกตบอลหญิง</option>
+  <option value="วอลเลย์บอลชาย">🏐 วอลเลย์บอลชาย</option>
+  <option value="วอลเลย์บอลหญิง">🏐 วอลเลย์บอลหญิง</option>
+  <option value="แบดมินตันชาย">🏸 แบดมินตันชาย</option>
+  <option value="แบดมินตันหญิง">🏸 แบดมินตันหญิง</option>
+  <option value="แฮนด์บอลหญิง">🤾 แฮนด์บอลชาย</option>
+    <option value="แฮนด์บอลหญิง">🤾 แฮนด์บอลหญิง</option>
+  <option value="กรีฑาชาย">🏃 กรีฑาชาย</option>
+  <option value="กรีฑาหญิง">🏃 กรีฑาหญิง</option>
+  <option value="แชร์บอลชาย">🥅 แชร์บอลชาย</option>
+  <option value="แชร์บอลหญิง">🥅 แชร์บอลหญิง</option>
+  <option value="ตะกร้อชาย">🦵 ตะกร้อชาย</option>
+  <option value="ตะกร้อหญิง">🦵 ตะกร้อหญิง</option>
+  <option value="เปตองชาย">🎯 เปตองชาย</option>
+  <option value="เปตองหญิง">🎯 เปตองหญิง</option>
+  <option value="เทเบิลเทนนิสชาย">🏓 ปิงปองชาย</option>
+  <option value="เทเบิลเทนนิสหญิง">🏓 ปิงปองหญิง</option>
+</select>
+<button type="submit">
+ ENTER DYNASTY 🔥
+</button>
+
+</form>
+
+</div>
+
+<div id="registerContainer"></div>
+
+<!-- Popup แจ้งเตือน -->
+<div id="qrPopup" class="qr-popup">
+    <div class="qr-box">
+        <h2 id="qrTitle"></h2>
+        <img id="qrImage" src="" alt="QR Code">
+        <p>สแกนเพื่อเข้ากลุ่ม Messenger💥</p>
+        <a id="qrLink" href="#" target="_blank" rel="noopener noreferrer" class="qr-link-btn">
+            👉 กดที่นี่เพื่อเข้ากลุ่ม
+        </a>
+        <button onclick="closeQR()">ปิด</button>
+    </div>
+</div>
+
+<script type="module" src="script.js"></script>
+
+<div class="thai-character-egg"></div>
+
+<div id="checkStatusSection">
+    <h2>เช็คสถานะการสมัคร❤️‍🔥</h2>
+    <input type="text" id="checkName" placeholder="ชื่อ-นามสกุล ตามที่ได้กรอก">
+    <input type="text" id="checkRoom" placeholder="ห้องเรียน เช่น 6/1">
+    <button id="checkStatusBtn">ตรวจสอบ</button>
+
+    <div id="checkResult"></div>
+</div>
+
+
  <!-- CHECKIN HTML -->
 <section id="checkin" class="checkin-section">
     <div class="header">
@@ -809,7 +813,7 @@ required
             <div class="name-text" id="nameText"></div>
         </div>
 
-        <div class="dept-section" id="roomSection" style="display: none;">
+        <div class="dept-section" id="checkinRoomSection" style="display: none;">
             <label class="dept-label">🏫 เลือกห้องเรียนของคุณ</label>
             <select id="roomSelect" class="room-select">
                 <option value="">-- กรุณาเลือกห้องเรียน --</option>
