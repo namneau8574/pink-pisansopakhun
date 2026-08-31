@@ -453,7 +453,92 @@
 <!-- ============================================================
      FIREBASE
 ============================================================ -->
+<!-- ผ้าคาดคณะสี -->
+<section id="sashorder">
 
+  <div class="order-header">
+    <h2 class="title">🎗️ สั่งซื้อผ้าคาดคณะสี</h2>
+    <p class="order-sub">ผ้าคาดคณะสีชมพูพิศาลโสภาคุณมาแล้วค้าบบบ กรอกข้อมูลแล้วสแกนจ่ายเงิน แนบสลิปได้เลยครับ</p>
+  </div>
+
+  <div class="sash-layout">
+
+    <div class="sash-showcase">
+      <div class="shirt-card">
+        <span class="winner-ribbon">🎗️ ผ้าคาดคณะสีสีชมพูพิศาลโสภาคุณ</span>
+        <img src="headband.png" alt="ผ้าคาดคณะสีชมพูพิศาลโสภาคุณ" class="shirt-img">
+        <div class="shirt-info">
+          <p>ผ้าคาดผูกข้อมือ/คาดศีรษะ ลายคณะสี</p>
+          <span class="price-tag">35฿</span>
+        </div>
+      </div>
+    </div>
+
+    <form id="sashForm" class="order-form">
+
+      <div class="form-step">
+        <span class="step-num">1</span>
+        <div class="step-fields">
+          <label class="step-label">ข้อมูลผู้สั่งซื้อ</label>
+          <input type="text" id="sashName" placeholder="👤 ชื่อ-นามสกุล" required>
+
+          <div id="sashLevelGrid" class="btn-grid">
+            <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
+            <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
+            <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
+            <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
+            <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
+            <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
+          </div>
+
+          <div id="sashRoomGrid" class="btn-grid"></div>
+          <input type="hidden" id="sashRoom" required>
+
+          <input type="text" id="sashRollNo" placeholder="🔢 เลขที่" inputmode="numeric" maxlength="3" required>
+        </div>
+      </div>
+
+      <div class="form-step">
+        <span class="step-num">2</span>
+        <div class="step-fields">
+          <label class="step-label">ช่องทางติดต่อ</label>
+          <input type="text" id="sashContact" placeholder="📱 LINE / IG / Facebook" required>
+        </div>
+      </div>
+
+      <div class="form-step">
+        <span class="step-num">3</span>
+        <div class="step-fields">
+          <label class="step-label">💳 ชำระเงิน 35 บาท</label>
+          <div class="qr-card">
+            <p class="qr-label">📱 สแกน QR เพื่อโอนเงิน</p>
+            <img src="qrpay2.jpg" alt="QR โอนเงินผ้าคาด" class="qr-img">
+            <div class="bank-info">
+              <span>ธนาคารไทยพาณิชย์</span>
+                <p>501-4680290</p>
+              <span>น้ำเหนือ ศรีนาคำ</span>
+            </div>
+          </div>
+
+          <label for="sashSlipInput" class="upload-drop" id="sashUploadDrop">
+            <span class="upload-icon">🧾</span>
+            <span class="upload-text">แตะเพื่อเลือกรูปสลิป</span>
+          </label>
+          <input type="file" id="sashSlipInput" accept="image/*" hidden required>
+          <div id="sashSlipPreviewBox" class="slip-preview-box">
+            <img id="sashSlipPreview" src="" alt="ตัวอย่างสลิป">
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" id="sashSubmitBtn">⚡ ยืนยันการสั่งซื้อผ้าคาด</button>
+
+    </form>
+
+  </div>
+
+  <div id="sashSuccessBox" class="pay-success-box" style="display:none;"></div>
+</section>
       
 <!-- ORDER SHIRT -->
 
@@ -585,92 +670,7 @@
   </div>
 <div id="paySuccessBox" class="pay-success-box" style="display:none;"></div>
 </section>
-<!-- ผ้าคาดคณะสี -->
-<section id="sashorder">
 
-  <div class="order-header">
-    <h2 class="title">🎗️ สั่งซื้อผ้าคาดคณะสี</h2>
-    <p class="order-sub">ผ้าคาดคณะสีชมพูพิศาลโสภาคุณมาแล้วค้าบบบ กรอกข้อมูลแล้วสแกนจ่ายเงิน แนบสลิปได้เลยครับ</p>
-  </div>
-
-  <div class="sash-layout">
-
-    <div class="sash-showcase">
-      <div class="shirt-card">
-        <span class="winner-ribbon">🎗️ ผ้าคาดคณะสีสีชมพูพิศาลโสภาคุณ</span>
-        <img src="headband.png" alt="ผ้าคาดคณะสีชมพูพิศาลโสภาคุณ" class="shirt-img">
-        <div class="shirt-info">
-          <p>ผ้าคาดผูกข้อมือ/คาดศีรษะ ลายคณะสี</p>
-          <span class="price-tag">35฿</span>
-        </div>
-      </div>
-    </div>
-
-    <form id="sashForm" class="order-form">
-
-      <div class="form-step">
-        <span class="step-num">1</span>
-        <div class="step-fields">
-          <label class="step-label">ข้อมูลผู้สั่งซื้อ</label>
-          <input type="text" id="sashName" placeholder="👤 ชื่อ-นามสกุล" required>
-
-          <div id="sashLevelGrid" class="btn-grid">
-            <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
-            <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
-            <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
-            <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
-            <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
-            <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
-          </div>
-
-          <div id="sashRoomGrid" class="btn-grid"></div>
-          <input type="hidden" id="sashRoom" required>
-
-          <input type="text" id="sashRollNo" placeholder="🔢 เลขที่" inputmode="numeric" maxlength="3" required>
-        </div>
-      </div>
-
-      <div class="form-step">
-        <span class="step-num">2</span>
-        <div class="step-fields">
-          <label class="step-label">ช่องทางติดต่อ</label>
-          <input type="text" id="sashContact" placeholder="📱 LINE / IG / Facebook" required>
-        </div>
-      </div>
-
-      <div class="form-step">
-        <span class="step-num">3</span>
-        <div class="step-fields">
-          <label class="step-label">💳 ชำระเงิน 35 บาท</label>
-          <div class="qr-card">
-            <p class="qr-label">📱 สแกน QR เพื่อโอนเงิน</p>
-            <img src="qrpay2.jpg" alt="QR โอนเงินผ้าคาด" class="qr-img">
-            <div class="bank-info">
-              <span>ธนาคารไทยพาณิชย์</span>
-                <p>501-4680290</p>
-              <span>น้ำเหนือ ศรีนาคำ</span>
-            </div>
-          </div>
-
-          <label for="sashSlipInput" class="upload-drop" id="sashUploadDrop">
-            <span class="upload-icon">🧾</span>
-            <span class="upload-text">แตะเพื่อเลือกรูปสลิป</span>
-          </label>
-          <input type="file" id="sashSlipInput" accept="image/*" hidden required>
-          <div id="sashSlipPreviewBox" class="slip-preview-box">
-            <img id="sashSlipPreview" src="" alt="ตัวอย่างสลิป">
-          </div>
-        </div>
-      </div>
-
-      <button type="submit" id="sashSubmitBtn">⚡ ยืนยันการสั่งซื้อผ้าคาด</button>
-
-    </form>
-
-  </div>
-
-  <div id="sashSuccessBox" class="pay-success-box" style="display:none;"></div>
-</section>
 <!-- REGISTER -->
 <section id="register">
 <h2 class="title">
