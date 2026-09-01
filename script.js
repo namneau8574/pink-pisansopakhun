@@ -2067,7 +2067,7 @@ if (sashForm) {
     successBox.innerHTML = `
       <div class="sash-success-icon">🎗️</div>
       <h3>สั่งซื้อผ้าคาดสำเร็จแล้ว!</h3>
-      <p class="sash-success-note">ขอบคุณสำหรับการสั่งซ์้อนะครับ 🌸</p>
+      <p class="sash-success-note">ขอบคุณสำหรับการสั่งซื้อนะครับ 🌸</p>
     `;
     successBox.style.display = 'block';
   } else {
