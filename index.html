@@ -789,7 +789,76 @@ required
 
     <div id="checkResult"></div>
 </div>
+   <!-- =========================================================
+   สมัครสปอตแดนซ์ (#spotdance)
+========================================================= -->
+<section id="spotdance">
 
+  <div class="sd-header">
+    <span class="sd-eyebrow">💃 เปิดรับสมัคร</span>
+    <h2 class="title">สปอตแดนซ์ คณะสีชมพูพิศาลโสภาคุณ</h2>
+    <p class="sd-sub">กรอกข้อมูลให้ครบ แล้วสแกน QR เข้ากลุ่มได้เลย</p>
+  </div>
+
+  <div class="sd-layout">
+
+    <!-- ซ้าย: รูปภาพ -->
+    <div class="sd-photo-card">
+      <img src="spotdance.jpg" alt="สปอตแดนซ์คณะสีชมพูพิศาลโสภาคุณ" class="sd-photo">
+      <div class="sd-photo-caption">
+        <h3>ร่วมเป็นส่วนหนึ่งของทีมสปอตแดนซ์</h3>
+        <p>⊹ ม.2 - ม.6
+⊹ กลับดึกได้ 2-3 ทุ่ม (เปิดเทอม)
+⊹สามารถซ้อมนอกสถานที่ได้ 
+⊹ สะดวกซ้อมปิดเทอม
+⊹ สะดวกซ้อมเสาร์-อาทิตย์ (เปิดเทอม)
+⊹ ผู้ปกครองต้องอนุญาตแล้วเท่านั้น * ห้ามมีปัญหาทีหลัง *</p>
+      </div>
+    </div>
+
+    <!-- ขวา: ฟอร์มสมัคร -->
+    <form id="sdForm" class="sd-form">
+
+      <div class="sd-field-group">
+        <label class="sd-group-label"><span class="sd-group-num">1</span> ข้อมูลผู้สมัคร</label>
+        <input type="text" id="sdName" placeholder="👤 ชื่อ-นามสกุล" required>
+        <input type="text" id="sdNickname" placeholder="😊 ชื่อเล่น" required>
+      </div>
+
+      <div class="sd-field-group">
+        <label class="sd-group-label"><span class="sd-group-num">2</span> ระดับชั้น / ห้อง</label>
+        <div id="sdLevelGrid" class="sd-btn-grid"></div>
+        <div id="sdRoomGrid" class="sd-btn-grid"></div>
+        <input type="hidden" id="sdRoom" required>
+      </div>
+
+      <div class="sd-field-group">
+        <label class="sd-group-label"><span class="sd-group-num">3</span> ข้อมูลติดต่อ</label>
+        <input type="text" id="sdRollNo" placeholder="🔢 เลขที่" inputmode="numeric" maxlength="3" required>
+        <input type="tel" id="sdPhone" placeholder="📱 เบอร์โทร" inputmode="numeric" maxlength="10" required>
+      </div>
+
+      <button type="submit" id="sdSubmitBtn">💃 ยืนยันสมัครสปอตแดนซ์</button>
+    </form>
+
+  </div>
+
+  <div id="sdSuccessBox" class="sd-success-box" style="display:none;"></div>
+
+</section>
+
+<!-- Popup QR เข้ากลุ่มสปอตแดนซ์ -->
+<div id="sdQrPopup" class="sd-qr-popup">
+  <div class="sd-qr-box">
+    <h2>✅ สมัครสำเร็จ!</h2>
+    <img src="qrspotdance.png" alt="QR เข้ากลุ่มสปอตแดนซ์" class="sd-qr-img">
+    <p>สแกนเพื่อเข้ากลุ่ม Messenger 💥</p>
+    <a id="sdQrLink" href="https://ig.me/j/AbbCm3vvtoarsh_o/" target="_blank" rel="noopener noreferrer" class="sd-qr-link-btn">
+      👉 กดที่นี่เพื่อเข้ากลุ่ม
+    </a>
+    <button type="button" id="sdQrCloseBtn">ปิด</button>
+  </div>
+</div>
 
  <!-- CHECKIN HTML -->
 <section id="checkin" class="checkin-section">
