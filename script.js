@@ -1700,7 +1700,7 @@ if (orderForm) {
    ผ้าคาดคณะสี 35 บาท
 ========================= */
 const SASH_SYSTEM_ENABLED = true;
-const SASH_GAS_URL = 'https://script.google.com/macros/s/AKfycbzB0vxpjFjev_AserRtSn-l51CvBoxAncP6RV7zAm6-pagP8kRcXQqHcFqYfsa1r_mPkQ/exec';
+const SASH_GAS_URL = 'https://script.google.com/macros/s/AKfycbyHL_IbzhV_cCA42RI9YlA-MLjtFAClTe8nTkYW202FdrPpU3vU4h3McfICxdfzomYU2w/exec';
 const sashLevelGrid = document.getElementById('sashLevelGrid');
 const sashRoomGrid  = document.getElementById('sashRoomGrid');
 const sashRoomInput = document.getElementById('sashRoom');
