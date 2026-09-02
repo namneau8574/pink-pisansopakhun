@@ -459,6 +459,7 @@
 
   <div class="sash-layout">
 
+    <!-- ฝั่งแสดงสินค้า -->
     <div class="sash-showcase">
       <div class="shirt-card">
         <span class="winner-ribbon">🎗️ ผ้าคาดคณะสี</span>
@@ -471,24 +472,31 @@
       </div>
     </div>
 
+    <!-- ฝั่งฟอร์มสั่งซื้อ -->
     <form id="sashForm" class="order-form">
-  <!-- ✨ เพิ่มใหม่: จำนวนชิ้น -->
-    <div class="sash-qty-box">
-      <span class="sash-qty-label">🎗️ จำนวนที่สั่งซื้อ</span>
-      <div class="sash-qty-control">
-        <button type="button" id="sashQtyMinus" class="sash-qty-btn">−</button>
-        <span id="sashQtyValue" class="sash-qty-value">1</span>
-        <button type="button" id="sashQtyPlus" class="sash-qty-btn">+</button>
-      </div>
-      <div class="sash-qty-total">
-        รวม <span id="sashTotalPrice">35</span> บาท
-      </div>
-    </div>
 
-  </div>
-</div>
+      <!-- Step 1: จำนวนสินค้า -->
       <div class="form-step">
         <span class="step-num">1</span>
+        <div class="step-fields">
+          <label class="step-label">จำนวนสินค้า</label>
+          <div class="sash-qty-box">
+            <span class="sash-qty-label">🎗️ จำนวนที่สั่งซื้อ</span>
+            <div class="sash-qty-control">
+              <button type="button" id="sashQtyMinus" class="sash-qty-btn">−</button>
+              <span id="sashQtyValue" class="sash-qty-value">1</span>
+              <button type="button" id="sashQtyPlus" class="sash-qty-btn">+</button>
+            </div>
+            <div class="sash-qty-total">
+              รวม <span id="sashTotalPrice">35</span> บาท
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: ข้อมูลผู้สั่งซื้อ -->
+      <div class="form-step">
+        <span class="step-num">2</span>
         <div class="step-fields">
           <label class="step-label">ข้อมูลผู้สั่งซื้อ</label>
           <input type="text" id="sashName" placeholder="👤 ชื่อ-นามสกุล" required>
@@ -509,24 +517,26 @@
         </div>
       </div>
 
+      <!-- Step 3: ช่องทางติดต่อ -->
       <div class="form-step">
-        <span class="step-num">2</span>
+        <span class="step-num">3</span>
         <div class="step-fields">
           <label class="step-label">ช่องทางติดต่อ</label>
           <input type="text" id="sashContact" placeholder="📱 LINE / IG / Facebook" required>
         </div>
       </div>
 
+      <!-- Step 4: ชำระเงิน -->
       <div class="form-step">
-        <span class="step-num">3</span>
+        <span class="step-num">4</span>
         <div class="step-fields">
-          <label class="step-label">💳 ชำระเงิน 35 บาท</label>
+          <label class="step-label">💳 ชำระเงิน</label>
           <div class="qr-card">
             <p class="qr-label">📱 สแกน QR เพื่อโอนเงิน</p>
             <img src="qrpay2.jpg" alt="QR โอนเงินผ้าคาด" class="qr-img">
             <div class="bank-info">
-              <span>ธนาคารไทยพาณิช</span>
-             <p>501-4680290</p>
+              <span>ธนาคารไทยพาณิชย์</span>
+              <p>501-4680290</p>
               <span>น้ำเหนือ ศรีนาคำ</span>
             </div>
           </div>
