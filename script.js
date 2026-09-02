@@ -2089,3 +2089,170 @@ if (sashForm) {
 }
  });
 }
+
+
+
+/* =========================================================
+   SPOT DANCE REGISTER (#spotdance)
+   ⚠️ แก้ SD_GAS_URL เป็น Apps Script Web app URL ของคุณ
+   ⚠️ แก้ลิงก์กลุ่มใน HTML (#sdQrLink) หรือแก้ตรง SD_GROUP_LINK ด้านล่างก็ได้
+========================================================= */
+
+const SD_GAS_URL = "https://script.google.com/macros/s/AKfycbzNVD0af-zr-_3hGNZR3ZFlAH1zp7YPmRfQtQCOdzQGt_CRGMbXUbJprYR_C2qzQZJW/exec";
+const SD_GROUP_LINK = "https://ig.me/j/AbbCm3vvtoarsh_o/"; // ลิงก์กลุ่ม สปอตแดนซ์
+
+const sdRoomsByLevel = {
+    "ม.2": ["2/1", "2/8", "2/13"],
+    "ม.3": ["3/4", "3/5", "3/10"],
+    "ม.4": ["4/1", "4/6", "4/13"],
+    "ม.5": ["5/3", "5/7", "5/11"],
+    "ม.6": ["6/7", "6/9", "6/14"]
+};
+
+const sdLevelGrid = document.getElementById('sdLevelGrid');
+const sdRoomGrid  = document.getElementById('sdRoomGrid');
+const sdRoomInput = document.getElementById('sdRoom');
+
+if (sdLevelGrid) {
+  Object.keys(sdRoomsByLevel).forEach(level => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pick-btn';
+    b.dataset.level = level;
+    b.textContent = level;
+    sdLevelGrid.appendChild(b);
+  });
+
+  sdLevelGrid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.pick-btn');
+    if (!btn) return;
+    const selectedLevel = btn.dataset.level;
+
+    sdLevelGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    sdRoomInput.value = '';
+
+    const rooms = sdRoomsByLevel[selectedLevel] || [];
+    sdRoomGrid.innerHTML = '';
+    rooms.forEach(room => {
+      const roomBtn = document.createElement('button');
+      roomBtn.type = 'button';
+      roomBtn.className = 'pick-btn';
+      roomBtn.dataset.room = room;
+      roomBtn.textContent = room;
+      sdRoomGrid.appendChild(roomBtn);
+    });
+  });
+}
+
+if (sdRoomGrid) {
+  sdRoomGrid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.pick-btn');
+    if (!btn) return;
+    sdRoomGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    sdRoomInput.value = btn.dataset.room;
+  });
+}
+
+const sdRollNoInput = document.getElementById('sdRollNo');
+const sdPhoneInput  = document.getElementById('sdPhone');
+
+if (sdRollNoInput) {
+  sdRollNoInput.addEventListener('input', () => {
+    sdRollNoInput.value = sdRollNoInput.value.replace(/[^0-9]/g, '');
+  });
+}
+if (sdPhoneInput) {
+  sdPhoneInput.addEventListener('input', () => {
+    sdPhoneInput.value = sdPhoneInput.value.replace(/[^0-9]/g, '');
+  });
+}
+
+/* ===== Popup QR ===== */
+function showSdQrPopup() {
+  const popup = document.getElementById('sdQrPopup');
+  const link = document.getElementById('sdQrLink');
+  if (link) link.href = SD_GROUP_LINK;
+  if (popup) popup.classList.add('show');
+}
+function closeSdQrPopup() {
+  const popup = document.getElementById('sdQrPopup');
+  if (popup) popup.classList.remove('show');
+}
+
+const sdQrCloseBtn = document.getElementById('sdQrCloseBtn');
+if (sdQrCloseBtn) sdQrCloseBtn.addEventListener('click', closeSdQrPopup);
+
+const sdQrPopupEl = document.getElementById('sdQrPopup');
+if (sdQrPopupEl) {
+  sdQrPopupEl.addEventListener('click', (e) => {
+    if (e.target.id === 'sdQrPopup') closeSdQrPopup();
+  });
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeSdQrPopup();
+});
+
+/* ===== ส่งฟอร์ม ===== */
+const sdForm = document.getElementById('sdForm');
+if (sdForm) {
+  sdForm.noValidate = true;
+
+  sdForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name     = document.getElementById('sdName').value.trim();
+    const nickname = document.getElementById('sdNickname').value.trim();
+    const room     = sdRoomInput.value.trim();
+    const rollNo   = sdRollNoInput.value.trim();
+    const phone    = sdPhoneInput.value.trim();
+
+    if (!name || !nickname || !room || !rollNo || !phone) {
+      alert('⚠️ กรุณากรอกข้อมูลให้ครบทุกช่อง');
+      return;
+    }
+    if (phone.length < 9) {
+      alert('⚠️ กรุณากรอกเบอร์โทรให้ครบ 9-10 หลัก');
+      return;
+    }
+
+    const btn = document.getElementById('sdSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ กำลังส่งข้อมูล...';
+
+    // เด้ง QR ทันที ไม่ต้องรอผลจากชีต (UX ลื่นเหมือนระบบ register เดิม)
+    sdForm.reset();
+    if (sdLevelGrid) sdLevelGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
+    if (sdRoomGrid) sdRoomGrid.innerHTML = '';
+    showSdQrPopup();
+
+    try {
+      const payload = { action: 'spotdance', name, nickname, room, rollNo, phone };
+
+      fetch(SD_GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors', // ส่งเบื้องหลังแบบเดียวกับ registerForm เดิม
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).catch(err => console.error(err));
+
+      const successBox = document.getElementById('sdSuccessBox');
+      successBox.innerHTML = `
+        <div class="sd-success-icon">💃</div>
+        <h3>สมัครสปอตแดนซ์สำเร็จแล้ว!</h3>
+        <div class="sd-success-row"><span>ชื่อ</span><b>${name} (${nickname})</b></div>
+        <div class="sd-success-row"><span>ห้อง</span><b>${room} เลขที่ ${rollNo}</b></div>
+        <div class="sd-success-row"><span>เบอร์โทร</span><b>${phone}</b></div>
+        <p class="sd-success-note">อย่าลืมสแกน QR เข้ากลุ่มด้วยนะครับ 🌸</p>
+      `;
+      successBox.style.display = 'block';
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '💃 ยืนยันสมัครสปอตแดนซ์';
+    }
+  });
+}
