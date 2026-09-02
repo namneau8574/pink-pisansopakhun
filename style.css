@@ -2858,7 +2858,90 @@ img, video {
   color: #8a7a82;
   line-height: 1.6;
 }
+/* ===== ตัวเลือกจำนวนชิ้น (ผ้าคาด) ===== */
+.sash-qty-box {
+  background: var(--gold-pale);
+  border: 1.5px solid rgba(232, 166, 201, 0.35);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
 
+.sash-qty-label {
+  font-weight: 700;
+  color: var(--dark);
+  font-size: 0.92rem;
+}
+
+.sash-qty-control {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.sash-qty-btn {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink), var(--pink-light));
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(255, 46, 136, 0.3);
+  transition: 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.sash-qty-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 46, 136, 0.4);
+}
+
+.sash-qty-btn:active {
+  transform: scale(0.92);
+}
+
+.sash-qty-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.sash-qty-value {
+  min-width: 44px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pink);
+  font-family: 'Noto Serif Thai', serif;
+}
+
+.sash-qty-total {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.sash-qty-total span {
+  color: var(--pink);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 480px) {
+  .sash-qty-btn { width: 46px; height: 46px; font-size: 1.4rem; }
+}
 
 
 
