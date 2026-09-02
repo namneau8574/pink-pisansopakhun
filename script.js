@@ -413,9 +413,9 @@ registerForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const name = document.getElementById('name').value.trim();
-    const room = document.getElementById('room').value.trim();
+    const room = document.getElementById('registerRoom').value.trim();
     const sport = document.getElementById('sport').value;
-    const level = document.getElementById('level').value;
+    const level = document.getElementById('registerLevel').value;
     const contact = document.getElementById('contact').value.trim();
 
     if (name === '' || room === '') {
@@ -458,9 +458,9 @@ const roomsByLevel = {
 
 const levelGrid = document.getElementById('levelGrid');
 const roomGrid = document.getElementById('roomGrid');
-const roomSection = document.getElementById('roomSection');
-const levelInput = document.getElementById('level');
-const roomInput = document.getElementById('room');
+const roomSection = document.getElementById('registerRoomSection');
+const levelInput = document.getElementById('registerLevel');
+const roomInput = document.getElementById('registerRoom');
 
 if (levelGrid) {
     levelGrid.addEventListener('click', (e) => {
@@ -472,13 +472,13 @@ if (levelGrid) {
         levelGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
 
-              // เปลี่ยนจาก ม.1-ม.6 เป็น มัธยมต้น/ปลาย
-levelInput.value =
-    ["ม.1", "ม.2", "ม.3"].includes(selectedLevel)
-        ? "📘 มัธยมต้น"
-        : "📕 มัธยมปลาย";
+        // เปลี่ยนจาก ม.1-ม.6 เป็น มัธยมต้น/ปลาย
+        levelInput.value =
+            ["ม.1", "ม.2", "ม.3"].includes(selectedLevel)
+                ? "📘 มัธยมต้น"
+                : "📕 มัธยมปลาย";
 
-roomInput.value = '';
+        roomInput.value = '';
        
         const rooms = roomsByLevel[selectedLevel] || [];
         roomGrid.innerHTML = '';
@@ -523,6 +523,7 @@ popup.classList.remove('show');
 },2000);
 
 }
+
 function voteAnimation(team){
 
 const div = document.createElement('div');
@@ -538,6 +539,7 @@ div.remove();
 },600);
 
 }
+
 function canVote(team){
 
   const lastVote = localStorage.getItem('vote_' + team);
@@ -548,6 +550,7 @@ function canVote(team){
 
   return diff > 10000; // 10 วิ
 }
+
 /* =========================
    LOAD VOTES
 ========================= */
@@ -557,6 +560,7 @@ onValue(ref(db,'votes'),(snapshot)=>{
   console.log("VOTES:", snapshot.val());
 
 });
+
 const cards = document.querySelectorAll('.card');
 
 cards.forEach(card => {
@@ -595,6 +599,7 @@ scale(1)
 });
 
 });
+
 window.addEventListener("load",()=>{
 
 setTimeout(()=>{
@@ -633,7 +638,8 @@ const qrImages={
 "เทเบิลเทนนิสชาย":"qrtabletennis.jpg",
 "เทเบิลเทนนิสหญิง":"qrtabletennis.jpg"
 };
-// แหล่งรวมลิงก์กลุ่ม Messenger ของแต่ละกีฬา (ใส่ลิงก์จริงแทน xxxxxxx)
+
+// แหล่งรวมลิงก์กลุ่ม Messenger ของแต่ละกีฬา
 const qrLinks = {
     "ฟุตบอลชาย": "https://m.me/j/AbagNH1jRtE5crHJ/?send_source=gc:share_to_line",
     "บาสเกตบอลชาย": "https://m.me/j/AbZukYRd197hRbmV/?send_source=gc:share_to_line",
@@ -643,7 +649,7 @@ const qrLinks = {
     "แบดมินตันชาย": "https://m.me/j/AbYhHKZz1oddYFxJ/?send_source=gc:share_to_line",
     "แบดมินตันหญิง": "https://m.me/j/AbYhHKZz1oddYFxJ/?send_source=gc:share_to_line",
     "แฮนด์บอลชาย": "https://m.me/j/AbbrOntvOA1UTSJw/?send_source=gc:share_to_line",
-   "แฮนด์บอลหญิง": "https://m.me/j/AbbrOntvOA1UTSJw/?send_source=gc:share_to_line",
+    "แฮนด์บอลหญิง": "https://m.me/j/AbbrOntvOA1UTSJw/?send_source=gc:share_to_line",
     "กรีฑาชาย": "https://m.me/j/Abbk4m6GDPI2-TYJ/?send_source=gc:share_to_line",
     "กรีฑาหญิง": "https://m.me/j/Abbk4m6GDPI2-TYJ/?send_source=gc:share_to_line",
     "แชร์บอลชาย": "https://m.me/j/AbbqWlkmdRYtTFLq/?send_source=gc:share_to_line",
@@ -661,10 +667,12 @@ window.closeQR = function() {
   document.getElementById('qrPopup').style.display = 'none';
   document.getElementById('registerForm').reset();
 };
+
 // กดพื้นหลังเพื่อปิด
 document.getElementById('qrPopup').addEventListener('click', function(e) {
   if (e.target.id === 'qrPopup') window.closeQR();
 });
+
 // กด Escape เพื่อปิด
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') window.closeQR();
@@ -695,7 +703,6 @@ function showQR(sport){
 
     document.getElementById("qrPopup").style.display = "flex";
 }
-
 // 📑 ฐานข้อมูลรหัสประจำตัวนักเรียนที่มีสิทธิ์เข้าเว็บ
 const studentDatabase = ["39019", "39150", "39153", "39159", "39169", "39212", "39217", "39246", "39499", "39519", "39522", "39523", "39536", "39567", "39570", "39577", "39627", "39638", "39665", "39672", "39713", "39720", "39748", "39754", "39757", "39774", "39776", "41215", "41886", "41887", "41888", "41889", "41890", "41891", "41892", "41893", "41895", "41897", "41898", "41899",
     "39152", "39180", "39198", "39244", "39248", "39249", "39264", "39272", "39287", "39291", "39303", "39319", "39323", "39326", "39344", "39350", "39413", "39508", "39515", "39528", "39539", "39540", "39566", "39636", "39670", "39674", "39704", "39727", "39752", "39756", "39769", "41825", "41826", "41827", "41828", "41829", "41830", "41831", "41832", "41833",
