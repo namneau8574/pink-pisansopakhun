@@ -2037,6 +2037,42 @@ if (sdQrPopupEl) {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeSdQrPopup();
 });
+// ===== จำนวนชิ้น =====
+const SASH_UNIT_PRICE = 35;
+let sashQty = 1;
+
+const sashQtyValueEl = document.getElementById('sashQtyValue');
+const sashQtyMinusBtn = document.getElementById('sashQtyMinus');
+const sashQtyPlusBtn = document.getElementById('sashQtyPlus');
+const sashTotalPriceEl = document.getElementById('sashTotalPrice');
+
+function updateSashQtyDisplay() {
+  if (sashQtyValueEl) sashQtyValueEl.textContent = sashQty;
+  if (sashTotalPriceEl) sashTotalPriceEl.textContent = sashQty * SASH_UNIT_PRICE;
+  if (sashQtyMinusBtn) sashQtyMinusBtn.disabled = sashQty <= 1;
+}
+
+if (sashQtyMinusBtn) {
+  sashQtyMinusBtn.addEventListener('click', () => {
+    if (sashQty > 1) {
+      sashQty--;
+      updateSashQtyDisplay();
+      updateSashProgress();
+    }
+  });
+}
+
+if (sashQtyPlusBtn) {
+  sashQtyPlusBtn.addEventListener('click', () => {
+    if (sashQty < 20) { // กันกดเผลอเกินจำนวนที่สมเหตุสมผล
+      sashQty++;
+      updateSashQtyDisplay();
+      updateSashProgress();
+    }
+  });
+}
+
+updateSashQtyDisplay(); // เรียกครั้งแรกให้ปุ่มลบถูก disable ตอน qty = 1
 
 /* ===== ส่งฟอร์ม ===== */
 const sdForm = document.getElementById('sdForm');
