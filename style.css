@@ -2536,52 +2536,30 @@ img, video {
 
 
 
-
 /* =========================================================
-   ORDER SHIRT SECTION (#ordershirt) — ปรับให้กะทัดรัด + ปุ่มกดง่ายบนมือถือ
-   (ฉบับปรับปรุง: รวม media query ที่ซ้ำ, ใช้ clamp() ลดจำนวนจุดที่ต้องแก้,
-    เพิ่ม touch target และความลื่นไหลบนจอเล็ก)
+   SASH ORDER (#sashorder) — ปรับปรุงใหม่
 ========================================================= */
+#sashorder { position: relative; z-index: 2; }
 
-#ordershirt {
-  position: relative;
-  z-index: 2;
-}
-
-#ordershirt .order-header {
-  text-align: center;
-  margin-bottom: clamp(28px, 6vw, 50px);
-}
-
-#ordershirt .order-eyebrow {
-  display: inline-block;
-  font-size: 0.8rem;
+/* ---------- Header ---------- */
+#sashorder .order-header { text-align: center; margin-bottom: clamp(24px, 4vw, 36px); }
+#sashorder .order-header .title {
+  font-family: 'Anuphan', sans-serif;
   font-weight: 700;
-  letter-spacing: 0.25em;
-  color: var(--pink);
-  background: var(--pink-pale);
-  padding: 7px 20px;
-  border-radius: 999px;
-  margin-bottom: 16px;
-  text-transform: uppercase;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  color: var(--pink, #ff2e88);
+  margin-bottom: 8px;
 }
-
-#ordershirt .order-header .title {
-  margin-bottom: 4px;
-}
-
-#ordershirt .order-sub {
-  color: var(--text-muted);
-  font-size: clamp(0.88rem, 2vw, 1rem);
-  letter-spacing: 0.03em;
+#sashorder .order-sub {
+  font-size: clamp(0.85rem, 2vw, 0.95rem);
+  color: #6b5b63;
   max-width: 520px;
   margin: 0 auto;
-  padding: 0 8px;
+  line-height: 1.6;
 }
 
-/* ===== LAYOUT ===== */
-
-#ordershirt .order-layout {
+/* ---------- Layout ---------- */
+#sashorder .sash-layout {
   display: grid;
   grid-template-columns: 1fr 1.1fr;
   gap: clamp(24px, 4vw, 40px);
@@ -2589,369 +2567,252 @@ img, video {
   max-width: 1100px;
   margin: 0 auto;
 }
-
 @media (max-width: 900px) {
-  #ordershirt .order-layout {
-    grid-template-columns: 1fr;
-  }
+  #sashorder .sash-layout { grid-template-columns: 1fr; }
 }
-
-/* ===== SHOWCASE (ซ้าย) ===== */
-
-#ordershirt .order-showcase {
+#sashorder .sash-showcase {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  position: sticky;
+  top: 24px;
 }
+@media (max-width: 900px) { #sashorder .sash-showcase { position: static; } }
 
-#ordershirt .shirt-card,
-#ordershirt .qr-card {
-  background: var(--white);
-  border: 1px solid rgba(232, 166, 201, 0.35);
-  border-radius: clamp(16px, 3vw, 24px);
-  padding: clamp(14px, 3vw, 28px);
-  position: relative;
-  text-align: center;
-  box-shadow: 0 10px 34px rgba(255, 46, 136, 0.1);
-  overflow: hidden;
-}
-
-/* มุมประดับพาสเทลแบบเดียวกับธีมหลัก */
-#ordershirt .shirt-card::before,
-#ordershirt .qr-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 36px; height: 36px;
-  border-top: 2px solid var(--gold-light);
-  border-left: 2px solid var(--gold-light);
-  border-radius: 24px 0 0 0;
-}
-#ordershirt .shirt-card::after,
-#ordershirt .qr-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0; right: 0;
-  width: 36px; height: 36px;
-  border-bottom: 2px solid var(--gold-light);
-  border-right: 2px solid var(--gold-light);
-  border-radius: 0 0 24px 0;
-}
-
-#ordershirt .winner-ribbon {
-  position: absolute;
-  top: 18px; left: -34px;
-  transform: rotate(-45deg);
-  background: linear-gradient(135deg, var(--pink), var(--pink-light));
-  color: #fff;
-  font-size: clamp(0.62rem, 1.5vw, 0.72rem);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 5px 40px;
-  box-shadow: 0 4px 12px rgba(255, 46, 136, 0.35);
-  z-index: 2;
-}
-
-#ordershirt .shirt-img {
-  width: 100%;
-  max-width: clamp(150px, 30vw, 260px);
-  height: auto;
-  display: block;
-  margin: 10px auto 20px;
-  border-radius: 18px;
-  border: 1px solid rgba(232, 166, 201, 0.3);
-  box-shadow: 0 6px 22px rgba(255, 46, 136, 0.12);
-}
-
-#ordershirt .shirt-info h3 {
-  font-family: 'Noto Serif Thai', serif;
-  color: var(--pink);
-  font-size: clamp(1.15rem, 3vw, 1.4rem);
-  letter-spacing: 0.05em;
-  margin-bottom: 6px;
-}
-
-#ordershirt .shirt-info p {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  margin-bottom: 14px;
-}
-
-#ordershirt .price-tag {
-  display: inline-block;
-  background: linear-gradient(135deg, var(--pink), var(--pink-light));
-  color: #fff;
-  font-weight: 700;
-  font-size: clamp(0.85rem, 2vw, 0.95rem);
-  padding: clamp(7px, 1.5vw, 9px) clamp(18px, 4vw, 26px);
-  border-radius: 999px;
-  box-shadow: 0 6px 18px rgba(255, 46, 136, 0.25);
-  letter-spacing: 0.03em;
-}
-
-#ordershirt .qr-label {
-  font-weight: 700;
-  color: var(--dark);
-  margin-bottom: 14px;
-  font-size: 0.95rem;
-}
-
-#ordershirt .qr-img {
-  width: clamp(130px, 30vw, 190px);
-  height: clamp(130px, 30vw, 190px);
-  object-fit: contain;
+/* ---------- Product card ---------- */
+#sashorder .shirt-card {
   background: #fff;
-  padding: 10px;
-  border-radius: 16px;
-  border: 1px solid rgba(232, 166, 201, 0.35);
-  box-shadow: 0 4px 16px rgba(255, 46, 136, 0.08);
-  margin-bottom: 14px;
+  border-radius: 24px;
+  padding: clamp(20px, 4vw, 28px);
+  box-shadow: 0 10px 40px rgba(255, 46, 136, 0.12);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
 }
-
-#ordershirt .bank-info {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-#ordershirt .bank-info span:first-child {
-  color: var(--pink);
+#sashorder .winner-ribbon {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: linear-gradient(135deg, var(--pink, #ff2e88), var(--pink-light, #ff7ab8));
+  color: #fff;
+  font-size: 0.78rem;
   font-weight: 700;
-  font-size: 0.95rem;
+  padding: 6px 14px;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(255, 46, 136, 0.3);
+}
+#sashorder .shirt-img {
+  width: 100%;
+  max-width: 280px;
+  margin: 20px auto 8px;
+  display: block;
+  border-radius: 16px;
+}
+#sashorder .shirt-info h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+#sashorder .shirt-info p { font-size: 0.85rem; color: #8a7a82; margin-bottom: 10px; }
+#sashorder .price-tag {
+  display: inline-block;
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: var(--pink, #ff2e88);
+  background: rgba(255, 46, 136, 0.08);
+  padding: 4px 18px;
+  border-radius: 50px;
 }
 
-/* ===== FORM (ขวา) ===== */
-
-#ordershirt .order-form {
-  background: var(--white);
-  border: 1px solid rgba(232, 166, 201, 0.35);
-  border-radius: clamp(18px, 3vw, 26px);
-  padding: clamp(16px, 3vw, 36px) clamp(14px, 3vw, 32px);
-  box-shadow: 0 10px 34px rgba(255, 46, 136, 0.1);
+/* ---------- Form shell ---------- */
+#sashorder .order-form {
+  background: #fff;
+  border-radius: 24px;
+  padding: clamp(20px, 4vw, 30px);
+  box-shadow: 0 10px 40px rgba(255, 46, 136, 0.1);
   display: flex;
   flex-direction: column;
-  gap: clamp(18px, 3vw, 26px);
+  gap: 22px;
 }
-
-#ordershirt .form-step {
+#sashorder .form-step {
   display: flex;
-  gap: clamp(10px, 2vw, 16px);
-  align-items: flex-start;
+  gap: 14px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed rgba(255, 46, 136, 0.2);
 }
-
-#ordershirt .step-num {
+#sashorder .form-step:last-of-type { border-bottom: none; padding-bottom: 0; }
+#sashorder .step-num {
   flex-shrink: 0;
-  width: clamp(26px, 5vw, 32px);
-  height: clamp(26px, 5vw, 32px);
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--pink), var(--pink-light));
+  background: linear-gradient(135deg, var(--pink, #ff2e88), var(--pink-light, #ff7ab8));
   color: #fff;
   font-weight: 700;
-  font-size: clamp(0.8rem, 2vw, 0.95rem);
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(255, 46, 136, 0.3);
+}
+#sashorder .step-fields { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+#sashorder .step-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 2px;
+}
+#sashorder .step-fields input[type="text"] {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #f0e2e8;
+  border-radius: 14px;
+  font-family: 'Anuphan', sans-serif;
+  font-size: 0.92rem;
+  transition: 0.2s;
+}
+#sashorder .step-fields input[type="text"]:focus {
+  outline: none;
+  border-color: var(--pink, #ff2e88);
+  box-shadow: 0 0 0 4px rgba(255, 46, 136, 0.1);
 }
 
-#ordershirt .step-fields {
-  flex: 1;
-  min-width: 0;
+/* ---------- ปุ่มเลือกระดับชั้น / ห้อง (จัดเรียงสวยๆ) ---------- */
+/* ---------- ปุ่มเลือกระดับชั้น / ห้อง ---------- */
+#sashorder .btn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+  gap: 10px;
+}
+
+#sashorder .pick-btn {
+  padding: 10px 8px;
+  border: 1.5px solid #ff7ab8;
+  border-radius: 12px;
+  background: #fff0f6;
+  font-family: 'Anuphan', sans-serif;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #ff2e88;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+/* ตอนเอาเมาส์ชี้ */
+#sashorder .pick-btn:hover {
+  border-color: #ff2e88;
+  background: #ffe0ed;
+  color: #ff2e88;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(255, 46, 136, 0.15);
+}
+
+/* ตอนเลือก */
+#sashorder .pick-btn.selected {
+  background: linear-gradient(
+    135deg,
+    #ff2e88,
+    #ff7ab8
+  );
+  border-color: #ff2e88;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(255, 46, 136, 0.35);
+  transform: translateY(-2px);
+}
+
+/* ห้อง */
+#sashorder #sashRoomGrid {
+  margin-top: 4px;
+}
+
+#sashorder #sashRoomGrid:empty::before {
+  content: '⬆️ กรุณาเลือกระดับชั้นก่อน';
+  font-size: 0.8rem;
+  color: #ff7ab8;
+  grid-column: 1 / -1;
+}
+/* ---------- QR Payment card ---------- */
+#sashorder .qr-card {
+  background: #fff7fa;
+  border: 1.5px dashed rgba(255, 46, 136, 0.25);
+  border-radius: 18px;
+  padding: 18px;
+  text-align: center;
+}
+#sashorder .qr-label { font-weight: 700; font-size: 0.9rem; margin-bottom: 10px; }
+#sashorder .qr-img {
+  width: 100%;
+  max-width: 220px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+#sashorder .bank-info {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 2px;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #6b5b63;
+  font-weight: 600;
 }
 
-#ordershirt .step-label {
-  font-weight: 700;
-  color: var(--dark);
-  font-size: clamp(0.85rem, 2vw, 0.95rem);
-  letter-spacing: 0.03em;
-}
-
-#ordershirt .step-fields input[type="text"] {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1.5px solid rgba(232, 166, 201, 0.35);
-  background: var(--gold-pale);
-  color: var(--text);
-  font-size: 16px; /* กัน iOS auto-zoom ตอน focus */
-  font-family: 'Anuphan', sans-serif;
-  outline: none;
-  transition: 0.25s;
-}
-
-#ordershirt .step-fields input[type="text"]::placeholder {
-  color: rgba(181, 103, 154, 0.55);
-}
-
-#ordershirt .step-fields input[type="text"]:focus {
-  border-color: var(--pink);
-  background: var(--white);
-  box-shadow: 0 0 0 3px rgba(255, 46, 136, 0.1);
-}
-
-#ordershirt .name-number-row {
-  display: flex;
-  gap: 10px;
-}
-
-#ordershirt .name-number-row #orderBackName {
-  flex: 2;
-  min-width: 0;
-}
-
-#ordershirt .name-number-row #orderBackNumber {
-  flex: 1;
-  min-width: 64px;
-  text-align: center;
-  letter-spacing: 0.05em;
-}
-
-@media (max-width: 480px) {
-  #ordershirt .name-number-row {
-    flex-direction: column;
-  }
-  #ordershirt .name-number-row #orderBackNumber {
-    text-align: left;
-  }
-}
-
-/* =========================================================
-   ปุ่มเลือก (ระดับชั้น / ห้อง / ไซซ์)
-   — จอ ≤900px ให้ทุกกริดเรียง 2 คอลัมน์อัตโนมัติ (รวมกฎซ้ำเป็นจุดเดียว)
-========================================================= */
-
-#ordershirt .btn-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-@media (max-width: 900px) {
-  #ordershirt #orderLevelGrid.btn-grid,
-  #ordershirt #sizeGrid.btn-grid,
-  #ordershirt #orderRoomGrid.btn-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-}
-
-#ordershirt .pick-btn {
-  padding: 11px 20px;
-  border: 1.5px solid rgba(232, 166, 201, 0.4);
-  border-radius: 12px;
-  background: var(--gold-pale);
-  color: var(--pink);
-  font-weight: 700;
-  font-size: 0.9rem;
-  font-family: 'Anuphan', sans-serif;
-  cursor: pointer;
-  transition: 0.2s;
-  min-height: 44px; /* touch target มาตรฐาน iOS/Android */
-  -webkit-tap-highlight-color: transparent;
-}
-
-#ordershirt .pick-btn:hover {
-  border-color: var(--pink);
-  background: var(--pink-pale);
-}
-
-#ordershirt .pick-btn:active {
-  transform: scale(0.97);
-}
-
-#ordershirt .pick-btn.selected {
-  background: linear-gradient(135deg, var(--pink), var(--pink-light));
-  border-color: var(--pink);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(255, 46, 136, 0.3);
-}
-
-@media (max-width: 900px) {
-  #ordershirt .pick-btn {
-    width: 100%;
-    min-height: 50px;
-    padding: 13px 10px;
-    font-size: 0.92rem;
-    text-align: center;
-    border-radius: 14px;
-    white-space: nowrap;
-    box-sizing: border-box;
-  }
-}
-
-@media (max-width: 480px) {
-  #ordershirt .pick-btn {
-    min-height: 48px;
-    padding: 12px 8px;
-    font-size: 0.9rem;
-  }
-}
-
-#ordershirt #orderRoomSection {
-  display: none;
-}
-
-/* อัปโหลดสลิป */
-#ordershirt .upload-drop {
+/* ---------- ปุ่มแนบสลิป (เด่นชัดขึ้น) ---------- */
+#sashorder .upload-drop {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: clamp(18px, 4vw, 28px) 16px;
-  border: 2px dashed rgba(255, 46, 136, 0.35);
-  border-radius: 16px;
-  background: var(--gold-pale);
+  padding: 24px 16px;
+  border: 2.5px dashed var(--pink-light, #ff7ab8);
+  border-radius: 18px;
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255, 46, 136, 0.04),
+    rgba(255, 46, 136, 0.04) 10px,
+    transparent 10px,
+    transparent 20px
+  );
   cursor: pointer;
+  transition: all 0.25s ease;
   text-align: center;
-  transition: 0.25s;
-  -webkit-tap-highlight-color: transparent;
 }
-
-#ordershirt .upload-drop:hover,
-#ordershirt .upload-drop:active {
-  border-color: var(--pink);
-  background: var(--pink-pale);
+#sashorder .upload-drop:hover {
+  border-color: var(--pink, #ff2e88);
+  background-color: rgba(255, 46, 136, 0.06);
+  transform: scale(1.01);
 }
-
-#ordershirt .upload-icon {
-  font-size: 1.8rem;
+#sashorder .upload-icon {
+  font-size: 2.2rem;
+  line-height: 1;
 }
-
-#ordershirt .upload-text {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  font-weight: 600;
+#sashorder .upload-text {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--pink, #ff2e88);
 }
+/* สถานะแนบสำเร็จ: ให้สลับ class จาก JS เพื่อเปลี่ยนกรอบเป็นทึบ */
+#sashorder .upload-drop.attached {
+  border-style: solid;
+  border-color: #2ecc71;
+  background: rgba(46, 204, 113, 0.06);
+}
+#sashorder .upload-drop.attached .upload-text { color: #27ae60; }
 
-#ordershirt .slip-preview-box {
+#sashorder .slip-preview-box {
   display: none;
-  margin-top: 6px;
+  margin-top: 4px;
   border-radius: 14px;
   overflow: hidden;
-  border: 1px solid rgba(232, 166, 201, 0.35);
+  border: 1.5px solid #f0e2e8;
 }
-
-#ordershirt .slip-preview-box.show {
-  display: block;
-}
-
-#ordershirt .slip-preview-box img {
+#sashorder .slip-preview-box.show { display: block; }
+#sashorder .slip-preview-box img {
   width: 100%;
   max-height: 260px;
   object-fit: contain;
-  background: var(--gold-pale);
+  background: #faf7f8;
   display: block;
 }
 
-/* ปุ่มยืนยัน */
-#ordershirt #orderSubmitBtn {
+/* ---------- ปุ่มยืนยัน ---------- */
+#sashorder #sashSubmitBtn {
   width: 100%;
   padding: clamp(14px, 3vw, 17px);
   border: none;
@@ -2965,570 +2826,399 @@ img, video {
   cursor: pointer;
   box-shadow: 0 8px 25px rgba(255, 46, 136, 0.3);
   transition: 0.3s;
-  position: relative;
-  overflow: hidden;
   min-height: 48px;
-  -webkit-tap-highlight-color: transparent;
+}
+#sashorder #sashSubmitBtn:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(255, 46, 136, 0.4); }
+#sashorder #sashSubmitBtn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ---------- Success box (เรียบๆ ไม่มีลุคตั๋ว) ---------- */
+#sashorder .pay-success-box {
+  max-width: 460px;
+  margin: 24px auto 0;
+  padding: clamp(32px, 5vw, 44px) clamp(24px, 4vw, 32px);
+  border-radius: 24px;
+  background: linear-gradient(180deg, #fff 0%, #fff7fa 100%);
+  box-shadow: 0 10px 40px rgba(255, 46, 136, 0.12);
+  text-align: center;
+}
+#sashorder .sash-success-icon {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+#sashorder .pay-success-box h3 {
+  font-family: 'Anuphan', sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+#sashorder .sash-success-note {
+  font-size: 0.9rem;
+  color: #8a7a82;
+  line-height: 1.6;
 }
 
-#ordershirt #orderSubmitBtn::before {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  border-radius: 49px;
-  border: 1px solid rgba(255, 196, 224, 0.5);
-  pointer-events: none;
-}
 
-#ordershirt #orderSubmitBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(255, 46, 136, 0.4);
-}
 
-#ordershirt #orderSubmitBtn:active {
-  transform: translateY(0);
-}
-
-#ordershirt #orderSubmitBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-#ordershirt #orderContainer {
-  margin-top: 36px;
-  display: grid;
-  gap: 16px;
-  max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-#ordershirt #orderContainer .register-card,
-#ordershirt #orderContainer .comment {
-  border-left: 4px solid var(--pink-light);
-}
-
-/* =========================================
-   จอเล็กมาก (iPhone SE และเล็กกว่า)
-   — เหลือแค่ค่าที่ clamp() คุมไม่ถึง
-========================================= */
-@media (max-width: 480px) {
-  #ordershirt .order-form,
-  #ordershirt .shirt-card,
-  #ordershirt .qr-card {
-    padding-left: 14px;
-    padding-right: 14px;
-  }
-
-  #ordershirt .winner-ribbon {
-    top: 14px;
-    left: -36px;
-  }
-}
 
 /* =========================================================
-   PAYMENT SECTION (#payment)
-   ค้นหาชื่อ -> จ่ายเงิน -> แนบสลิป
-   วิธีใช้: เพิ่มใน <head>
-   <link rel="stylesheet" href="payment.css">
+   SPOT DANCE REGISTER (#spotdance)
+   ใช้ตัวแปรสีธีมหลักที่ประกาศไว้ใน style.css (--pink, --gold ฯลฯ)
 ========================================================= */
 
-#payment {
+#spotdance {
   position: relative;
   z-index: 2;
+  padding: 100px 8% 120px;
 }
 
-#payment .order-header {
+.sd-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 50px;
 }
 
-#payment .order-header .title {
-  font-size: 1.7rem;
-  background: linear-gradient(135deg, var(--pink), #ff7cb8);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 800;
-  margin-bottom: 6px;
+.sd-eyebrow {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  color: var(--pink);
+  background: var(--pink-pale);
+  padding: 7px 20px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
 }
 
-#payment .order-header .order-sub {
+.sd-sub {
   color: var(--text-muted);
-  font-size: 0.92rem;
-  max-width: 420px;
-  margin: 0 auto;
-}
-
-#payment .payment-layout {
+  font-size: 0.95rem;
   max-width: 520px;
   margin: 0 auto;
+}
+
+/* ===== Layout ===== */
+.sd-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.1fr;
+  gap: clamp(24px, 4vw, 44px);
+  align-items: start;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+@media (max-width: 900px) {
+  .sd-layout { grid-template-columns: 1fr; }
+}
+
+/* ===== การ์ดรูปภาพ ===== */
+.sd-photo-card {
+  background: var(--white);
+  border: 1px solid rgba(232,166,201,.35);
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 14px 40px rgba(255,46,136,.12);
+  position: sticky;
+  top: 100px;
+}
+
+.sd-photo {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  display: block;
+  transition: transform .5s cubic-bezier(.16,1,.3,1);
+}
+.sd-photo-card:hover .sd-photo { transform: scale(1.05); }
+
+.sd-photo-caption {
+  padding: 22px 24px 26px;
+  text-align: center;
+}
+.sd-photo-caption h3 {
+  font-family: 'Noto Serif Thai', serif;
+  color: var(--pink);
+  font-size: 1.15rem;
+  margin-bottom: 6px;
+}
+.sd-photo-caption p {
+  color: var(--text-muted);
+  font-size: .86rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .sd-photo-card { position: static; }
+}
+
+/* ===== ฟอร์ม ===== */
+.sd-form {
+  background: var(--white);
+  border: 1px solid rgba(232,166,201,.35);
+  border-radius: 26px;
+  padding: clamp(18px, 3vw, 32px);
+  box-shadow: 0 14px 40px rgba(255,46,136,.1);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
 }
 
-/* ===== ฟอร์มค้นหาชื่อ ===== */
-
-#payment .pay-search-form {
+.sd-group-label {
   display: flex;
-  gap: 8px;
-  background: var(--white);
-  padding: 8px;
-  border-radius: 20px;
-  border: 1.5px solid rgba(232, 166, 201, 0.35);
-  box-shadow: 0 8px 24px rgba(255, 46, 136, 0.08);
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--dark);
+  font-size: .95rem;
+  margin-bottom: 12px;
 }
-
-#payment .pay-search-form input {
-  flex: 1;
-  min-width: 0;
-  padding: 15px 18px;
-  border-radius: 14px;
-  border: 1.5px solid transparent;
-  background: var(--gold-pale);
-  color: var(--text);
-  font-size: 16px; /* ป้องกัน iOS Safari auto-zoom */
-  font-family: 'Anuphan', sans-serif;
-  outline: none;
-  transition: 0.25s ease;
-}
-
-#payment .pay-search-form input::placeholder {
-  color: rgba(181, 103, 154, 0.55);
-}
-
-#payment .pay-search-form input:focus {
-  border-color: var(--pink);
-  background: var(--white);
-  box-shadow: 0 0 0 4px rgba(255, 46, 136, 0.12);
-}
-
-#payment .pay-search-form button {
-  padding: 0 24px;
-  border: none;
-  border-radius: 14px;
+.sd-group-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
   background: linear-gradient(135deg, var(--pink), var(--pink-light));
   color: #fff;
-  font-weight: 700;
-  font-size: 0.9rem;
-  font-family: 'Anuphan', sans-serif;
-  cursor: pointer;
-  white-space: nowrap;
-  box-shadow: 0 6px 18px rgba(255, 46, 136, 0.28);
-  transition: 0.25s ease;
-  min-height: 48px;
+  font-size: .8rem;
+  display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-
-#payment .pay-search-form button:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 24px rgba(255, 46, 136, 0.38);
-}
-
-#payment .pay-search-form button:active {
-  transform: translateY(0) scale(0.98);
-}
-
-#payment .pay-search-form button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* ===== กล่องแจ้งเตือน error ===== */
-
-#payment .pay-error-box {
+.sd-field-group {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 46, 136, 0.08);
-  color: var(--pink);
-  border-left: 4px solid var(--pink);
-  padding: 14px 18px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.92rem;
-  line-height: 1.5;
-  animation: payFadeIn 0.3s ease;
+  flex-direction: column;
+  gap: 12px;
 }
-
-/* ===== กรณีชื่อซ้ำหลายรายการ ===== */
-
-#payment .pay-match-list {
-  background: var(--white);
-  border: 1px solid rgba(232, 166, 201, 0.3);
-  border-radius: 20px;
-  padding: 16px;
-  color: var(--text);
-  box-shadow: 0 8px 24px rgba(255, 46, 136, 0.08);
-  animation: payFadeIn 0.3s ease;
-}
-
-#payment .pay-match-list > p:first-child {
-  font-weight: 700;
-  color: var(--dark);
-  font-size: 0.92rem;
-  margin: 2px 0 12px;
-}
-
-#payment .pay-match-btn {
-  display: block;
+.sd-field-group input {
   width: 100%;
-  text-align: left;
-  padding: 13px 16px;
-  margin-bottom: 8px;
+  padding: 15px 18px;
   border-radius: 14px;
-  border: 1.5px solid rgba(232, 166, 201, 0.35);
+  border: 1.5px solid rgba(232,166,201,.35);
   background: var(--gold-pale);
   color: var(--text);
+  font-size: 16px; /* กัน iOS auto-zoom */
   font-family: 'Anuphan', sans-serif;
-  font-weight: 600;
-  font-size: 0.88rem;
-  line-height: 1.4;
-  cursor: pointer;
-  transition: 0.2s ease;
-  min-height: 44px;
+  outline: none;
+  transition: .25s;
 }
-
-#payment .pay-match-btn:last-child {
-  margin-bottom: 0;
-}
-
-#payment .pay-match-btn:hover {
+.sd-field-group input::placeholder { color: rgba(181,103,154,.55); }
+.sd-field-group input:focus {
   border-color: var(--pink);
-  background: var(--pink-pale);
-  transform: translateX(4px);
-}
-
-#payment .pay-match-btn:active {
-  transform: translateX(2px) scale(0.99);
-}
-
-/* ===== การ์ดสรุปคำสั่งจอง + จ่ายเงิน ===== */
-
-#payment .payment-section {
   background: var(--white);
-  border: 1px solid rgba(232, 166, 201, 0.35);
-  border-radius: 24px;
-  padding: 26px;
-  box-shadow: 0 14px 40px rgba(255, 46, 136, 0.12);
+  box-shadow: 0 0 0 3px rgba(255,46,136,.1);
+}
+
+/* ===== ปุ่มเลือก ระดับชั้น/ห้อง ===== */
+.sd-btn-grid {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  animation: payFadeIn 0.4s ease;
+  flex-wrap: wrap;
+  gap: 10px;
 }
-
-#payment .pay-order-summary {
-  background: linear-gradient(135deg, var(--pink-pale), var(--gold-pale));
-  border-radius: 16px;
-  padding: 16px 20px;
-  color: var(--text);
-  line-height: 1.9;
-  font-size: 0.92rem;
-  border: 1px solid rgba(232, 166, 201, 0.3);
-}
-
-#payment .pay-order-summary p {
-  margin: 0;
-}
-
-#payment .pay-order-summary p:first-child {
-  font-size: 1.05rem;
-  color: var(--dark);
-  font-weight: 700;
-}
-
-/* ===== การ์ด QR ===== */
-
-#payment .qr-card {
-  background: var(--white);
-  border: 1px solid rgba(232, 166, 201, 0.35);
-  border-radius: 20px;
-  padding: 22px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-#payment .qr-card::before {
-  content: "";
-  position: absolute;
-  top: -40%;
-  left: -40%;
-  width: 180%;
-  height: 180%;
-  background: radial-gradient(circle, rgba(255, 46, 136, 0.06), transparent 60%);
-  pointer-events: none;
-}
-
-/* มุมประดับ ให้เข้าธีมเดียวกับการ์ดสั่งเสื้อ */
-#payment .qr-card::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 32px; height: 32px;
-  border-top: 2px solid var(--gold-light);
-  border-left: 2px solid var(--gold-light);
-  border-radius: 20px 0 0 0;
-  pointer-events: none;
-}
-
-#payment .qr-label {
-  font-weight: 700;
-  color: var(--dark);
-  margin-bottom: 14px;
-  font-size: 0.92rem;
-  position: relative;
-}
-
-#payment .qr-img {
-  width: 170px;
-  height: 170px;
-  object-fit: contain;
-  background: #fff;
-  padding: 10px;
-  border-radius: 16px;
-  border: 1.5px solid rgba(232, 166, 201, 0.4);
-  box-shadow: 0 6px 22px rgba(255, 46, 136, 0.14);
-  margin-bottom: 14px;
-  position: relative;
-}
-
-#payment .bank-info {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  position: relative;
-}
-
-#payment .bank-info span:first-child {
+.sd-btn-grid .pick-btn {
+  padding: 11px 20px;
+  border: 1.5px solid rgba(232,166,201,.4);
+  border-radius: 12px;
+  background: var(--gold-pale);
   color: var(--pink);
   font-weight: 700;
-  font-size: 0.95rem;
-}
-
-/* ===== แนบสลิป ===== */
-
-#payment .upload-drop {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 24px 16px;
-  border: 2px dashed rgba(255, 46, 136, 0.4);
-  border-radius: 16px;
-  background: var(--gold-pale);
+  font-size: .9rem;
+  font-family: 'Anuphan', sans-serif;
   cursor: pointer;
-  text-align: center;
-  transition: 0.25s ease;
+  transition: .2s;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
-
-#payment .upload-drop:hover {
+.sd-btn-grid .pick-btn:hover {
   border-color: var(--pink);
   background: var(--pink-pale);
-  transform: scale(1.01);
+}
+.sd-btn-grid .pick-btn.selected {
+  background: linear-gradient(135deg, var(--pink), var(--pink-light));
+  border-color: var(--pink);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(255,46,136,.3);
+}
+@media (max-width: 480px) {
+  .sd-btn-grid .pick-btn {
+    flex: 1 1 30%;
+    min-height: 48px;
+    padding: 12px 8px;
+    font-size: .85rem;
+    text-align: center;
+  }
 }
 
-#payment .upload-icon {
-  font-size: 1.8rem;
-}
-
-#payment .upload-text {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-#payment .slip-preview-box {
-  display: none;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid rgba(232, 166, 201, 0.35);
-  box-shadow: 0 6px 18px rgba(255, 46, 136, 0.1);
-}
-
-#payment .slip-preview-box.show {
-  display: block;
-  animation: payFadeIn 0.3s ease;
-}
-
-#payment .slip-preview-box img {
+/* ===== ปุ่มยืนยัน ===== */
+#sdSubmitBtn {
   width: 100%;
-  max-height: 240px;
-  object-fit: contain;
-  background: var(--gold-pale);
-  display: block;
-}
-
-/* ===== ปุ่มยืนยันจ่ายเงิน ===== */
-
-#payment #payConfirmBtn {
-  width: 100%;
-  padding: 17px;
+  padding: 16px;
   border: none;
   border-radius: 50px;
   background: linear-gradient(135deg, var(--pink), var(--pink-light));
   color: #fff;
   font-family: 'Anuphan', sans-serif;
   font-weight: 700;
-  font-size: 0.98rem;
-  letter-spacing: 0.06em;
+  letter-spacing: .06em;
   cursor: pointer;
-  box-shadow: 0 10px 28px rgba(255, 46, 136, 0.32);
-  transition: 0.3s ease;
+  box-shadow: 0 8px 25px rgba(255,46,136,.3);
+  transition: .3s;
   min-height: 48px;
-  position: relative;
-  overflow: hidden;
 }
-
-#payment #payConfirmBtn::before {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  border-radius: 49px;
-  border: 1px solid rgba(255, 196, 224, 0.5);
-  pointer-events: none;
-}
-
-#payment #payConfirmBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 36px rgba(255, 46, 136, 0.42);
-}
-
-#payment #payConfirmBtn:active {
-  transform: translateY(-1px);
-}
-
-#payment #payConfirmBtn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
+#sdSubmitBtn:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(255,46,136,.4); }
+#sdSubmitBtn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 
 /* ===== กล่องสำเร็จ ===== */
-
-#payment .pay-success-box {
+.sd-success-box {
   max-width: 520px;
-  margin: 6px auto 0;
+  margin: 28px auto 0;
   background: linear-gradient(135deg, var(--white), var(--pink-pale));
-  border: 1px solid rgba(232, 166, 201, 0.4);
-  border-radius: 20px;
-  padding: 24px;
+  border: 1px solid rgba(232,166,201,.4);
+  border-radius: 22px;
+  padding: 28px;
   text-align: center;
-  color: var(--pink);
-  font-weight: 700;
-  font-size: 1rem;
-  box-shadow: 0 12px 30px rgba(255, 46, 136, 0.14);
-  animation: payFadeIn 0.4s ease;
+  box-shadow: 0 14px 36px rgba(255,46,136,.14);
+  animation: sdPop .4s ease;
+}
+.sd-success-icon { font-size: 2.4rem; margin-bottom: 8px; }
+.sd-success-box h3 {
+  font-family: 'Noto Serif Thai', serif;
+  color: var(--dark);
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+.sd-success-row {
+  display: flex;
+  justify-content: space-between;
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 6px 0;
+  font-size: .9rem;
+  border-bottom: 1px dashed rgba(232,166,201,.4);
+  color: var(--text);
+}
+.sd-success-note { margin-top: 14px; font-size: .85rem; color: var(--text-muted); }
+
+@keyframes sdPop {
+  from { opacity: 0; transform: scale(.94) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-#payment .pay-success-box p {
-  margin: 0;
-}
-
-@keyframes payFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ===== RESPONSIVE ===== */
-
-/* มือถือทั่วไป */
+/* ===== Responsive ===== */
 @media (max-width: 640px) {
-  #payment .order-header {
-    margin-bottom: 22px;
-  }
+  #spotdance { padding: 60px 16px; }
+  .sd-form, .sd-photo-caption { padding: 20px 16px; }
+}
+/* ===== QR Popup ===== */
+.sd-qr-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(42, 0, 24, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  backdrop-filter: blur(10px);
+  padding: 20px;
+}
+.sd-qr-popup.show { display: flex; }
 
-  #payment .order-header .title {
-    font-size: 1.35rem;
-  }
-
-  #payment .order-header .order-sub {
-    font-size: 0.85rem;
-    padding: 0 10px;
-  }
-
-  #payment .payment-layout {
-    max-width: 100%;
-    gap: 14px;
-  }
-
-  #payment .pay-search-form {
-    flex-direction: column;
-    border-radius: 18px;
-    gap: 8px;
-  }
-
-  #payment .pay-search-form button {
-    padding: 14px;
-  }
-
-  #payment .payment-section {
-    padding: 18px;
-    border-radius: 20px;
-    gap: 16px;
-  }
-
-  #payment .qr-card {
-    padding: 16px;
-  }
-
-  #payment .qr-img {
-    width: 140px;
-    height: 140px;
-  }
-
-  #payment .pay-order-summary {
-    padding: 14px 16px;
-    font-size: 0.88rem;
-  }
-
-  #payment .pay-success-box {
-    padding: 18px;
-    font-size: 0.92rem;
-  }
+.sd-qr-box {
+  background: var(--white);
+  border: 1px solid rgba(232, 166, 201, 0.35);
+  padding: 40px 32px;
+  border-radius: 24px;
+  text-align: center;
+  width: 360px;
+  max-width: 100%;
+  box-shadow: 0 20px 60px rgba(255, 46, 136, 0.15), 0 0 0 1px rgba(232, 166, 201, 0.1);
+  animation: sdPop .35s ease;
+  position: relative;
 }
 
-/* มือถือจอเล็ก (iPhone SE และเล็กกว่า) */
-@media (max-width: 400px) {
-  #payment .order-header .title {
-    font-size: 1.2rem;
-  }
+.sd-qr-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 44px; height: 44px;
+  border-top: 2.5px solid var(--gold-light);
+  border-left: 2.5px solid var(--gold-light);
+  border-radius: 24px 0 0 0;
+}
+.sd-qr-box::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 44px; height: 44px;
+  border-bottom: 2.5px solid var(--gold-light);
+  border-right: 2.5px solid var(--gold-light);
+  border-radius: 0 0 24px 0;
+}
 
-  #payment .payment-section {
-    padding: 14px;
-  }
+.sd-qr-box h2 {
+  font-family: 'Noto Serif Thai', serif;
+  color: var(--dark);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: 0.05em;
+}
 
-  #payment .qr-card {
-    padding: 14px;
-  }
+.sd-qr-img {
+  width: 220px; height: 220px;
+  object-fit: contain;
+  background: white;
+  padding: 8px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(232, 166, 201, 0.2);
+  box-shadow: 0 4px 16px rgba(255, 46, 136, 0.08);
+}
 
-  #payment .qr-img {
-    width: 120px;
-    height: 120px;
-  }
+.sd-qr-box p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 18px;
+}
 
-  #payment .upload-drop {
-    padding: 18px 10px;
-  }
+.sd-qr-link-btn {
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  padding: 14px;
+  background: linear-gradient(135deg, #1877f2, #42a5f5);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  transition: 0.3s;
+  box-shadow: 0 6px 18px rgba(24, 119, 242, 0.3);
+}
+.sd-qr-link-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(24, 119, 242, 0.4);
+}
 
-  #payment .pay-match-btn {
-    padding: 11px 12px;
-    font-size: 0.82rem;
-  }
+.sd-qr-box button#sdQrCloseBtn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--pink), var(--pink-light));
+  color: white;
+  border: none;
+  padding: 13px 36px;
+  border-radius: 50px;
+  font-family: 'Anuphan', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 6px 18px rgba(255, 46, 136, 0.25);
+}
+.sd-qr-box button#sdQrCloseBtn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(255, 46, 136, 0.4);
+}
+
+@media (max-width: 480px) {
+  .sd-qr-box { padding: 30px 22px; width: 92vw; }
+  .sd-qr-img { width: 180px; height: 180px; }
 }
 
 
