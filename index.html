@@ -472,7 +472,21 @@
     </div>
 
     <form id="sashForm" class="order-form">
+  <!-- ✨ เพิ่มใหม่: จำนวนชิ้น -->
+    <div class="sash-qty-box">
+      <span class="sash-qty-label">🎗️ จำนวนที่สั่งซื้อ</span>
+      <div class="sash-qty-control">
+        <button type="button" id="sashQtyMinus" class="sash-qty-btn">−</button>
+        <span id="sashQtyValue" class="sash-qty-value">1</span>
+        <button type="button" id="sashQtyPlus" class="sash-qty-btn">+</button>
+      </div>
+      <div class="sash-qty-total">
+        รวม <span id="sashTotalPrice">35</span> บาท
+      </div>
+    </div>
 
+  </div>
+</div>
       <div class="form-step">
         <span class="step-num">1</span>
         <div class="step-fields">
