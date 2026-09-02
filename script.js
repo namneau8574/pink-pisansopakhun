@@ -1699,12 +1699,33 @@ if (orderForm) {
    SASH ORDER SYSTEM
    ผ้าคาดคณะสี 35 บาท
 ========================= */
-const SASH_SYSTEM_ENABLED = true;
-const SASH_GAS_URL = 'https://script.google.com/macros/s/AKfycbyHL_IbzhV_cCA42RI9YlA-MLjtFAClTe8nTkYW202FdrPpU3vU4h3McfICxdfzomYU2w/exec';
-const sashLevelGrid = document.getElementById('sashLevelGrid');
-const sashRoomGrid  = document.getElementById('sashRoomGrid');
-const sashRoomInput = document.getElementById('sashRoom');
 
+const SASH_SYSTEM_ENABLED = true;
+const SASH_GAS_URL = 'https://script.google.com/macros/s/AKfycbzRF6g6vmn47OmwEAzph42b8SniYYogY_COUeIVuodv7BKHBvw9Tin7UGeiju8jD-lwVQ/exec';
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const sashLevelGrid = document.getElementById('sashLevelGrid');
+const sashRoomGrid = document.getElementById('sashRoomGrid');
+const sashRoomInput = document.getElementById('sashRoom');
+const sashNameInput = document.getElementById('sashName');
+const sashRollNoInput = document.getElementById('sashRollNo');
+const sashContactInput = document.getElementById('sashContact');
+
+/* =========================
+   จำนวนผ้าคาด
+========================= */
+
+const sashQtyMinus = document.getElementById('sashQtyMinus');
+const sashQtyPlus = document.getElementById('sashQtyPlus');
+const sashQtyValue = document.getElementById('sashQtyValue');
+const sashTotalPrice = document.getElementById('sashTotalPrice');
+const sashPaymentTotal = document.getElementById('sashPaymentTotal');
+
+let sashQuantity = 1;
+const SASH_PRICE = 35;
 
 /* =========================
    ห้องแต่ละระดับชั้น
@@ -1719,143 +1740,174 @@ const sashRoomsByLevel = {
   "ม.6": ["6/7", "6/9", "6/14"]
 };
 
+/* =========================
+   อัปเดตจำนวน + ราคา
+========================= */
+
+function updateSashQuantity() {
+  const total = sashQuantity * SASH_PRICE;
+  if (sashQtyValue) sashQtyValue.textContent = sashQuantity;
+  if (sashTotalPrice) sashTotalPrice.textContent = total;
+  if (sashPaymentTotal) sashPaymentTotal.textContent = total;
+}
+
+/* =========================
+   ปุ่ม - / +
+========================= */
+
+if (sashQtyMinus) {
+  sashQtyMinus.addEventListener('click', () => {
+    if (sashQuantity > 1) {
+      sashQuantity--;
+      updateSashQuantity();
+    }
+  });
+}
+
+if (sashQtyPlus) {
+  sashQtyPlus.addEventListener('click', () => {
+    if (sashQuantity < 20) {
+      sashQuantity++;
+      updateSashQuantity();
+    }
+  });
+}
+
+/* เริ่มต้น */
+updateSashQuantity();
 
 /* =========================
    เลือกระดับชั้น
 ========================= */
 
 if (sashLevelGrid) {
-
   sashLevelGrid.addEventListener('click', (e) => {
-
     const btn = e.target.closest('.pick-btn');
-
     if (!btn) return;
 
     const selectedLevel = btn.dataset.level;
 
+    // ล้าง selected เดิม
+    sashLevelGrid.querySelectorAll('.pick-btn').forEach(b => {
+      b.classList.remove('selected');
+    });
 
-    // ทำให้ระดับที่เลือกเป็นสีชมพู
-    sashLevelGrid
-      .querySelectorAll('.pick-btn')
-      .forEach(b => b.classList.remove('selected'));
-
+    // เลือกระดับนี้
     btn.classList.add('selected');
-
 
     // ล้างห้องเดิม
     sashRoomInput.value = '';
     sashRoomGrid.innerHTML = '';
 
-
-    // ดึงข้อมูลห้อง
+    // ดึงห้อง
     const rooms = sashRoomsByLevel[selectedLevel] || [];
-
 
     // สร้างปุ่มห้อง
     rooms.forEach(room => {
-
       const roomBtn = document.createElement('button');
-
       roomBtn.type = 'button';
       roomBtn.className = 'pick-btn';
       roomBtn.dataset.room = room;
       roomBtn.textContent = room;
-
       sashRoomGrid.appendChild(roomBtn);
-
     });
 
-
     updateSashProgress();
-
   });
-
 }
-
 
 /* =========================
    เลือกห้อง
 ========================= */
 
 if (sashRoomGrid) {
-
   sashRoomGrid.addEventListener('click', (e) => {
-
     const btn = e.target.closest('.pick-btn');
-
     if (!btn) return;
 
+    sashRoomGrid.querySelectorAll('.pick-btn').forEach(b => {
+      b.classList.remove('selected');
+    });
 
-    // เอาสี selected ออกจากห้องอื่น
-    sashRoomGrid
-      .querySelectorAll('.pick-btn')
-      .forEach(b => b.classList.remove('selected'));
-
-
-    // เลือกห้องนี้
     btn.classList.add('selected');
-
     sashRoomInput.value = btn.dataset.room;
-
-
     updateSashProgress();
-
   });
-
 }
 
-const sashNameInput    = document.getElementById('sashName');
-const sashRollNoInput  = document.getElementById('sashRollNo');
-const sashContactInput = document.getElementById('sashContact');
+/* =========================
+   ข้อมูลผู้สั่ง
+========================= */
 
 if (sashNameInput) sashNameInput.addEventListener('input', updateSashProgress);
+
 if (sashRollNoInput) {
   sashRollNoInput.addEventListener('input', () => {
     sashRollNoInput.value = sashRollNoInput.value.replace(/[^0-9]/g, '');
     updateSashProgress();
   });
 }
+
 if (sashContactInput) sashContactInput.addEventListener('input', updateSashProgress);
 
-// ===== แนบรูปสลิป =====
+/* =========================
+   แนบรูปสลิป
+========================= */
+
 let sashSlipBase64 = "";
-const sashSlipInput      = document.getElementById('sashSlipInput');
-const sashUploadDrop     = document.getElementById('sashUploadDrop');
+
+const sashSlipInput = document.getElementById('sashSlipInput');
+const sashUploadDrop = document.getElementById('sashUploadDrop');
 const sashSlipPreviewBox = document.getElementById('sashSlipPreviewBox');
-const sashChangeSlipBtn  = document.getElementById('sashChangeSlip');
+const sashChangeSlipBtn = document.getElementById('sashChangeSlip');
 
 if (sashSlipInput) {
   sashSlipInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // จำกัดเฉพาะรูป
+    if (!file.type.startsWith('image/')) {
+      alert('⚠️ กรุณาเลือกไฟล์รูปภาพ');
+      sashSlipInput.value = '';
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = function (ev) {
       sashSlipBase64 = ev.target.result;
-      document.getElementById('sashSlipPreview').src = sashSlipBase64;
-      sashSlipPreviewBox.classList.add('show');
-      sashUploadDrop.classList.add('hidden');
+      const preview = document.getElementById('sashSlipPreview');
+      if (preview) preview.src = sashSlipBase64;
+      if (sashSlipPreviewBox) sashSlipPreviewBox.classList.add('show');
+      if (sashUploadDrop) sashUploadDrop.classList.add('hidden');
       updateSashProgress();
     };
     reader.readAsDataURL(file);
   });
 }
 
+/* =========================
+   เปลี่ยนสลิป
+========================= */
+
 if (sashChangeSlipBtn) {
   sashChangeSlipBtn.addEventListener('click', () => {
-    sashSlipInput.click();
+    if (sashSlipInput) sashSlipInput.click();
   });
 }
 
-// ===== อัปเดตแถบสถานะตามความครบถ้วนของข้อมูล =====
+/* =========================
+   Progress
+========================= */
+
 function updateSashProgress() {
-  const name    = sashNameInput ? sashNameInput.value.trim() : '';
-  const room    = sashRoomInput ? sashRoomInput.value.trim() : '';
-  const rollNo  = sashRollNoInput ? sashRollNoInput.value.trim() : '';
+  const name = sashNameInput ? sashNameInput.value.trim() : '';
+  const room = sashRoomInput ? sashRoomInput.value.trim() : '';
+  const rollNo = sashRollNoInput ? sashRollNoInput.value.trim() : '';
   const contact = sashContactInput ? sashContactInput.value.trim() : '';
 
   const infoComplete = name && room && rollNo && contact;
-  const payComplete  = infoComplete && sashSlipBase64;
+  const payComplete = infoComplete && sashSlipBase64;
 
   const fill = document.getElementById('sashProgressFill');
   const labels = document.querySelectorAll('#sashProgress .sash-progress-label');
@@ -1863,75 +1915,153 @@ function updateSashProgress() {
   let percent = 8;
   let activeStep = 1;
 
-  if (payComplete) { percent = 100; activeStep = 3; }
-  else if (infoComplete) { percent = 55; activeStep = 2; }
-  else if (name || room || rollNo) { percent = 25; activeStep = 1; }
+  if (payComplete) {
+    percent = 100;
+    activeStep = 3;
+  } else if (infoComplete) {
+    percent = 55;
+    activeStep = 2;
+  } else if (name || room || rollNo || contact) {
+    percent = 25;
+    activeStep = 1;
+  }
 
   if (fill) fill.style.width = percent + '%';
-  labels.forEach(l => l.classList.toggle('active', Number(l.dataset.step) <= activeStep));
+
+  labels.forEach(l => {
+    l.classList.toggle('active', Number(l.dataset.step) <= activeStep);
+  });
 }
 
-// ===== ส่งฟอร์ม =====
+/* =========================
+   ส่งฟอร์ม
+========================= */
+
 const sashForm = document.getElementById('sashForm');
+
 if (sashForm) {
   sashForm.noValidate = true;
 
   sashForm.addEventListener('submit', async (e) => {
     e.preventDefault();
- // 🚧 ระบบยังไม่เปิดให้สั่งซื้อจริง — เช็คเป็นด่านแรกสุดเสมอ
+
+    /* ---------------------------------
+       เช็คระบบเปิดหรือยัง
+    --------------------------------- */
     if (!SASH_SYSTEM_ENABLED) {
       alert('🚧 ระบบสั่งซื้อผ้าคาดยังไม่เปิดให้ใช้งานในขณะนี้ กรุณารอประกาศอีกครั้ง');
       return;
     }
-    const name    = sashNameInput.value.trim();
-    const room    = sashRoomInput.value.trim();
-    const rollNo  = sashRollNoInput.value.trim();
-    const contact = sashContactInput.value.trim();
 
+    /* ---------------------------------
+       รับข้อมูล
+    --------------------------------- */
+    const name = sashNameInput.value.trim();
+    const room = sashRoomInput.value.trim();
+    const rollNo = sashRollNoInput.value.trim();
+    const contact = sashContactInput.value.trim();
+    const quantity = Number(sashQuantity);
+    const totalPrice = quantity * SASH_PRICE;
+
+    /* ---------------------------------
+       ตรวจข้อมูล
+    --------------------------------- */
     if (!name || !room || !rollNo || !contact) {
       alert('⚠️ กรุณากรอกชื่อ เลือกระดับชั้น/ห้อง เลขที่ และช่องทางติดต่อให้ครบ');
       return;
     }
+
     if (!sashSlipBase64) {
       alert('⚠️ กรุณาแนบรูปสลิปโอนเงิน');
       return;
     }
 
+    /* ---------------------------------
+       ปุ่ม Submit
+    --------------------------------- */
     const btn = document.getElementById('sashSubmitBtn');
-    btn.disabled = true;
-    btn.textContent = '⏳ กำลังส่งข้อมูล...';
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = '⏳ กำลังส่งข้อมูล...';
+    }
+
+    /* ---------------------------------
+       Payload
+    --------------------------------- */
+    const payload = {
+      action: 'sash',
+      name: name,
+      room: room,
+      rollNo: rollNo,
+      contact: contact,
+      quantity: quantity,
+      price: SASH_PRICE,
+      totalPrice: totalPrice,
+      photo: sashSlipBase64
+    };
 
     try {
-  const payload = { action: 'sash', name, room, rollNo, contact, price: 35, photo: sashSlipBase64 };
+      /* ---------------------------------
+         ส่งไป Google Apps Script
+      --------------------------------- */
+      const response = await fetch(SASH_GAS_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(payload)
+      });
 
-  const response = await fetch(SASH_GAS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload)
+      /* ---------------------------------
+         อ่าน Response
+      --------------------------------- */
+      const data = await response.json();
+      console.log('SASH RESPONSE:', data);
+
+      /* ---------------------------------
+         สำเร็จ
+      --------------------------------- */
+      if (data.success) {
+        sashForm.style.display = 'none';
+
+        const successBox = document.getElementById('sashSuccessBox');
+        if (successBox) {
+          successBox.innerHTML = `
+            <div class="sash-success-icon">🎗️</div>
+            <h3>สั่งซื้อผ้าคาดสำเร็จแล้ว!</h3>
+            <p class="sash-success-note">ขอบคุณสำหรับการสั่งซื้อนะครับ 🌸</p>
+            <p>🎗️ จำนวน: <strong>${quantity}</strong> ชิ้น</p>
+            <p>💰 ยอดรวม: <strong>${totalPrice}</strong> บาท</p>
+            <p style="font-size:14px;">⏳ กรุณารอการตรวจสอบการชำระเงิน</p>
+          `;
+          successBox.style.display = 'block';
+        }
+      } 
+      /* ---------------------------------
+         Error จาก GAS
+      --------------------------------- */
+      else {
+        alert('❌ เกิดข้อผิดพลาดจากระบบ: ' + (data.error || 'ไม่ทราบสาเหตุ'));
+      }
+    } 
+    /* ---------------------------------
+       Connection Error
+    --------------------------------- */
+    catch (err) {
+      console.error('SASH ERROR:', err);
+      alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+    } 
+    /* ---------------------------------
+       เปิดปุ่มกลับ
+    --------------------------------- */
+    finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '⚡ ยืนยันการสั่งซื้อผ้าคาด';
+      }
+    }
   });
-
-  const data = await response.json();
-
-  if (data.success) {
-    sashForm.style.display = 'none';
-    const successBox = document.getElementById('sashSuccessBox');
-    successBox.innerHTML = `
-      <div class="sash-success-icon">🎗️</div>
-      <h3>สั่งซื้อผ้าคาดสำเร็จแล้ว!</h3>
-      <p class="sash-success-note">ขอบคุณสำหรับการสั่งซื้อนะครับ 🌸</p>
-    `;
-    successBox.style.display = 'block';
-  } else {
-    alert('❌ เกิดข้อผิดพลาดจากระบบ: ' + data.error);
-  }
-} catch (err) {
-  console.error(err);
-  alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
-} finally {
-  btn.disabled = false;
-  btn.textContent = '⚡ ยืนยันการสั่งซื้อผ้าคาด';
-}
- });
 }
 
 
