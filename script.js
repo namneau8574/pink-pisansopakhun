@@ -1395,7 +1395,6 @@ function normalizeRoom(str) {
 
 
 
-const SYSTEM_ENABLED = true;
 
 
 
