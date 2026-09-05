@@ -2795,8 +2795,8 @@ img, video {
 }
 
 #ordershirt .qr-img {
-  width: clamp(130px, 30vw, 170px);
-  height: clamp(130px, 30vw, 170px);
+  width: clamp(180px, 45vw, 260px);
+  height: clamp(180px, 45vw, 260px);
   object-fit: contain;
   background: #fff;
   padding: 10px;
