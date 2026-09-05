@@ -2767,8 +2767,11 @@ img, video {
 
 #ordershirt .design-thumb {
   width: 100%;
-  max-width: 140px;
+  max-width: 100%;
   height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  background: var(--gold-pale);
   border-radius: 12px;
   display: block;
 }
