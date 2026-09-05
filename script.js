@@ -1395,302 +1395,508 @@ function normalizeRoom(str) {
 
 
 
-const SYSTEM_ENABLED = false; 
+const SYSTEM_ENABLED = true;
+
 
 
 /* =========================================================
    ORDER + PAYMENT (ระบบเดียว)
    เลือกแบบ -> กรอกข้อมูล -> ชื่อ/เบอร์หลังเสื้อ -> ไซซ์ -> แนบสลิป -> ส่งครั้งเดียว
 ========================================================= */
+const SYSTEM_ENABLED = true;
 
-// 🔗 แทนที่ด้วย Web app URL ที่ได้จากขั้นตอน Deploy Apps Script
-const ORDER_GAS_URL = "https://script.google.com/macros/s/AKfycbyrBvbjDXWEbwS8ZY61HOMBH8rgS8nnn-ysMOOrIe45YrqJ1d86SnNbZXjzyK4vjAwl/exec";
+document.addEventListener("DOMContentLoaded", () => {
 
-/* =========================
-   เลือกแบบเสื้อ (แบบที่1 / แบบที่2)
-   - แบบที่1: ซ่อนเฉพาะช่อง "ชื่อหลังเสื้อ" (ช่องเบอร์ยังโชว์ปกติ)
-   - แบบที่2: โชว์ทั้งชื่อและเบอร์ตามปกติ
-========================= */
-const orderDesignGrid = document.getElementById('orderDesignGrid');
-const orderDesignInput = document.getElementById('orderDesign');
+  /* ======================================
+     CONFIG
+  ======================================= */
 
-function updateBackNameVisibility(design) {
-  const backNameField = document.getElementById('backNameField');
-  const backNameInputEl = document.getElementById('orderBackName');
+  const DESIGN_PRICES = {
+    "1": 140,
+    "2": 110
+  };
 
-  if (design === '1') {
-    if (backNameField) {
-      backNameField.style.display = 'none';
-    } else if (backNameInputEl) {
-      backNameInputEl.style.display = 'none';
-    }
-    if (backNameInputEl) backNameInputEl.value = '';
-  } else {
-    if (backNameField) {
-      backNameField.style.display = '';
-    } else if (backNameInputEl) {
-      backNameInputEl.style.display = '';
-    }
+  // ค่าไซซ์เพิ่มเติม ตั้งแต่ 2XL ขึ้นไป
+  const SIZE_SURCHARGE = {
+    "2XL": 10,
+    "3XL": 20,
+    "4XL": 30,
+    "5XL": 40
+  };
+
+  function getSizeSurcharge(size) {
+    if (!size) return 0;
+    return SIZE_SURCHARGE[size.trim().toUpperCase()] || 0;
   }
-}
 
-if (orderDesignGrid) {
-  orderDesignGrid.addEventListener('click', (e) => {
-    const btn = e.target.closest('.pick-btn');
-    if (!btn) return;
+  function getDesignPrice(design, size) {
+    return (DESIGN_PRICES[design] || 0) + getSizeSurcharge(size);
+  }
 
-    orderDesignGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
+  function getTotalPrice(designs, size1, size2) {
+    return designs.reduce((sum, d) => {
+      const size = d === "1" ? size1 : size2;
+      return sum + getDesignPrice(d, size);
+    }, 0);
+  }
 
-    const design = btn.dataset.design;
-    if (orderDesignInput) orderDesignInput.value = design;
-    updateBackNameVisibility(design);
-  });
+  // 🔗 ใส่ Web App URL จาก Google Apps Script ตรงนี้
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxiIZFjKljjtA4YLDsr1I1zVp-TlBbKqHKurVx3fNL06NY-cHf-gTurkZdS3UcPu3zE/exec";
 
-  updateBackNameVisibility('1');
-}
-
-/* =========================
-   เลือกระดับชั้น → ห้อง
-========================= */
-const orderRoomsByLevel = {
+  // (ทางเลือก) ถ้าอยากกำหนดห้องเฉพาะของแต่ละชั้นแทนการไล่ 1..N อัตโนมัติ
+  // ให้เพิ่มชั้นนั้นในนี้ เช่น "ม.1": ["1/2", "1/7", "1/15"]
+  // ชั้นไหนไม่ได้ระบุในนี้ จะ gen ห้องอัตโนมัติตาม DEFAULT_ROOM_COUNT
+  const ROOMS_BY_LEVEL = {
     "ม.1": ["1/2", "1/7", "1/15"],
     "ม.2": ["2/1", "2/8", "2/13"],
     "ม.3": ["3/4", "3/5", "3/10"],
     "ม.4": ["4/1", "4/6", "4/13"],
     "ม.5": ["5/3", "5/7", "5/11"],
     "ม.6": ["6/7", "6/9", "6/14"]
-};
+  };
+  const DEFAULT_ROOM_COUNT = 12;
 
-const orderLevelGrid = document.getElementById('orderLevelGrid');
-const orderRoomGrid = document.getElementById('orderRoomGrid');
-const orderRoomSection = document.getElementById('orderRoomSection');
-const orderRoomInput = document.getElementById('orderRoom');
+  /* ======================================
+     STATE
+  ======================================= */
 
-if (orderLevelGrid) {
-    orderLevelGrid.addEventListener('click', (e) => {
-        const btn = e.target.closest('.pick-btn');
-        if (!btn) return;
+  let selectedDesigns = [];
+  let selectedLevel = "";
+  let selectedRoom = "";
+  let selectedSize1 = "";
+  let selectedSize2 = "";
+  let selectedSlip = null;
 
-        const selectedLevel = btn.dataset.level;
 
-        orderLevelGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
+  /* ======================================
+     DESIGN
+  ======================================= */
 
-        orderRoomInput.value = '';
+  document.querySelectorAll(".design-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const design = btn.dataset.design;
 
-        const rooms = orderRoomsByLevel[selectedLevel] || [];
-        orderRoomGrid.innerHTML = '';
-        rooms.forEach(room => {
-            const roomBtn = document.createElement('button');
-            roomBtn.type = 'button';
-            roomBtn.className = 'pick-btn';
-            roomBtn.dataset.room = room;
-            roomBtn.textContent = room;
-            orderRoomGrid.appendChild(roomBtn);
-        });
-
-        orderRoomSection.style.display = 'block';
-    });
-}
-
-if (orderRoomGrid) {
-    orderRoomGrid.addEventListener('click', (e) => {
-        const btn = e.target.closest('.pick-btn');
-        if (!btn) return;
-
-        orderRoomGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-
-        orderRoomInput.value = btn.dataset.room;
-    });
-}
-
-/* =========================
-   เลือกไซซ์
-========================= */
-const sizeGrid = document.getElementById('sizeGrid');
-const orderSizeInput = document.getElementById('orderSize');
-const otherSizeInput = document.getElementById('otherSizeInput');
-
-if (sizeGrid) {
-  sizeGrid.addEventListener('click', (e) => {
-    const btn = e.target.closest('.pick-btn');
-    if (!btn) return;
-
-    sizeGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-
-    if (btn.dataset.size === 'OTHER') {
-      if (otherSizeInput) {
-        otherSizeInput.style.display = 'block';
-        otherSizeInput.focus();
+      if (selectedDesigns.includes(design)) {
+        selectedDesigns = selectedDesigns.filter(d => d !== design);
+        btn.classList.remove("selected");
+        btn.setAttribute("aria-pressed", "false");
+      } else {
+        selectedDesigns.push(design);
+        btn.classList.add("selected");
+        btn.setAttribute("aria-pressed", "true");
       }
-      orderSizeInput.value = '';
-    } else {
-      if (otherSizeInput) {
-        otherSizeInput.style.display = 'none';
-        otherSizeInput.value = '';
-      }
-      orderSizeInput.value = btn.dataset.size;
+
+      updateSizeBlocks();
+      calculateTotal();
+    });
+  });
+
+
+  /* ======================================
+     SIZE BLOCK
+     (โชว์/ซ่อนตามแบบที่เลือก + ล้างค่าไซซ์เก่าให้หมดจริงๆ
+      ทั้งตัวแปร, hidden input, ปุ่มที่ค้าง .selected, ช่อง "อื่นๆ")
+  ======================================= */
+
+  function clearSizeUI(gridId, hiddenId, otherId) {
+    document.querySelectorAll(`#${gridId} .pick-btn`).forEach(b => b.classList.remove("selected"));
+    document.getElementById(hiddenId).value = "";
+    const other = document.getElementById(otherId);
+    other.style.display = "none";
+    other.value = "";
+  }
+
+  function updateSizeBlocks() {
+    const design1 = selectedDesigns.includes("1");
+    const design2 = selectedDesigns.includes("2");
+
+    document.getElementById("sizeBlock1").style.display = design1 ? "block" : "none";
+    document.getElementById("sizeBlock2").style.display = design2 ? "block" : "none";
+
+    if (!design1) {
+      selectedSize1 = "";
+      clearSizeUI("sizeGrid1", "orderSize1", "otherSizeInput1");
+    }
+    if (!design2) {
+      selectedSize2 = "";
+      clearSizeUI("sizeGrid2", "orderSize2", "otherSizeInput2");
+    }
+  }
+
+
+  /* ======================================
+     SIZE BUTTON
+  ======================================= */
+
+  function setupSize(gridId, hiddenId, otherId, number) {
+    const grid = document.getElementById(gridId);
+
+    grid.querySelectorAll(".pick-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        grid.querySelectorAll(".pick-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+
+        const size = btn.dataset.size;
+        const other = document.getElementById(otherId);
+
+        if (size === "OTHER") {
+          other.style.display = "block";
+          other.focus();
+          document.getElementById(hiddenId).value = "";
+          if (number === 1) selectedSize1 = ""; else selectedSize2 = "";
+        } else {
+          other.style.display = "none";
+          other.value = "";
+          document.getElementById(hiddenId).value = size;
+          if (number === 1) selectedSize1 = size; else selectedSize2 = size;
+        }
+
+        calculateTotal();
+      });
+    });
+
+    document.getElementById(otherId).addEventListener("input", function () {
+      const value = this.value.trim().toUpperCase();
+      this.value = value;
+      document.getElementById(hiddenId).value = value;
+      if (number === 1) selectedSize1 = value; else selectedSize2 = value;
+      calculateTotal();
+    });
+  }
+
+  setupSize("sizeGrid1", "orderSize1", "otherSizeInput1", 1);
+  setupSize("sizeGrid2", "orderSize2", "otherSizeInput2", 2);
+
+
+  /* ======================================
+     LEVEL
+  ======================================= */
+
+  document.querySelectorAll("#orderLevelGrid .pick-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#orderLevelGrid .pick-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      selectedLevel = btn.dataset.level;
+      createRooms(selectedLevel);
+    });
+  });
+
+
+  /* ======================================
+     ROOM
+     - ถ้ามีระบุห้องเฉพาะของชั้นนั้นใน ROOMS_BY_LEVEL จะใช้ลิสต์นั้น
+     - ถ้าไม่มี จะ gen ห้อง 1..DEFAULT_ROOM_COUNT ให้อัตโนมัติ
+  ======================================= */
+
+  function createRooms(level) {
+    const grid = document.getElementById("orderRoomGrid");
+    const hint = document.getElementById("roomHint");
+
+    grid.innerHTML = "";
+    selectedRoom = "";
+
+    const customRooms = ROOMS_BY_LEVEL[level];
+    const roomLabels = customRooms
+      ? customRooms
+      : Array.from({ length: DEFAULT_ROOM_COUNT }, (_, i) => `${level}/${i + 1}`);
+
+    roomLabels.forEach(roomLabel => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pick-btn";
+      btn.textContent = roomLabel;
+
+      btn.addEventListener("click", () => {
+        grid.querySelectorAll(".pick-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedRoom = roomLabel;
+      });
+
+      grid.appendChild(btn);
+    });
+
+    if (hint) hint.style.display = "none";
+  }
+
+
+  /* ======================================
+     NO BACK PRINT
+  ======================================= */
+
+  document.getElementById("noBackPrint").addEventListener("change", function () {
+    const name = document.getElementById("orderBackName");
+    const number = document.getElementById("orderBackNumber");
+
+    name.disabled = this.checked;
+    number.disabled = this.checked;
+
+    if (this.checked) {
+      name.value = "";
+      number.value = "";
     }
   });
-}
 
-if (otherSizeInput) {
-  otherSizeInput.addEventListener('input', () => {
-    orderSizeInput.value = otherSizeInput.value.trim();
+
+  /* ======================================
+     ตัวเลขล้วนสำหรับเลขที่ / เบอร์หลังเสื้อ
+  ======================================= */
+
+  ["orderRollNo", "orderBackNumber"].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener("input", e => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    });
   });
-}
 
-/* =========================
-   จำกัดให้ช่องเบอร์หลังเสื้อกรอกได้เฉพาะตัวเลข
-========================= */
-const orderBackNumberInput = document.getElementById('orderBackNumber');
-if (orderBackNumberInput) {
-  orderBackNumberInput.addEventListener('input', (e) => {
-    e.target.value = e.target.value.replace(/[^0-9]/g, '');
-  });
-}
 
-/* =========================
-   แนบสลิปโอนเงิน (ขั้นตอนที่ 5)
-========================= */
-let orderSlipBase64 = "";
+  /* ======================================
+     PRICE
+  ======================================= */
 
-const orderSlipInput = document.getElementById('orderSlipInput');
-const orderUploadDrop = document.getElementById('orderUploadDrop');
+  function calculateTotal() {
+    const total = getTotalPrice(selectedDesigns, selectedSize1, selectedSize2);
+    document.getElementById("orderTotal").textContent = total.toLocaleString("th-TH") + " บาท";
+  }
 
-if (orderSlipInput) {
-  orderSlipInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
+
+  /* ======================================
+     SLIP
+  ======================================= */
+
+  document.getElementById("orderSlipInput").addEventListener("change", function () {
+    const file = this.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = function (ev) {
-      orderSlipBase64 = ev.target.result;
-      const previewEl = document.getElementById('orderSlipPreview');
-      const previewBox = document.getElementById('orderSlipPreviewBox');
+    if (!file.type.startsWith("image/")) {
+      alert("กรุณาเลือกไฟล์รูปภาพ");
+      this.value = "";
+      return;
+    }
 
-      if (previewEl) previewEl.src = orderSlipBase64;
-      if (previewBox) previewBox.classList.add('show');
-      if (orderUploadDrop) orderUploadDrop.querySelector('.upload-text').textContent = '✅ แนบสลิปแล้ว (แตะเพื่อเปลี่ยน)';
+    if (file.size > 10 * 1024 * 1024) {
+      alert("ไฟล์ต้องไม่เกิน 10MB");
+      this.value = "";
+      return;
+    }
+
+    selectedSlip = file;
+    document.getElementById("uploadText").textContent = "✅ เลือกสลิปแล้ว (แตะเพื่อเปลี่ยน)";
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const preview = document.getElementById("orderSlipPreview");
+      preview.src = e.target.result;
+      document.getElementById("orderSlipPreviewBox").style.display = "block";
     };
     reader.readAsDataURL(file);
   });
-}
 
-function resetSlipUpload() {
-  orderSlipBase64 = "";
-  const previewBox = document.getElementById('orderSlipPreviewBox');
-  const previewEl = document.getElementById('orderSlipPreview');
-  if (previewBox) previewBox.classList.remove('show');
-  if (previewEl) previewEl.src = '';
-  if (orderUploadDrop) orderUploadDrop.querySelector('.upload-text').textContent = 'แตะเพื่อเลือกรูปสลิป';
-  if (orderSlipInput) orderSlipInput.value = '';
-}
+  function resetSlipUI() {
+    selectedSlip = null;
+    const previewBox = document.getElementById("orderSlipPreviewBox");
+    const previewImg = document.getElementById("orderSlipPreview");
+    previewBox.style.display = "none";
+    previewImg.src = "";
+    document.getElementById("uploadText").textContent = "แตะเพื่อเลือกรูปสลิป";
+    document.getElementById("orderSlipInput").value = "";
+  }
 
-/* =========================
-   ส่งฟอร์ม: สั่งจอง + ชำระเงิน ในครั้งเดียว
-========================= */
-const orderForm = document.getElementById('orderForm');
-if (orderForm) {
-  orderForm.noValidate = true;
 
-  orderForm.addEventListener('submit', async (e) => {
+  /* ======================================
+     VALIDATE
+  ======================================= */
+
+  function validate() {
+    if (selectedDesigns.length === 0) {
+      alert("กรุณาเลือกแบบเสื้อ");
+      return false;
+    }
+
+    const name = document.getElementById("orderName").value.trim();
+    if (!name) {
+      alert("กรุณากรอกชื่อ-นามสกุล");
+      return false;
+    }
+
+    if (!selectedLevel) {
+      alert("กรุณาเลือกชั้น");
+      return false;
+    }
+
+    if (!selectedRoom) {
+      alert("กรุณาเลือกห้อง");
+      return false;
+    }
+
+    const roll = document.getElementById("orderRollNo").value.trim();
+    if (!roll) {
+      alert("กรุณากรอกเลขที่");
+      return false;
+    }
+
+    if (selectedDesigns.includes("1") && !document.getElementById("orderSize1").value.trim()) {
+      alert("กรุณาเลือกไซซ์แบบที่ 1");
+      return false;
+    }
+
+    if (selectedDesigns.includes("2") && !document.getElementById("orderSize2").value.trim()) {
+      alert("กรุณาเลือกไซซ์แบบที่ 2");
+      return false;
+    }
+
+    if (!selectedSlip) {
+      alert("กรุณาแนบสลิป");
+      return false;
+    }
+
+    return true;
+  }
+
+
+  /* ======================================
+     FILE → BASE64
+  ======================================= */
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(",")[1]); // ตัด prefix data:...;base64,
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+
+  /* ======================================
+     SUBMIT
+  ======================================= */
+
+  document.getElementById("orderForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    // 🚧 เช็คก่อนเสมอว่าระบบเปิดใช้งานหรือยัง
-    if (typeof SYSTEM_ENABLED !== 'undefined' && !SYSTEM_ENABLED) {
-      alert('🚧 ระบบสั่งจองเสื้อยังไม่เปิดให้ใช้งานในขณะนี้ กรุณารอประกาศอีกครั้ง');
-      return;
+    if (!validate()) return;
+
+    const name = document.getElementById("orderName").value.trim();
+    const rollNo = document.getElementById("orderRollNo").value.trim();
+    const backName = document.getElementById("orderBackName").value.trim();
+    const backNumber = document.getElementById("orderBackNumber").value.trim();
+    const size1 = document.getElementById("orderSize1").value.trim();
+    const size2 = document.getElementById("orderSize2").value.trim();
+    const noBackPrintChecked = document.getElementById("noBackPrint").checked;
+
+    const quantity = selectedDesigns.length;
+    const total = getTotalPrice(selectedDesigns, size1, size2);
+
+    const orderData = {
+      name,
+      level: selectedLevel,
+      room: selectedRoom,
+      rollNo,
+      backName: noBackPrintChecked ? "" : backName,
+      backNumber: noBackPrintChecked ? "" : backNumber,
+      designs: [],
+      quantity,
+      total
+    };
+
+    if (selectedDesigns.includes("1")) {
+      orderData.designs.push({ design: "1", size: size1 });
+    }
+    if (selectedDesigns.includes("2")) {
+      orderData.designs.push({ design: "2", size: size2 });
     }
 
-    const design = orderDesignInput ? orderDesignInput.value : '';
-    const name = document.getElementById('orderName').value.trim();
-    const room = document.getElementById('orderRoom').value.trim();
-    const rollNo = document.getElementById('orderRollNo') ? document.getElementById('orderRollNo').value.trim() : '';
-    const backName = document.getElementById('orderBackName') ? document.getElementById('orderBackName').value.trim() : '';
-    const backNumber = document.getElementById('orderBackNumber') ? document.getElementById('orderBackNumber').value.trim() : '';
-    const size = orderSizeInput ? orderSizeInput.value : '';
-
-    if (!design) {
-      alert('⚠️ กรุณาเลือกแบบเสื้อ');
-      return;
-    }
-    if (!name || !room || !rollNo || !size) {
-      alert('⚠️ กรุณากรอกชื่อ เลือกระดับชั้น/ห้อง เลขที่ และเลือกไซซ์ให้ครบ');
-      return;
-    }
-    if (!orderSlipBase64) {
-      alert('⚠️ กรุณาแนบรูปสลิปโอนเงินก่อนกดยืนยัน');
-      return;
-    }
-
-    const btn = document.getElementById('orderSubmitBtn');
-    btn.disabled = true;
-    btn.textContent = '⏳ กำลังส่งข้อมูล...';
+    const button = document.getElementById("orderSubmitBtn");
+    button.disabled = true;
+    button.textContent = "⏳ กำลังส่งข้อมูล...";
 
     try {
-      // ⚠️ ฝั่ง Apps Script (ORDER_GAS_URL) ต้องอัปเดตให้รับ action นี้
-      //    และบันทึกข้อมูลออเดอร์ + รูปสลิปในแถวเดียวกันตั้งแต่ครั้งแรก
-      //    (เดิมแบ่งเป็น 2 ขั้นตอน: สร้างแถว -> ค้นหาแล้วแนบสลิปทีหลัง)
-      const payload = {
-        action: 'orderAndPay',
-        design: design,
-        name: name,
-        room: room,
-        rollNo: rollNo,
-        backName: backName,
-        backNumber: backNumber,
-        size: size,
-        photo: orderSlipBase64
+      const slipBase64 = await fileToBase64(selectedSlip);
+
+      orderData.slip = {
+        name: selectedSlip.name,
+        type: selectedSlip.type,
+        data: slipBase64
       };
 
-      const response = await fetch(ORDER_GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+      const response = await fetch(GAS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(orderData)
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
-      if (data.success) {
-        alert('✅ สั่งจองและชำระเงินสำเร็จ! ขอบคุณครับ 🌸');
-        orderForm.reset();
-
-        if (orderDesignGrid) {
-          orderDesignGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
-          if (orderDesignInput) orderDesignInput.value = '';
-          updateBackNameVisibility('1');
-        }
-        if (orderLevelGrid) {
-          orderLevelGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
-        }
-        if (orderRoomGrid) {
-          orderRoomGrid.innerHTML = '';
-        }
-        if (orderRoomSection) {
-          orderRoomSection.style.display = 'none';
-        }
-        if (sizeGrid) {
-          sizeGrid.querySelectorAll('.pick-btn').forEach(b => b.classList.remove('selected'));
-        }
-        resetSlipUpload();
-      } else {
-        alert('❌ เกิดข้อผิดพลาดจากระบบ: ' + data.error);
+      if (!result.success) {
+        throw new Error(result.message || "ส่งข้อมูลไม่สำเร็จ");
       }
 
-    } catch (err) {
-      console.error(err);
-      alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+      // ===== สำเร็จ =====
+      const sizeRows = selectedDesigns
+        .map(d => {
+          const size = d === "1" ? size1 : size2;
+          return `<div class="detail-row"><span>ไซซ์ (แบบที่${d})</span><strong>${size}</strong></div>`;
+        })
+        .join("");
+
+      const backRow = (noBackPrintChecked || (!backName && !backNumber))
+        ? ""
+        : `<div class="detail-row"><span>ชื่อ-เบอร์หลังเสื้อ</span><strong>${backName}${backName && backNumber ? " / " : ""}${backNumber}</strong></div>`;
+
+      document.getElementById("orderContainer").innerHTML = `
+        <div class="order-success-box">
+          <div class="success-icon">🎉</div>
+          <h3>สั่งจองสำเร็จ</h3>
+          <div class="success-detail">
+            <div class="detail-row"><span>ชื่อ</span><strong>${name}</strong></div>
+            <div class="detail-row"><span>ชั้น/ห้อง</span><strong>${selectedLevel}/${selectedRoom}</strong></div>
+            <div class="detail-row"><span>เลขที่</span><strong>${rollNo}</strong></div>
+            ${sizeRows}
+            ${backRow}
+          </div>
+          <div class="success-total">ยอดชำระ ${total.toLocaleString("th-TH")} บาท</div>
+        </div>
+      `;
+
+      this.reset();
+
+      selectedDesigns = [];
+      selectedLevel = "";
+      selectedRoom = "";
+      selectedSize1 = "";
+      selectedSize2 = "";
+
+      document.querySelectorAll(".pick-btn").forEach(btn => {
+        btn.classList.remove("selected");
+        if (btn.hasAttribute("aria-pressed")) btn.setAttribute("aria-pressed", "false");
+      });
+
+      document.getElementById("sizeBlock1").style.display = "none";
+      document.getElementById("sizeBlock2").style.display = "none";
+      ["otherSizeInput1", "otherSizeInput2"].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.display = "none";
+        el.value = "";
+      });
+
+      document.getElementById("orderRoomGrid").innerHTML = "";
+      const roomHint = document.getElementById("roomHint");
+      if (roomHint) roomHint.style.display = "";
+
+      resetSlipUI();
+      calculateTotal();
+
+    } catch (error) {
+      console.error(error);
+      alert("❌ ส่งข้อมูลไม่สำเร็จ\n" + error.message);
     } finally {
-      btn.disabled = false;
-      btn.textContent = '⚡ ยืนยันการสั่งจองและชำระเงิน';
+      button.disabled = false;
+      button.textContent = "⚡ ยืนยันการสั่งจองและชำระเงิน";
     }
   });
-}
 
+});
 
 
 
