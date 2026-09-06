@@ -1440,7 +1440,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 🔗 ใส่ Web App URL จาก Google Apps Script ตรงนี้
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbxiIZFjKljjtA4YLDsr1I1zVp-TlBbKqHKurVx3fNL06NY-cHf-gTurkZdS3UcPu3zE/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxSTwziaduW8EQftmSSYkHN-uGRIhorMLmVKyx0JraysbuapXtVX2FHT2Gu15AM2cfS/exec";
 
   // (ทางเลือก) ถ้าอยากกำหนดห้องเฉพาะของแต่ละชั้นแทนการไล่ 1..N อัตโนมัติ
   // ให้เพิ่มชั้นนั้นในนี้ เช่น "ม.1": ["1/2", "1/7", "1/15"]
