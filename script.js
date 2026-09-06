@@ -1440,7 +1440,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 🔗 ใส่ Web App URL จาก Google Apps Script ตรงนี้
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbyPKsBlcwzsT3ezgWdARsF2iZwdXR3ydkHZXm5o4sbJciKGBN1WuQpFLWg6yBS2BqZk/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbzE8fYlzo1aGgZ1QVQ-nPbXv70bFIasGkxIoiT0jXPQsk4T75nHcqi_TwVX0a6tADmM/exec";
 
   // (ทางเลือก) ถ้าอยากกำหนดห้องเฉพาะของแต่ละชั้นแทนการไล่ 1..N อัตโนมัติ
   // ให้เพิ่มชั้นนั้นในนี้ เช่น "ม.1": ["1/2", "1/7", "1/15"]
@@ -1465,6 +1465,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let selectedSize1 = "";
   let selectedSize2 = "";
   let selectedSlip = null;
+  let isOtherLevel = false; // ✅ true เมื่อเลือก "อื่นๆ" (บุคคลทั่วไป/ไม่ใช่นักเรียน)
 
 
   /* ======================================
@@ -1577,9 +1578,40 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.classList.add("selected");
 
       selectedLevel = btn.dataset.level;
-      createRooms(selectedLevel);
+
+      if (selectedLevel === "OTHER") {
+        isOtherLevel = true;
+        renderOtherRoomInput();
+      } else {
+        isOtherLevel = false;
+        createRooms(selectedLevel);
+      }
     });
   });
+
+  // ✅ ช่องกรอกอิสระสำหรับบุคคลทั่วไป / ระดับชั้นอื่นๆ ที่ไม่อยู่ใน ม.1-ม.6
+  function renderOtherRoomInput() {
+    const grid = document.getElementById("orderRoomGrid");
+    const hint = document.getElementById("roomHint");
+    grid.innerHTML = "";
+    selectedRoom = "";
+
+    const wrap = document.createElement("div");
+    wrap.style.width = "100%";
+
+    const otherInput = document.createElement("input");
+    otherInput.type = "text";
+    otherInput.id = "orderOtherRoomInput";
+    otherInput.placeholder = "🏫 ระบุชั้น/ห้อง สีอื่นที่อยากสั่ง เช่น ม.5/8 ";
+    otherInput.addEventListener("input", () => {
+      selectedRoom = otherInput.value.trim();
+    });
+
+    wrap.appendChild(otherInput);
+    grid.appendChild(wrap);
+
+    if (hint) hint.style.display = "none";
+  }
 
 
   /* ======================================
@@ -1724,13 +1756,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (!selectedRoom) {
-      alert("กรุณาเลือกห้อง");
+      alert(isOtherLevel ? "กรุณากรอกชั้น/ห้อง หรือหน่วยงานของคุณ" : "กรุณาเลือกห้อง");
       return false;
     }
 
     const roll = document.getElementById("orderRollNo").value.trim();
     if (!roll) {
       alert("กรุณากรอกเลขที่");
+      return false;
+    }
+   
+    const contact = document.getElementById("orderContact").value.trim();
+    if (!contact) {
+      alert("กรุณากรอกช่องทางติดต่อ");
       return false;
     }
 
@@ -1778,6 +1816,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const name = document.getElementById("orderName").value.trim();
     const rollNo = document.getElementById("orderRollNo").value.trim();
+    const contact = document.getElementById("orderContact").value.trim();
     const backName = document.getElementById("orderBackName").value.trim();
     const backNumber = document.getElementById("orderBackNumber").value.trim();
     const size1 = document.getElementById("orderSize1").value.trim();
@@ -1788,10 +1827,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const total = getTotalPrice(selectedDesigns, size1, size2);
 
     const orderData = {
+      // ✅ เมื่อเลือก "อื่นๆ" จะส่ง action เป็น order_other เพื่อให้ฝั่ง Apps Script
+      //    แยกไปบันทึกลงชีตคนละแผ่นจากนักเรียนในระบบปกติ
+      action: isOtherLevel ? "order_other" : "order",
+      isOther: isOtherLevel,
       name,
-      level: selectedLevel,
+      level: isOtherLevel ? "อื่นๆ" : selectedLevel,
       room: selectedRoom,
       rollNo,
+      contact,
       backName: noBackPrintChecked ? "" : backName,
       backNumber: noBackPrintChecked ? "" : backNumber,
       designs: [],
@@ -1843,10 +1887,10 @@ document.addEventListener("DOMContentLoaded", () => {
         ? ""
         : `<div class="detail-row"><span>ชื่อ-เบอร์หลังเสื้อ</span><strong>${backName}${backName && backNumber ? " / " : ""}${backNumber}</strong></div>`;
 
-      document.getElementById("orderContainer").innerHTML = `
+    document.getElementById("orderContainer").innerHTML = `
   <div class="order-success-box">
     <div class="success-photo-wrap">
-      <img src="1608.png" alt="ขอบคุณค้าบบบ" class="success-owner-photo">
+      <img src="owner-photo.jpg" alt="ขอบคุณค้าบบบ" class="success-owner-photo">
     </div>
     <h3>สั่งจองสำเร็จ 💗</h3>
     <p class="success-thankyou"> เปิดเทอม<br>รอรับเสื้อได้เลย💗<</p>
@@ -1854,6 +1898,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="detail-row"><span>ชื่อ</span><strong>${name}</strong></div>
       <div class="detail-row"><span>ชั้น/ห้อง</span><strong>${selectedLevel}/${selectedRoom}</strong></div>
       <div class="detail-row"><span>เลขที่</span><strong>${rollNo}</strong></div>
+      <div class="detail-row"><span>ติดต่อ</span><strong>${contact}</strong></div>
       ${sizeRows}
       ${backRow}
     </div>
@@ -1867,6 +1912,7 @@ document.addEventListener("DOMContentLoaded", () => {
       selectedRoom = "";
       selectedSize1 = "";
       selectedSize2 = "";
+      isOtherLevel = false;
 
       document.querySelectorAll(".pick-btn").forEach(btn => {
         btn.classList.remove("selected");
@@ -1908,7 +1954,7 @@ document.addEventListener("DOMContentLoaded", () => {
 ========================= */
 
 const SASH_SYSTEM_ENABLED = true;
-const SASH_GAS_URL = 'https://script.google.com/macros/s/AKfycbzRF6g6vmn47OmwEAzph42b8SniYYogY_COUeIVuodv7BKHBvw9Tin7UGeiju8jD-lwVQ/exec';
+const SASH_GAS_URL = 'https://script.google.com/macros/s/AKfycbwtd_VbQ6n0ATVOOuQly6LkTHv_jhSIbIzvTj7un6vc1Vag9RMbiHhy4PXXOzjMuq111A/exec';
 
 /* =========================
    ELEMENTS
@@ -1920,6 +1966,8 @@ const sashRoomInput = document.getElementById('sashRoom');
 const sashNameInput = document.getElementById('sashName');
 const sashRollNoInput = document.getElementById('sashRollNo');
 const sashContactInput = document.getElementById('sashContact');
+
+let sashIsOtherLevel = false; // ✅ true เมื่อเลือก "อื่นๆ" (บุคคลทั่วไป/ไม่ใช่นักเรียน)
 
 /* =========================
    จำนวนผ้าคาด
@@ -2006,18 +2054,37 @@ if (sashLevelGrid) {
     sashRoomInput.value = '';
     sashRoomGrid.innerHTML = '';
 
-    // ดึงห้อง
-    const rooms = sashRoomsByLevel[selectedLevel] || [];
+    if (selectedLevel === 'OTHER') {
+      // ✅ บุคคลทั่วไป / ไม่ใช่นักเรียนในฐานข้อมูล -> ให้พิมพ์เอง
+      sashIsOtherLevel = true;
 
-    // สร้างปุ่มห้อง
-    rooms.forEach(room => {
-      const roomBtn = document.createElement('button');
-      roomBtn.type = 'button';
-      roomBtn.className = 'pick-btn';
-      roomBtn.dataset.room = room;
-      roomBtn.textContent = room;
-      sashRoomGrid.appendChild(roomBtn);
-    });
+      const otherInput = document.createElement('input');
+      otherInput.type = 'text';
+      otherInput.id = 'sashOtherRoomInput';
+      otherInput.placeholder = '🏫 ระบุชั้น/ห้อง หรือหน่วยงาน เช่น ม.4/7 หรือ บุคคลทั่วไป';
+      otherInput.style.width = '100%';
+      otherInput.addEventListener('input', () => {
+        sashRoomInput.value = otherInput.value.trim();
+        updateSashProgress();
+      });
+
+      sashRoomGrid.appendChild(otherInput);
+    } else {
+      sashIsOtherLevel = false;
+
+      // ดึงห้อง
+      const rooms = sashRoomsByLevel[selectedLevel] || [];
+
+      // สร้างปุ่มห้อง
+      rooms.forEach(room => {
+        const roomBtn = document.createElement('button');
+        roomBtn.type = 'button';
+        roomBtn.className = 'pick-btn';
+        roomBtn.dataset.room = room;
+        roomBtn.textContent = room;
+        sashRoomGrid.appendChild(roomBtn);
+      });
+    }
 
     updateSashProgress();
   });
@@ -2197,7 +2264,10 @@ if (sashForm) {
        Payload
     --------------------------------- */
     const payload = {
-      action: 'sash',
+      // ✅ เมื่อเลือก "อื่นๆ" จะส่ง action เป็น sash_other เพื่อให้ฝั่ง Apps Script
+      //    แยกไปบันทึกลงชีตคนละแผ่นจากนักเรียนในระบบปกติ
+      action: sashIsOtherLevel ? 'sash_other' : 'sash',
+      isOther: sashIsOtherLevel,
       name: name,
       room: room,
       rollNo: rollNo,
