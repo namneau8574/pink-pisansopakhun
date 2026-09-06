@@ -1846,7 +1846,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("orderContainer").innerHTML = `
   <div class="order-success-box">
     <div class="success-photo-wrap">
-      <img src="owner-photo.jpg" alt="ขอบคุณค้าบบบ" class="success-owner-photo">
+      <img src="1608.png" alt="ขอบคุณค้าบบบ" class="success-owner-photo">
     </div>
     <h3>สั่งจองสำเร็จ 💗</h3>
     <p class="success-thankyou"> เปิดเทอม<br>รอรับเสื้อได้เลย💗<</p>
