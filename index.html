@@ -180,24 +180,31 @@
     }
 
     // 🔒 ลำดับที่ 4: ฟังก์ชันสั่งแช่แข็งปุ่มและฟอร์มทั้งหมดบนเว็บ (สำหรับคนนอกที่เลือกชมทั่วไป)
-    function freezeAllActions() {
-        const allButtons = document.querySelectorAll('button:not(#gatekeeper button), input[type="submit"], input[type="button"]');
-        const allInputs = document.querySelectorAll('input:not(#studentIdInput), textarea, select');
+   function freezeAllActions() {
+    // เพิ่ม :not(#ordershirt ...) และ :not(#sashorder ...) 
+    // เพื่อไม่ให้ปุ่ม/ช่องกรอกในสองโซนนี้โดนแช่แข็ง
+    const allButtons = document.querySelectorAll(
+        'button:not(#gatekeeper button):not(#ordershirt button):not(#sashorder button)'
+    );
+    const allInputs = document.querySelectorAll(
+        'input:not(#studentIdInput):not(#ordershirt input):not(#sashorder input), ' +
+        'textarea:not(#ordershirt textarea):not(#sashorder textarea), ' +
+        'select:not(#ordershirt select):not(#sashorder select)'
+    );
 
-        allButtons.forEach(btn => {
-            btn.disabled = true;
-            btn.style.opacity = '0.4';
-            btn.style.cursor = 'not-allowed';
-            btn.style.pointerEvents = 'none'; // ปิดการคลิกทุกอย่างแบบถาวร
-        });
+    allButtons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.4';
+        btn.style.cursor = 'not-allowed';
+        btn.style.pointerEvents = 'none';
+    });
 
-        allInputs.forEach(input => {
-            input.disabled = true;
-            input.style.background = '#f5f5f5';
-            input.style.cursor = 'not-allowed';
-        });
-    }
-
+    allInputs.forEach(input => {
+        input.disabled = true;
+        input.style.background = '#f5f5f5';
+        input.style.cursor = 'not-allowed';
+    });
+}
     // 🎬 ลำดับที่ 5: เอฟเฟกต์หมุนกล่อง 3D วาร์ปทะลุเข้าหน้าเว็บหลัก
     function warpIntoWeb() {
         const gateBox = document.querySelector('.gate-box');
