@@ -804,19 +804,24 @@ function addGuestButton() {
 
 // 🔒 ฟังก์ชันแช่แข็ง: สั่งปิดการใช้งานปุ่มโหวต ปุ่มสมัคร ฟอร์มทุกอย่างในเว็บ (สำหรับสายส่อง)
 function freezeAllActions() {
-    // หาปุ่มทั้งหมดในเว็บหลัก (ยกเว้นปุ่มในหน้ากากล็อกอิน)
-    const allButtons = document.querySelectorAll('button:not(#gatekeeper button), input[type="submit"], input[type="button"]');
-    const allInputs = document.querySelectorAll('input:not(#studentIdInput), textarea, select');
+    // เพิ่ม :not(#ordershirt ...) และ :not(#sashorder ...) 
+    // เพื่อไม่ให้ปุ่ม/ช่องกรอกในสองโซนนี้โดนแช่แข็ง
+    const allButtons = document.querySelectorAll(
+        'button:not(#gatekeeper button):not(#ordershirt button):not(#sashorder button)'
+    );
+    const allInputs = document.querySelectorAll(
+        'input:not(#studentIdInput):not(#ordershirt input):not(#sashorder input), ' +
+        'textarea:not(#ordershirt textarea):not(#sashorder textarea), ' +
+        'select:not(#ordershirt select):not(#sashorder select)'
+    );
 
-    // 1. สั่งเปิดโหมดเดดล็อกให้กับทุกปุ่ม เปลี่ยนสีให้จางลง และกดไม่ได้
     allButtons.forEach(btn => {
         btn.disabled = true;
-        btn.style.opacity = '0.5';
+        btn.style.opacity = '0.4';
         btn.style.cursor = 'not-allowed';
-        btn.style.pointerEvents = 'none'; // บล็อกไม่ให้เกิดคลิกอีเวนต์เด็ดขาด
+        btn.style.pointerEvents = 'none';
     });
 
-    // 2. สั่งปิดฟอร์มกรอกข้อมูลทั้งหมด พิมพ์อะไรลงไปไม่ได้เลย
     allInputs.forEach(input => {
         input.disabled = true;
         input.style.background = '#f5f5f5';
