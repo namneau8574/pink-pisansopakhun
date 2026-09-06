@@ -1844,20 +1844,22 @@ document.addEventListener("DOMContentLoaded", () => {
         : `<div class="detail-row"><span>ชื่อ-เบอร์หลังเสื้อ</span><strong>${backName}${backName && backNumber ? " / " : ""}${backNumber}</strong></div>`;
 
       document.getElementById("orderContainer").innerHTML = `
-        <div class="order-success-box">
-          <div class="success-icon">🎉</div>
-          <h3>สั่งจองสำเร็จ</h3>
-          <div class="success-detail">
-            <div class="detail-row"><span>ชื่อ</span><strong>${name}</strong></div>
-            <div class="detail-row"><span>ชั้น/ห้อง</span><strong>${selectedLevel}/${selectedRoom}</strong></div>
-            <div class="detail-row"><span>เลขที่</span><strong>${rollNo}</strong></div>
-            ${sizeRows}
-            ${backRow}
-          </div>
-          <div class="success-total">ยอดชำระ ${total.toLocaleString("th-TH")} บาท</div>
-        </div>
-      `;
-
+  <div class="order-success-box">
+    <div class="success-photo-wrap">
+      <img src="owner-photo.jpg" alt="ขอบคุณค้าบบบ" class="success-owner-photo">
+    </div>
+    <h3>สั่งจองสำเร็จ 💗</h3>
+    <p class="success-thankyou"> เปิดเทอม<br>รอรับเสื้อได้เลย💗<</p>
+    <div class="success-detail">
+      <div class="detail-row"><span>ชื่อ</span><strong>${name}</strong></div>
+      <div class="detail-row"><span>ชั้น/ห้อง</span><strong>${selectedLevel}/${selectedRoom}</strong></div>
+      <div class="detail-row"><span>เลขที่</span><strong>${rollNo}</strong></div>
+      ${sizeRows}
+      ${backRow}
+    </div>
+    <div class="success-total">ยอดชำระ ${total.toLocaleString("th-TH")} บาท</div>
+  </div>
+`;
       this.reset();
 
       selectedDesigns = [];
