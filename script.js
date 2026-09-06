@@ -2347,7 +2347,6 @@ if (sashForm) {
 }
 
 
-
 /* =========================================================
    SPOT DANCE REGISTER (#spotdance)
    ⚠️ แก้ SD_GAS_URL เป็น Apps Script Web app URL ของคุณ
