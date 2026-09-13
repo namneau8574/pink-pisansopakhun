@@ -919,487 +919,538 @@ if (inputField) {
     });
 }
 
+
 /* =========================
    เช็คชื่อเข้าร่วมกิจกรรม (ม.5)
+   ฉบับแก้ไข v3: รวมทุกอย่างไว้ใน IIFE เดียว
+   - แก้ hideAllCheckin ที่ถูกประกาศซ้ำ 3 รอบ (ตัวท้าย ๆ ใช้ id ผิด ทำให้เกิด error
+     แล้วสคริปต์หยุดทำงานกลางคัน)
+   - แก้ currentDept ที่แต่ก่อนถูกสร้างเป็นตัวแปร global คนละตัวกับตัวที่
+     checkFormReady/confirmCheckIn ใช้จริง (เพราะ selectDept เดิมอยู่นอก IIFE)
+   - แก้การเรียก buildDeptGrid() ที่ไม่เคยถูกประกาศไว้เลย
 ========================= */
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxfIvRJik7PZonZcCUW5J5o9aLsqctN7D7up9BC4qCCES5EQC1EZ1zTJew01QdtY78W/exec";
- 
-const students = {
-  // --- ม.5/11 ---
-  "39079": { name: "นางสาว ธัญเรศ นรินทร์", room: "ม.5/11" },
-  "39506": { name: "นาย เดโช ปานทอง", room: "ม.5/11" },
-  "39979": { name: "นาย พิชญณุ อุ่นละม้าย", room: "ม.5/11" },
-  "39991": { name: "นาย กฤษฎา แก้ววิจิตร", room: "ม.5/11" },
-  "39997": { name: "นางสาว มนต์ธิชา แก้วอยู่", room: "ม.5/11" },
-  "40103": { name: "นาย ธฤต แจ้ใจ", room: "ม.5/11" },
-  "40105": { name: "นางสาว สาธิตา ปัญญา", room: "ม.5/11" },
-  "40119": { name: "นาย ธนภัทร ใจบุญ", room: "ม.5/11" },
-  "40123": { name: "นางสาว จุติพร ดวงตาทิพย์", room: "ม.5/11" },
-  "40131": { name: "นาย นาวิน ปินตาแสน", room: "ม.5/11" },
-  "40138": { name: "นางสาว งามเนตร ก้อนจำปา", room: "ม.5/11" },
-  "40148": { name: "นางสาว ปานชีวา จุลเจิมศักดิ์", room: "ม.5/11" },
-  "40166": { name: "นางสาว ชนิดนันท์ อนันต์กิจโรจนา", room: "ม.5/11" },
-  "40186": { name: "นาย ยงยุทธ สุขสวัสดิ์", room: "ม.5/11" },
-  "40190": { name: "นาย ดัสกร ใจยะสาร", room: "ม.5/11" },
-  "40227": { name: "นาย ธนดล อ้นบ้านดง", room: "ม.5/11" },
-  "40229": { name: "นางสาว สุธาสินี สุยะสัก", room: "ม.5/11" },
-  "40243": { name: "นางสาว ธนัญชนก ไชยวงศ์", room: "ม.5/11" },
-  "40344": { name: "นางสาว บุญยาพร มูลธิ", room: "ม.5/11" },
-  "40346": { name: "นาย ธนกร ต๊ะกาบโพธิ์", room: "ม.5/11" },
-  "40367": { name: "นางสาว พิชญาภา จำปาทอง", room: "ม.5/11" },
-  "40369": { name: "นาย ปริญญา ธรรมยอม", room: "ม.5/11" },
-  "40372": { name: "นาย วชิรวิทย์ ณะปัญญา", room: "ม.5/11" },
-  "40389": { name: "นาย ชวัลลักษณ์ แดงเตจ๊ะ", room: "ม.5/11" },
-  "40392": { name: "นางสาว ข้าวขวัญ ธำรงวิชชาการ", room: "ม.5/11" },
-  "40432": { name: "นางสาว นันทิชา เบ้าสีดา", room: "ม.5/11" },
-  "40437": { name: "นางสาว พิมพ์ลภัส อุนจะนำ", room: "ม.5/11" },
-  "40443": { name: "นาย ณัฐพงษ์ ต้นเจริญ", room: "ม.5/11" },
-  "40452": { name: "นางสาว พิมพ์มาดา เฮ้าปาน", room: "ม.5/11" },
-  "40454": { name: "นางสาว พิมพ์ลภัส จอมขันเงิน", room: "ม.5/11" },
-  "41907": { name: "นาย ปิติยังภูร สาวะจันทร์", room: "ม.5/11" },
-  "42548": { name: "นาย ญาณวุฒิ เนตรนิลพฤกษ์", room: "ม.5/11" },
-  "42549": { name: "นางสาว สุพิชญา คำปันนา", room: "ม.5/11" },
-  "42550": { name: "นาย พงศกร หาทวี", room: "ม.5/11" },
-  "42551": { name: "นางสาว ปริยาภรณ์ แรกนา", room: "ม.5/11" },
-  "42552": { name: "นางสาว ขวัญจิรา คำนาศักดิ์", room: "ม.5/11" },
-  "42553": { name: "นาย พงษธร ห้าแสน", room: "ม.5/11" },
-  "42554": { name: "นาย ธณิษา วิเศษกาศ", room: "ม.5/11" },
-  "42555": { name: "นาย อนาวิน ปาสีเลื่อม", room: "ม.5/11" },
-  "42556": { name: "นาย อธิวัฒน์ ไชยชนะ", room: "ม.5/11" },
+(function () {
+  "use strict";
 
-  // --- ม.5/7 ---
-  "39858": { name: "นาย ชยพล แสนคะนารึ", room: "ม.5/7" },
-  "39881": { name: "นางสาว พรปวีณ์ ทรัพย์สนธิ", room: "ม.5/7" },
-  "39893": { name: "นาย ภูริวัชร์ อุดมทิพย์", room: "ม.5/7" },
-  "39901": { name: "นางสาว ศุภิกา ชูกลิ่น", room: "ม.5/7" },
-  "39936": { name: "นาย สุกฤต สิงห์โตวะนา", room: "ม.5/7" },
-  "39942": { name: "นาย พีรพัฒน์ สมบูนไชย", room: "ม.5/7" },
-  "39943": { name: "นางสาว พิชญ์สิริ โกมาร", room: "ม.5/7" },
-  "39959": { name: "นางสาว อชิรญาณ์ บุตรนุชิต", room: "ม.5/7" },
-  "39963": { name: "นางสาว ญาดากานต์ ศรีลองเมือง", room: "ม.5/7" },
-  "39994": { name: "นาย ศุภโชค ใจจิตร", room: "ม.5/7" },
-  "39995": { name: "นางสาว ณิชชา เทพพรมวงศ์", room: "ม.5/7" },
-  "40005": { name: "นางสาว สุพิชช์นันท์ กิติทรัพย์", room: "ม.5/7" },
-  "40040": { name: "นางสาว กัลย์รัตน์ กันทาทรัพย์", room: "ม.5/7" },
-  "40042": { name: "นางสาว กนกนาถ สุปินน๊ะวรรณา", room: "ม.5/7" },
-  "40045": { name: "นาย ณัฐกาส ศรีสด", room: "ม.5/7" },
-  "40051": { name: "นาย ธนกฤต พื้นอินต๊ะศรี", room: "ม.5/7" },
-  "40244": { name: "นาย นาคพิชัย กาวิเนตร", room: "ม.5/7" },
-  "40246": { name: "นางสาว พิชชาภา บุญเฌอ", room: "ม.5/7" },
-  "40249": { name: "นางสาว ขวัญวรินทร์ แก้วกันโท", room: "ม.5/7" },
-  "40253": { name: "นางสาว ภคมน วงศ์สถาน", room: "ม.5/7" },
-  "40267": { name: "นาย ธราเทพ ไชยส้าว", room: "ม.5/7" },
-  "40277": { name: "นาย วรยุทธ ทิพยรักษ์", room: "ม.5/7" },
-  "40327": { name: "นางสาว บุญยาพร เลิศวิไล", room: "ม.5/7" },
-  "40352": { name: "นาย บูรพล สุธีรางกูร", room: "ม.5/7" },
-  "40362": { name: "นาย นันทิพัฒน์ ปันศรี", room: "ม.5/7" },
-  "40444": { name: "นางสาว นรมน จินาเดช", room: "ม.5/7" },
-  "40455": { name: "นาย ปาณัท ไม้ประเสริฐ", room: "ม.5/7" },
-  "41879": { name: "นาย น้ำเหนือ ศรีนาคำ", room: "ม.5/7" },
-  "42513": { name: "นางสาว กัญญารัตน์ จันทร์ต๊ะ", room: "ม.5/7" },
-  "42514": { name: "นางสาว มุริน วิชัยกิตติกุล", room: "ม.5/7" },
-  "42515": { name: "นาย ธีร์ธวัช หิรัญบริรักษ์", room: "ม.5/7" },
-  "42516": { name: "นางสาว ธญปดี วงศ์อนันต์ชัย", room: "ม.5/7" },
-  "42517": { name: "นางสาว ปวิชญา ทรายใหม่", room: "ม.5/7" },
-  "42518": { name: "นางสาว ศิรภัสสร ต้นกลาง", room: "ม.5/7" },
-  "42519": { name: "นางสาว ศศิวิมล สุวรรณชีพ", room: "ม.5/7" },
-  "42520": { name: "นาย จักริน หมื่นบาง", room: "ม.5/7" },
-  "42521": { name: "นาย นพพล สุนันท์ต๊ะ", room: "ม.5/7" },
-  "42522": { name: "นางสาว รมิตา กาตัญญูคุณานนท์", room: "ม.5/7" },
-  "42523": { name: "นาย นพวัฒน์ สุยะวารี", room: "ม.5/7" },
-  "42525": { name: "นางสาว เขมจิรา บุญมาอุป", room: "ม.5/7" },
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwGl1l3SOzMMA7njkm5I8_53ecSG_onrpL5gPV3RFr4WNUir3sJD8oF466S89cZSeQ5/exec";
 
-  // --- ม.5/3 ---
-  "39854": { name: "นางสาว ปวรวรรณ เมินชัยภูมิ", room: "ม.5/3" },
-  "39917": { name: "นางสาว เยาวเรศ อภิวงศ์", room: "ม.5/3" },
-  "39923": { name: "นาย กรกฤษณ์ ยะใจ", room: "ม.5/3" },
-  "39927": { name: "นางสาว ชญาดา สินธุบุญ", room: "ม.5/3" },
-  "39929": { name: "นางสาว กชพร สงวนศักดิ์", room: "ม.5/3" },
-  "39938": { name: "นางสาว กุลสตรี จักขุเรือง", room: "ม.5/3" },
-  "39948": { name: "นาย กิตติพงศ์ แก้วปัน", room: "ม.5/3" },
-  "39950": { name: "นางสาว อริญชยา ตุ่นใจ", room: "ม.5/3" },
-  "39956": { name: "นาย วิชานาถ โยศรี", room: "ม.5/3" },
-  "39958": { name: "นางสาว ธัญชนก คำพิภาศ", room: "ม.5/3" },
-  "39965": { name: "นางสาว ณัฏฐณิชา อินออม", room: "ม.5/3" },
-  "39968": { name: "นางสาว ภัควลัญชน์ กันทะวรรณ์", room: "ม.5/3" },
-  "39973": { name: "นาย ปกรณ์ ศรีบุญกอง", room: "ม.5/3" },
-  "39998": { name: "นางสาว วิมลณัฐ วสุวัช", room: "ม.5/3" },
-  "40002": { name: "นางสาว ไอยวรักฏ์ อินต๊ะปัน", room: "ม.5/3" },
-  "40011": { name: "นางสาว อภิชญา ผาด่านสกุล", room: "ม.5/3" },
-  "40014": { name: "นางสาว กวินตรา วรรณโชค", room: "ม.5/3" },
-  "40025": { name: "นางสาว ธัญญลักษณ์ วงค์จันทร์", room: "ม.5/3" },
-  "40242": { name: "นางสาว กรวรรณ กันธาทรัพย์", room: "ม.5/3" },
-  "40282": { name: "นาย ณัฐปกรณ์ ตุ่นไชย", room: "ม.5/3" },
-  "40414": { name: "นางสาว สิริภาพร บัวงาม", room: "ม.5/3" },
-  "40453": { name: "นางสาว ชนกนันท์ พรมเสพสัก", room: "ม.5/3" },
-  "42487": { name: "นาย จักรภพ พรมชัย", room: "ม.5/3" },
-  "42488": { name: "นาย ต้นธาร ปัญโญศักดิ์", room: "ม.5/3" },
-  "42489": { name: "นางสาว จุฬาลักษณ์ จิตวิจักร", room: "ม.5/3" },
-  "42490": { name: "นางสาว กรรณิการ์ ศรีเกื้อกลิ่น", room: "ม.5/3" },
-  "42491": { name: "นางสาว สุลาลีวัลย์ กัณทะ", room: "ม.5/3" }, 
-  "42492": { name: "นางสาว ฐิตินันท์ ไชยเขื่อน", room: "ม.5/3" },
-  "42493": { name: "นาย พีรพล ทองแดง", room: "ม.5/3" },
-  "42494": { name: "นางสาว ณณิชา สุขสวัสดิ์", room: "ม.5/3" }
-};
- 
-const departments = [
-  "ประธานคณะสี","ผู้ช่วยคณะสี","รองประธานคณะสี",
-  "เลขานุการ","สวัสดิการและปฎิคม","เหรัญญิก",
-  "แสตนเชียร์","อัฒจันทร์","ขบวนพาเหรด",
-  "กีฬา","กรีฑา","สปอตแดนซ์",
-  "เชียร์หลีดเดอร์","ฝ่ายอุปกรณ์"
-];
- 
+  const students = {
+    // --- ม.5/11 ---
+    "39079": { name: "นางสาว ธัญเรศ นรินทร์", room: "ม.5/11" },
+    "39506": { name: "นาย เดโช ปานทอง", room: "ม.5/11" },
+    "39979": { name: "นาย พิชญณุ อุ่นละม้าย", room: "ม.5/11" },
+    "39991": { name: "นาย กฤษฎา แก้ววิจิตร", room: "ม.5/11" },
+    "39997": { name: "นางสาว มนต์ธิชา แก้วอยู่", room: "ม.5/11" },
+    "40103": { name: "นาย ธฤต แจ้ใจ", room: "ม.5/11" },
+    "40105": { name: "นางสาว สาธิตา ปัญญา", room: "ม.5/11" },
+    "40119": { name: "นาย ธนภัทร ใจบุญ", room: "ม.5/11" },
+    "40123": { name: "นางสาว จุติพร ดวงตาทิพย์", room: "ม.5/11" },
+    "40131": { name: "นาย นาวิน ปินตาแสน", room: "ม.5/11" },
+    "40138": { name: "นางสาว งามเนตร ก้อนจำปา", room: "ม.5/11" },
+    "40148": { name: "นางสาว ปานชีวา จุลเจิมศักดิ์", room: "ม.5/11" },
+    "40166": { name: "นางสาว ชนิดนันท์ อนันต์กิจโรจนา", room: "ม.5/11" },
+    "40186": { name: "นาย ยงยุทธ สุขสวัสดิ์", room: "ม.5/11" },
+    "40190": { name: "นาย ดัสกร ใจยะสาร", room: "ม.5/11" },
+    "40227": { name: "นาย ธนดล อ้นบ้านดง", room: "ม.5/11" },
+    "40229": { name: "นางสาว สุธาสินี สุยะสัก", room: "ม.5/11" },
+    "40243": { name: "นางสาว ธนัญชนก ไชยวงศ์", room: "ม.5/11" },
+    "40344": { name: "นางสาว บุญยาพร มูลธิ", room: "ม.5/11" },
+    "40346": { name: "นาย ธนกร ต๊ะกาบโพธิ์", room: "ม.5/11" },
+    "40367": { name: "นางสาว พิชญาภา จำปาทอง", room: "ม.5/11" },
+    "40369": { name: "นาย ปริญญา ธรรมยอม", room: "ม.5/11" },
+    "40372": { name: "นาย วชิรวิทย์ ณะปัญญา", room: "ม.5/11" },
+    "40389": { name: "นาย ชวัลลักษณ์ แดงเตจ๊ะ", room: "ม.5/11" },
+    "40392": { name: "นางสาว ข้าวขวัญ ธำรงวิชชาการ", room: "ม.5/11" },
+    "40432": { name: "นางสาว นันทิชา เบ้าสีดา", room: "ม.5/11" },
+    "40437": { name: "นางสาว พิมพ์ลภัส อุนจะนำ", room: "ม.5/11" },
+    "40443": { name: "นาย ณัฐพงษ์ ต้นเจริญ", room: "ม.5/11" },
+    "40452": { name: "นางสาว พิมพ์มาดา เฮ้าปาน", room: "ม.5/11" },
+    "40454": { name: "นางสาว พิมพ์ลภัส จอมขันเงิน", room: "ม.5/11" },
+    "41907": { name: "นาย ปิติยังภูร สาวะจันทร์", room: "ม.5/11" },
+    "42548": { name: "นาย ญาณวุฒิ เนตรนิลพฤกษ์", room: "ม.5/11" },
+    "42549": { name: "นางสาว สุพิชญา คำปันนา", room: "ม.5/11" },
+    "42550": { name: "นาย พงศกร หาทวี", room: "ม.5/11" },
+    "42551": { name: "นางสาว ปริยาภรณ์ แรกนา", room: "ม.5/11" },
+    "42552": { name: "นางสาว ขวัญจิรา คำนาศักดิ์", room: "ม.5/11" },
+    "42553": { name: "นาย พงษธร ห้าแสน", room: "ม.5/11" },
+    "42554": { name: "นาย ธณิษา วิเศษกาศ", room: "ม.5/11" },
+    "42555": { name: "นาย อนาวิน ปาสีเลื่อม", room: "ม.5/11" },
+    "42556": { name: "นาย อธิวัฒน์ ไชยชนะ", room: "ม.5/11" },
 
-// 📍 1. ตั้งค่าลิงก์พิกัดและระยะทางของคณะสี
-const GOOGLE_MAPS_URL = "https://www.google.com/maps/dir/18.5791586,99.0239452/%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%A3%E0%B8%B5%E0%B8%A2%E0%B8%99%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%A3%E0%B8%84%E0%B9%8D%E0%B8%B2%E0%B8%84%E0%B8%93%E0%B8%B2%E0%B8%97%E0%B8%A3/data=!4m6!4m5!1m0!1m2!1m1!1s0x30dbd2aadd7b605f:0x32d89249057f38eb!3e0?sa=X&ved=1t:196274&ictx=111"; 
-const MAX_DISTANCE_METERS = 100000; // 🎯 ขยายรัศมีเป็น 100 กิโลให้ครอบคลุมทั่วโรงเรียน
+    // --- ม.5/7 ---
+    "39858": { name: "นาย ชยพล แสนคะนารึ", room: "ม.5/7" },
+    "39881": { name: "นางสาว พรปวีณ์ ทรัพย์สนธิ", room: "ม.5/7" },
+    "39893": { name: "นาย ภูริวัชร์ อุดมทิพย์", room: "ม.5/7" },
+    "39901": { name: "นางสาว ศุภิกา ชูกลิ่น", room: "ม.5/7" },
+    "39936": { name: "นาย สุกฤต สิงห์โตวะนา", room: "ม.5/7" },
+    "39942": { name: "นาย พีรพัฒน์ สมบูนไชย", room: "ม.5/7" },
+    "39943": { name: "นางสาว พิชญ์สิริ โกมาร", room: "ม.5/7" },
+    "39959": { name: "นางสาว อชิรญาณ์ บุตรนุชิต", room: "ม.5/7" },
+    "39963": { name: "นางสาว ญาดากานต์ ศรีลองเมือง", room: "ม.5/7" },
+    "39994": { name: "นาย ศุภโชค ใจจิตร", room: "ม.5/7" },
+    "39995": { name: "นางสาว ณิชชา เทพพรมวงค์", room: "ม.5/7" },
+    "40005": { name: "นางสาว สุพิชช์นันท์ กิติทรัพย์", room: "ม.5/7" },
+    "40040": { name: "นางสาว กัลย์รัตน์ กันทาทรัพย์", room: "ม.5/7" },
+    "40042": { name: "นางสาว กนกนาถ สุปินน๊ะวรรณา", room: "ม.5/7" },
+    "40045": { name: "นาย ณัฐกาส ศรีสด", room: "ม.5/7" },
+    "40051": { name: "นาย ธนกฤต พื้นอินต๊ะศรี", room: "ม.5/7" },
+    "40244": { name: "นาย นาคพิชัย กาวิเนตร", room: "ม.5/7" },
+    "40246": { name: "นางสาว พิชชาภา บุญเฌอ", room: "ม.5/7" },
+    "40249": { name: "นางสาว ขวัญวรินทร์ แก้วกันโท", room: "ม.5/7" },
+    "40253": { name: "นางสาว ภคมน วงศ์สถาน", room: "ม.5/7" },
+    "40267": { name: "นาย ธราเทพ ไชยส้าว", room: "ม.5/7" },
+    "40277": { name: "นาย วรยุทธ ทิพยรักษ์", room: "ม.5/7" },
+    "40327": { name: "นางสาว บุญยาพร เลิศวิไล", room: "ม.5/7" },
+    "40352": { name: "นาย บูรพล สุธีรางกูร", room: "ม.5/7" },
+    "40362": { name: "นาย นันทิพัฒน์ ปันศรี", room: "ม.5/7" },
+    "40444": { name: "นางสาว นรมน จินาเดช", room: "ม.5/7" },
+    "40455": { name: "นาย ปาณัท ไม้ประเสริฐ", room: "ม.5/7" },
+    "41879": { name: "นาย น้ำเหนือ ศรีนาคำ", room: "ม.5/7" },
+    "42513": { name: "นางสาว กัญญารัตน์ จันทร์ต๊ะ", room: "ม.5/7" },
+    "42514": { name: "นางสาว มุริน วิชัยกิตติกุล", room: "ม.5/7" },
+    "42515": { name: "นาย ธีร์ธวัช หิรัญบริรักษ์", room: "ม.5/7" },
+    "42516": { name: "นางสาว ธญปดี วงศ์อนันต์ชัย", room: "ม.5/7" },
+    "42517": { name: "นางสาว ปวิชญา ทรายใหม่", room: "ม.5/7" },
+    "42518": { name: "นางสาว ศิรภัสสร ต้นกลาง", room: "ม.5/7" },
+    "42519": { name: "นางสาว ศศิวิมล สุวรรณชีพ", room: "ม.5/7" },
+    "42520": { name: "นาย จักริน หมื่นบาง", room: "ม.5/7" },
+    "42521": { name: "นาย นพพล สุนันท์ต๊ะ", room: "ม.5/7" },
+    "42522": { name: "นางสาว รมิตา กาตัญญูคุณานนท์", room: "ม.5/7" },
+    "42523": { name: "นาย นพวัฒน์ สุยะวารี", room: "ม.5/7" },
+    "42525": { name: "นางสาว เขมจิรา บุญมาอุป", room: "ม.5/7" },
 
-// 📍 ตั้งค่าพิกัดเริ่มต้นเป็นของ โรงเรียนจักรคำคณาทร ลำพูน (Lat: 18.586, Lng: 99.039)
-let SCHOOL_LAT = 18.586221; 
-let SCHOOL_LNG = 99.039017;
-
-let currentId   = null;
-let currentName = null;
-let currentDept = null;
-let base64Image = ""; 
-let isLocationValid = false; 
-let userCurrentLat = null;
-let userCurrentLng = null;
-
-// แกะรอยพิกัดโรงเรียนจากลิงก์อัตโนมัติ
-function extractCoordsFromUrl(url) {
-  try {
-    // 1. ตรวจสอบว่าถ้าเป็นลิงก์โรงเรียนจักรคำคณาทรตามที่ส่งมา ให้ล็อกพิกัดโรงเรียนโดยตรง
-    if (url.includes("%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%A3%E0%B8%B5%E0%B8%A2%E0%B8%99%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%A3%E0%B8%84%E0%B9%8D%E0%B8%B2")) {
-      SCHOOL_LAT = 18.586221;
-      SCHOOL_LNG = 99.039017;
-      console.log(`📍 ล็อกตำแหน่ง: โรงเรียนจักรคำคณาทร (Lat ${SCHOOL_LAT}, Lng ${SCHOOL_LNG})`);
-      return;
-    }
-
-    // 2. แบบปกติ (ถ้าเป็นลิงก์ยาวที่มีเครื่องหมาย @)
-    const match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-    if (match) {
-      SCHOOL_LAT = parseFloat(match[1]);
-      SCHOOL_LNG = parseFloat(match[2]);
-      console.log(`📍 ดึงพิกัดจากลิงก์สำเร็จ: Lat ${SCHOOL_LAT}, Lng ${SCHOOL_LNG}`);
-    }
-  } catch (e) {
-    console.error("❌ ไม่สามารถแกะพิกัดจากลิงก์ได้", e);
-  }
-}
-extractCoordsFromUrl(GOOGLE_MAPS_URL);
-
-// คำนวณระยะห่างระหว่างจุด 2 จุด
-function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371e3; 
-  const phi1 = lat1 * Math.PI/180;
-  const phi2 = lat2 * Math.PI/180;
-  const deltaPhi = (lat2-lat1) * Math.PI/180;
-  const deltaLambda = (lon2-lon1) * Math.PI/180;
-
-  const a = Math.sin(deltaPhi/2) * Math.sin(deltaPhi/2) +
-            Math.cos(phi1) * Math.cos(phi2) *
-            Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c; 
-}
-
-// ตรวจสอบตำแหน่งพิกัดปัจจุบันของนักเรียน
-function verifyLocation() {
-  const statusEl = document.getElementById('locationStatus');
-  if (!navigator.geolocation) {
-    statusEl.innerHTML = "❌ เบราว์เซอร์ไม่รองรับการเช็คพิกัด GPS";
-    return;
-  }
-
-  statusEl.innerHTML = "⏳ กำลังดึงพิกัดจากดาวเทียม...";
-  
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      userCurrentLat = position.coords.latitude;
-      userCurrentLng = position.coords.longitude;
-      
-      const distance = calculateDistance(userCurrentLat, userCurrentLng, SCHOOL_LAT, SCHOOL_LNG);
-      
-      if (distance <= MAX_DISTANCE_METERS) {
-        statusEl.innerHTML = `✅ พิกัดถูกต้อง! อยู่ในเขตกิจกรรม (ห่างจากจุดนัดหมาย ${Math.round(distance)} เมตร)`;
-        statusEl.style.color = "green";
-        isLocationValid = true;
-        window.checkFormReady();
-      } else {
-        statusEl.innerHTML = `❌ คุณอยู่ห่างเกินไป (${Math.round(distance)} เมตร) ไม่อนุญาตให้เช็คชื่อนอกพื้นที่งานครับ`;
-        statusEl.style.color = "red";
-        isLocationValid = false;
-        document.getElementById('confirmBtn').style.display = 'none';
-      }
-    },
-    (error) => {
-      statusEl.innerHTML = "❌ ไม่สามารถเข้าถึงพิกัดได้ กรุณาเปิด Location/GPS บนมือถือและยินยอมให้สิทธิ์";
-      statusEl.style.color = "red";
-      isLocationValid = false;
-    },
-    { enableHighAccuracy: true, timeout: 10000 }
-  );
-}
-
-// ดูตัวอย่างภาพที่ถ่าย
-window.previewImage = function(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    base64Image = e.target.result; 
-    document.getElementById('imagePreview').src = base64Image;
-    document.getElementById('imagePreviewContainer').style.display = 'block';
-    window.checkFormReady();
+    // --- ม.5/3 ---
+    "39854": { name: "นางสาว ปวรวรรณ เมินชัยภูมิ", room: "ม.5/3" },
+    "39917": { name: "นางสาว เยาวเรศ อภิวงศ์", room: "ม.5/3" },
+    "39923": { name: "นาย กรกฤษณ์ ยะใจ", room: "ม.5/3" },
+    "39927": { name: "นางสาว ชญาดา สินธุบุญ", room: "ม.5/3" },
+    "39929": { name: "นางสาว กชพร สงวนศักดิ์", room: "ม.5/3" },
+    "39938": { name: "นางสาว กุลสตรี จักขุเรือง", room: "ม.5/3" },
+    "39948": { name: "นาย กิตติพงศ์ แก้วปัน", room: "ม.5/3" },
+    "39950": { name: "นางสาว อริญชยา ตุ่นใจ", room: "ม.5/3" },
+    "39956": { name: "นาย วิชานาถ โยศรี", room: "ม.5/3" },
+    "39958": { name: "นางสาว ธัญชนก คำพิภาศ", room: "ม.5/3" },
+    "39965": { name: "นางสาว ณัฏฐณิชา อินออม", room: "ม.5/3" },
+    "39968": { name: "นางสาว ภัควลัญชน์ กันทะวรรณ์", room: "ม.5/3" },
+    "39973": { name: "นาย ปกรณ์ ศรีบุญกอง", room: "ม.5/3" },
+    "39998": { name: "นางสาว วิมลณัฐ วสุวัช", room: "ม.5/3" },
+    "40002": { name: "นางสาว ไอยวรักฏ์ อินต๊ะปัน", room: "ม.5/3" },
+    "40011": { name: "นางสาว อภิชญา ผาด่านสกุล", room: "ม.5/3" },
+    "40014": { name: "นางสาว กวินตรา วรรณโชค", room: "ม.5/3" },
+    "40025": { name: "นางสาว ธัญญลักษณ์ วงค์จันทร์", room: "ม.5/3" },
+    "40242": { name: "นางสาว กรวรรณ กันธาทรัพย์", room: "ม.5/3" },
+    "40282": { name: "นาย ณัฐปกรณ์ ตุ่นไชย", room: "ม.5/3" },
+    "40414": { name: "นางสาว สิริภาพร บัวงาม", room: "ม.5/3" },
+    "40453": { name: "นางสาว ชนกนันท์ พรมเสพสัก", room: "ม.5/3" },
+    "42487": { name: "นาย จักรภพ พรมชัย", room: "ม.5/3" },
+    "42488": { name: "นาย ต้นธาร ปัญโญศักดิ์", room: "ม.5/3" },
+    "42489": { name: "นางสาว จุฬาลักษณ์ จิตวิจักร", room: "ม.5/3" },
+    "42490": { name: "นางสาว กรรณิการ์ ศรีเกื้อกลิ่น", room: "ม.5/3" },
+    "42491": { name: "นางสาว สุลาลีวัลย์ กัณทะ", room: "ม.5/3" },
+    "42492": { name: "นางสาว ฐิตินันท์ ไชยเขื่อน", room: "ม.5/3" },
+    "42493": { name: "นาย พีรพล ทองแดง", room: "ม.5/3" },
+    "42494": { name: "นางสาว ณณิชา สุขสวัสดิ์", room: "ม.5/3" }
   };
-  reader.readAsDataURL(file);
-};
 
-// ตรวจเงื่อนไขความพร้อมปุ่มยืนยัน
-window.checkFormReady = function() {
-  const room = document.getElementById('roomSelect').value;
-  if (currentId && currentDept && room && isLocationValid && base64Image) {
-    document.getElementById('confirmBtn').style.display = 'block';
-  } else {
-    document.getElementById('confirmBtn').style.display = 'none';
-  }
-};
+  const departments = [
+    "ประธานคณะสี","ผู้ช่วยคณะสี","รองประธานคณะสี",
+    "เลขานุการ","สวัสดิการและปฎิคม","เหรัญญิก",
+    "แสตนเชียร์","อัฒจันทร์","ขบวนพาเหรด",
+    "กีฬา","กรีฑา","สปอตแดนซ์",
+    "เชียร์หลีดเดอร์","ฝ่ายอุปกรณ์"
+  ];
 
-// ฟังก์ชันค้นหารายชื่อ
-window.searchStudent = async function () {
-  const id = document.getElementById('studentId').value.trim();
-  window.hideAllCheckin();
-  currentDept = null;
-  base64Image = "";
-  isLocationValid = false;
-  document.getElementById('roomSelect').value = "";
-  document.getElementById('imageInput').value = "";
-  document.getElementById('imagePreviewContainer').style.display = 'none';
-  window.resetDeptBtns();
-  if (!id) return;
- 
-  const studentData = students[id];
-  if (!studentData) {
-    document.getElementById('errorBox').style.display = 'block';
-    return;
-  }
- 
-  currentId   = id;
-  currentName = studentData.name;
-  
-  document.getElementById('nameId').textContent   = '🎓 เลขประจำตัว ' + id;
-  document.getElementById('nameText').textContent = currentName;
-  document.getElementById('roomSelect').value = studentData.room;
+  // 📍 ตั้งค่าลิงก์พิกัดและระยะทางของคณะสี
+  const GOOGLE_MAPS_URL = "https://www.google.com/maps/dir/18.5791586,99.0239452/%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%A3%E0%B8%B5%E0%B8%A2%E0%B8%99%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%A3%E0%B8%84%E0%B9%8D%E0%B8%B2%E0%B8%84%E0%B8%93%E0%B8%B2%E0%B8%97%E0%B8%A3/data=!4m6!4m5!1m0!1m2!1m1!1s0x30dbd2aadd7b605f:0x32d89249057f38eb!3e0?sa=X&ved=1t:196274&ictx=111";
+  const MAX_DISTANCE_METERS = 100000; // 🎯 ขยายรัศมีเป็น 100 กิโลให้ครอบคลุมทั่วโรงเรียน
 
-  document.getElementById('nameBox').style.display     = 'block';
-  document.getElementById('roomSection').style.display = 'block';
-  document.getElementById('deptSection').style.display = 'block';
-  document.getElementById('verificationSection').style.display = 'block';
+  let SCHOOL_LAT = 18.586221;
+  let SCHOOL_LNG = 99.039017;
 
-  verifyLocation();
-};
+  let currentId   = null;
+  let currentName = null;
+  let currentDept = null;
+  let base64Image = "";
+  let isLocationValid = false;
+  let userCurrentLat = null;
+  let userCurrentLng = null;
 
-// ฟังก์ชันบันทึกข้อมูลและส่งค่าไปยังคอลัมน์ต่างๆ บนชีต
-window.confirmCheckIn = async function () {
-  const room = document.getElementById('roomSelect').value;
-  if (!currentId || !currentDept || !room || !isLocationValid || !base64Image) {
-    window.showCheckinToast('⚠️ ข้อมูลไม่ครบถ้วน หรือ พิกัดไม่อยู่ในเขตพื้นที่งาน');
-    return;
-  }
- 
-  const now  = new Date();
-  const time = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-  const date = now.toLocaleDateString('th-TH');
-  
-  // แปลงพิกัดจริงของเครื่องนักเรียนให้กลายเป็นลิงก์ Google Maps พร้อมระบุหมุดนำทาง
-  const studentMapUrl = `https://www.google.com/maps?q=${userCurrentLat},${userCurrentLng}`;
- 
-  const btn = document.getElementById('confirmBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ กำลังบันทึกข้อมูลและรูปภาพ...';
- 
-  try {
-    if (typeof set === 'function' && typeof ref === 'function' && typeof db !== 'undefined') {
-        await set(ref(db, 'checkin/' + currentId), {
-          name: currentName, room: room, dept: currentDept,
-          time, date, photo: base64Image, studentLocation: studentMapUrl,
-          timestamp: now.getTime()
-        });
+  // แกะรอยพิกัดโรงเรียนจากลิงก์อัตโนมัติ
+  function extractCoordsFromUrl(url) {
+    try {
+      if (url.includes("%E0%B9%82%E0%B8%A3%E0%B8%87%E0%B9%80%E0%B8%A3%E0%B8%B5%E0%B8%A2%E0%B8%99%E0%B8%88%E0%B8%B1%E0%B8%81%E0%B8%A3%E0%B8%84%E0%B9%8D%E0%B8%B2")) {
+        SCHOOL_LAT = 18.586221;
+        SCHOOL_LNG = 99.039017;
+        console.log("📍 ล็อกตำแหน่ง: โรงเรียนจักรคำคณาทร (Lat " + SCHOOL_LAT + ", Lng " + SCHOOL_LNG + ")");
+        return;
+      }
+
+      const match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+      if (match) {
+        SCHOOL_LAT = parseFloat(match[1]);
+        SCHOOL_LNG = parseFloat(match[2]);
+        console.log("📍 ดึงพิกัดจากลิงก์สำเร็จ: Lat " + SCHOOL_LAT + ", Lng " + SCHOOL_LNG);
+      }
+    } catch (e) {
+      console.error("❌ ไม่สามารถแกะพิกัดจากลิงก์ได้", e);
     }
- 
-    const params = new URLSearchParams({
-      sheet: 'เช็คชื่อ', id: currentId,
-      name: currentName, room: room, dept: currentDept,
-      time: time, date: date, maps: studentMapUrl, photo: base64Image 
-    });
- 
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: params
-    });
- 
-    window.hideAllCheckin();
-    document.getElementById('successName').textContent = currentName;
-    document.getElementById('successRoomBadge').textContent = '🏫 ' + room;
-    document.getElementById('successDeptBadge').textContent = '🏮 ' + currentDept;
-    document.getElementById('successBox').style.display = 'block';
-    document.getElementById('studentId').value = '';
-    
-    window.showCheckinToast('✅ เช็คชื่อพร้อมหลักฐานสำเร็จ! ' + currentName);
-    currentId = currentName = currentDept = base64Image = userCurrentLat = userCurrentLng = null;
- 
-  } catch (err) {
-    console.error(err);
-    window.showCheckinToast('❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '✅ ยืนยันเช็คชื่อ';
   }
-};
+  extractCoordsFromUrl(GOOGLE_MAPS_URL);
 
-window.hideAllCheckin = function() {
-  document.getElementById('errorBox').style.display = 'none';
-  document.getElementById('nameBox').style.display = 'none';
-  document.getElementById('roomSection').style.display = 'none';
-  document.getElementById('deptSection').style.display = 'none';
-  document.getElementById('verificationSection').style.display = 'none';
-  document.getElementById('confirmBtn').style.display = 'none';
-  document.getElementById('successBox').style.display = 'none';
-}
+  // คำนวณระยะห่างระหว่างจุด 2 จุด
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371e3;
+    const phi1 = lat1 * Math.PI / 180;
+    const phi2 = lat2 * Math.PI / 180;
+    const deltaPhi = (lat2 - lat1) * Math.PI / 180;
+    const deltaLambda = (lon2 - lon1) * Math.PI / 180;
 
-window.resetDeptBtns = function() {
-  document.querySelectorAll('.dept-btn').forEach(b => b.classList.remove('selected'));
-  window.checkFormReady();
-}
-
-window.selectDept = function(dept) {
-  currentDept = dept;
-  window.resetDeptBtns();
-  [...document.querySelectorAll('.dept-btn')]
-    .find(b => b.textContent === dept)
-    ?.classList.add('selected');
-  window.checkFormReady();
-}
-
-window.showCheckinToast = function(msg) {
-  const toastEl = document.getElementById('toast');
-  if (toastEl) {
-    toastEl.textContent = msg;
-    toastEl.classList.add('show');
-    setTimeout(() => { toastEl.classList.remove('show'); }, 3000);
-  } else {
-    alert(msg);
+    const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+              Math.cos(phi1) * Math.cos(phi2) *
+              Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
   }
-}
 
-// ผูกตัวแปรเลือกห้องเข้ากับตัวเช็คความพร้อม
-document.addEventListener("DOMContentLoaded", () => {
-  const roomSel = document.getElementById('roomSelect');
-  if(roomSel) roomSel.onchange = window.checkFormReady;
+  // ซ่อนทุกส่วนของฟอร์ม กลับสู่สถานะเริ่มต้นก่อนค้นหาใหม่
+  // (มี id ตรงกับ HTML จริงทั้งหมด — เดิมมีเวอร์ชันซ้ำนอก IIFE ที่ใช้ id ผิด
+  //  ('roomSection' ที่ไม่มีอยู่จริง) แล้วเขียนทับตัวนี้ ทำให้เกิด error
+  //  และสคริปต์หยุดทำงานกลางคัน จึงลบตัวซ้ำนั้นออกไปแล้ว)
+  window.hideAllCheckin = function () {
+    const ids = [
+      'errorBox',
+      'nameBox',
+      'checkinRoomSection',
+      'deptSection',
+      'verificationSection',
+      'confirmBtn',
+      'successBox'
+    ];
 
-  const deptGrid = document.getElementById('deptGrid');
-  if (deptGrid) {
-    deptGrid.innerHTML = ''; 
-    departments.forEach(d => {
+    ids.forEach(function (id) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+
+    // รีเซ็ตข้อความ GPS
+    const statusEl = document.getElementById('locationStatus');
+    if (statusEl) {
+      statusEl.innerHTML = '⏳ กำลังตรวจสอบพิกัดของคุณ...';
+      statusEl.style.color = '#666';
+    }
+
+    // ซ่อน Preview รูป
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    if (previewContainer) {
+      previewContainer.style.display = 'none';
+    }
+  };
+
+  // แจ้งเตือนแบบ toast (มี fallback เป็น alert ถ้าไม่เจอ element toast)
+  window.showCheckinToast = function (msg) {
+    const toastEl = document.getElementById('toast');
+    if (toastEl) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(function () { toastEl.classList.remove('show'); }, 3000);
+    } else {
+      alert(msg);
+    }
+  };
+
+  // สร้างปุ่มเลือกฝ่ายทั้งหมดใน #deptGrid
+  function buildDeptGrid() {
+    const deptGrid = document.getElementById('deptGrid');
+    if (!deptGrid) return;
+
+    deptGrid.innerHTML = '';
+    departments.forEach(function (d) {
       const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = 'dept-btn';
       btn.textContent = d;
-      btn.onclick = () => window.selectDept(d);
+      btn.addEventListener('click', function () {
+        window.selectDept(d);
+      });
       deptGrid.appendChild(btn);
     });
   }
-});
 
- 
-function hideAllCheckin() {
-  ['errorBox', 'nameBox', 'roomSection', 'deptSection', 'successBox'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  const confirmBtn = document.getElementById('confirmBtn');
-  if (confirmBtn) confirmBtn.style.display = 'none';
-}
- 
-function showCheckinToast(msg) {
-  const t = document.getElementById('toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-const checkStatusBtn = document.getElementById('checkStatusBtn');
-if (checkStatusBtn) {
-    checkStatusBtn.addEventListener('click', async () => {
-        const nameInput = document.getElementById('checkName') || document.getElementById('name');
-        const roomInput = document.getElementById('checkRoom') || document.getElementById('room');
-        
-        const resultBox = document.getElementById('checkResult');
-        if (!nameInput || !roomInput) {
-            resultBox.innerHTML = '<p style="color:red;">❌ ข้อผิดพลาดทางระบบ: หาช่องกรอกชื่อหรือห้องในหน้าเว็บไม่พบ</p>';
-            return;
-        }
-        const name = nameInput.value.trim();
-        const room = roomInput.value.trim();
-        if (!name || !room) {
-            resultBox.innerHTML = '<p style="color:red;">⚠️ กรุณากรอกชื่อและห้องให้ครบถ้วนก่อนกดปุ่ม</p>';
-            return;
-        }
-
-        // 🔒 ปิดปุ่มกันกดซ้ำ + เปลี่ยนข้อความปุ่ม
-        checkStatusBtn.disabled = true;
-        const originalText = checkStatusBtn.innerText;
-        checkStatusBtn.innerText = 'กำลังตรวจสอบ...';
-
-        resultBox.innerHTML = '<p>⏳ กำลังตรวจสอบข้อมูล กรุณารอสักครู่...</p>';
-        try {
-            const baseUrl = "https://script.google.com/macros/s/AKfycbxjdfQSUS6clXl7-uEkjwINlLQfAYxgsAPare0o-LcvKTA_Ok-DmaatFy5cJcvcMDU0/exec"
-            const url = `${baseUrl}?name=${encodeURIComponent(name)}&room=${encodeURIComponent(room)}`;
-            const res = await fetch(url);
-            const data = await res.json();
-
-            if (data.error) {
-                resultBox.innerHTML = `<p style="color:red;">❌ ${data.error}</p>`;
-                return;
-            }
-            if (!data.results || data.results.length === 0) {
-                resultBox.innerHTML = '<p style="color:orange;">❌ ไม่พบข้อมูลการสมัคร ยังไม่เคยลงทะเบียนกีฬาใดเลย</p>';
-                return;
-            }
-            let html = '<p style="color:green; font-weight:bold;">✅ พบข้อมูลการสมัครเรียบร้อย:</p><ul style="text-align:left; display:inline-block;">';
-            data.results.forEach(r => {
-                html += `<li style="margin-bottom: 5px;">🏆 <strong>${r.sport}</strong> (ระดับ: ${r.level || '-'})</li>`;
-            });
-            html += '</ul>';
-            resultBox.innerHTML = html;
-        } catch (err) {
-            console.error(err);
-            resultBox.innerHTML = '<p style="color:red;">❌ เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล ลองใหม่อีกครั้ง</p>';
-        } finally {
-            // 🔓 เปิดปุ่มกลับคืน ไม่ว่าจะสำเร็จหรือ error
-            checkStatusBtn.disabled = false;
-            checkStatusBtn.innerText = originalText;
-        }
+  // ล้างสถานะปุ่มฝ่ายที่เลือกไว้ทั้งหมด
+  window.resetDeptBtns = function () {
+    document.querySelectorAll('.dept-btn').forEach(function (b) {
+      b.classList.remove('selected');
     });
-}
-// ทำความสะอาดข้อมูลห้อง: ลบเว้นวรรค, ลบคำนำหน้า ม./ม, แปลงเป็นพิมพ์เล็ก
-function normalizeRoom(str) {
-  return String(str)
-    .replace(/\s+/g, '')           // ลบช่องว่างทั้งหมด
-    .toLowerCase()
-    .replace(/^ม\.?/, '')          // ลบ "ม." หรือ "ม" ที่นำหน้า (เช่น ม.4/7 -> 4/7, ม4/7 -> 4/7)
-    .replace(/^m\.?/, '');         // เผื่อกรณีพิมพ์ภาษาอังกฤษ m.4/7 -> 4/7
-}
+    window.checkFormReady();
+  };
 
+  // เลือกฝ่าย — ตอนนี้แก้ไขให้ตั้งค่า currentDept ตัวเดียวกับที่
+  // checkFormReady / confirmCheckIn ใช้จริง (แต่ก่อนมันเป็นตัวแปร global
+  // คนละตัวเพราะ selectDept เดิมอยู่นอก IIFE)
+  window.selectDept = function (dept) {
+    currentDept = dept;
+    window.resetDeptBtns();
+    [...document.querySelectorAll('.dept-btn')]
+      .find(function (b) { return b.textContent === dept; })
+      ?.classList.add('selected');
+    window.checkFormReady();
+  };
 
+  // ตรวจสอบตำแหน่งพิกัดปัจจุบันของนักเรียน
+  function verifyLocation() {
+    const statusEl = document.getElementById('locationStatus');
+    if (!navigator.geolocation) {
+      statusEl.innerHTML = "❌ เบราว์เซอร์ไม่รองรับการเช็คพิกัด GPS";
+      return;
+    }
 
+    statusEl.innerHTML = "⏳ กำลังดึงพิกัดจากดาวเทียม...";
 
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        userCurrentLat = position.coords.latitude;
+        userCurrentLng = position.coords.longitude;
+
+        const distance = calculateDistance(userCurrentLat, userCurrentLng, SCHOOL_LAT, SCHOOL_LNG);
+
+        if (distance <= MAX_DISTANCE_METERS) {
+          statusEl.innerHTML = "✅ พิกัดถูกต้อง! อยู่ในเขตกิจกรรม (ห่างจากจุดนัดหมาย " + Math.round(distance) + " เมตร)";
+          statusEl.style.color = "green";
+          isLocationValid = true;
+          window.checkFormReady();
+        } else {
+          statusEl.innerHTML = "❌ คุณอยู่ห่างเกินไป (" + Math.round(distance) + " เมตร) ไม่อนุญาตให้เช็คชื่อนอกพื้นที่งานครับ";
+          statusEl.style.color = "red";
+          isLocationValid = false;
+          const btn = document.getElementById('confirmBtn');
+          if (btn) btn.style.display = 'none';
+        }
+      },
+      function () {
+        statusEl.innerHTML = "❌ ไม่สามารถเข้าถึงพิกัดได้ กรุณาเปิด Location/GPS บนมือถือและยินยอมให้สิทธิ์";
+        statusEl.style.color = "red";
+        isLocationValid = false;
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  // ดูตัวอย่างภาพที่ถ่าย
+  window.previewImage = function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      base64Image = e.target.result;
+      document.getElementById('imagePreview').src = base64Image;
+      document.getElementById('imagePreviewContainer').style.display = 'block';
+      window.checkFormReady();
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // ตรวจเงื่อนไขความพร้อมปุ่มยืนยัน
+  window.checkFormReady = function () {
+    const roomEl = document.getElementById('roomSelect');
+    const room = roomEl ? roomEl.value : '';
+    const btn = document.getElementById('confirmBtn');
+    if (!btn) return;
+
+    if (currentId && currentDept && room && isLocationValid && base64Image) {
+      btn.style.display = 'block';
+    } else {
+      btn.style.display = 'none';
+    }
+  };
+
+  // ฟังก์ชันค้นหารายชื่อ
+  window.searchStudent = function () {
+    const idEl = document.getElementById('studentId');
+    if (!idEl) {
+      console.error('checkin.js: ไม่พบ input id="studentId" ในหน้า — ตรวจสอบว่า HTML ส่วนเช็คชื่อถูกใส่ไว้ในหน้าจริงหรือยัง');
+      return;
+    }
+
+    const id = idEl.value.trim();
+    window.hideAllCheckin();
+
+    currentDept = null;
+    base64Image = "";
+    isLocationValid = false;
+
+    const roomSelect = document.getElementById('roomSelect');
+    const imageInput = document.getElementById('imageInput');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+    if (roomSelect) roomSelect.value = "";
+    if (imageInput) imageInput.value = "";
+    if (imagePreviewContainer) imagePreviewContainer.style.display = 'none';
+
+    window.resetDeptBtns();
+
+    const studentData = students[id];
+    if (!studentData) {
+      const errBox = document.getElementById('errorBox');
+      if (errBox) errBox.style.display = 'block';
+      currentId = null;
+      currentName = null;
+      return;
+    }
+
+    currentId   = id;
+    currentName = studentData.name;
+
+    document.getElementById('nameId').textContent   = '🎓 เลขประจำตัว ' + id;
+    document.getElementById('nameText').textContent = currentName;
+    document.getElementById('roomSelect').value = studentData.room;
+
+    document.getElementById('nameBox').style.display             = 'block';
+    document.getElementById('checkinRoomSection').style.display  = 'block';
+    document.getElementById('deptSection').style.display         = 'block';
+    document.getElementById('verificationSection').style.display = 'block';
+
+    verifyLocation();
+  };
+
+  // ฟังก์ชันบันทึกข้อมูลและส่งค่าไปยังคอลัมน์ต่างๆ บนชีต
+  window.confirmCheckIn = async function () {
+    const room = document.getElementById('roomSelect').value;
+    if (!currentId || !currentDept || !room || !isLocationValid || !base64Image) {
+      window.showCheckinToast('⚠️ ข้อมูลไม่ครบถ้วน หรือ พิกัดไม่อยู่ในเขตพื้นที่งาน');
+      return;
+    }
+
+    const now  = new Date();
+    const time = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+    const date = now.toLocaleDateString('th-TH');
+
+    const studentMapUrl = "https://www.google.com/maps?q=" + userCurrentLat + "," + userCurrentLng;
+
+    const btn = document.getElementById('confirmBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ กำลังบันทึกข้อมูลและรูปภาพ...';
+
+    try {
+      const params = new URLSearchParams({
+        sheet: 'เช็คชื่อ', id: currentId,
+        name: currentName, room: room, dept: currentDept,
+        time: time, date: date, maps: studentMapUrl, photo: base64Image
+      });
+
+      await fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: params
+      });
+
+      const savedName = currentName;
+      const savedRoom = room;
+      const savedDept = currentDept;
+
+      window.hideAllCheckin();
+      document.getElementById('successName').textContent = savedName;
+      document.getElementById('successRoomBadge').textContent = '🏫 ' + savedRoom;
+      document.getElementById('successDeptBadge').textContent = '🏮 ' + savedDept;
+      document.getElementById('successBox').style.display = 'block';
+      document.getElementById('studentId').value = '';
+
+      window.showCheckinToast('✅ เช็คชื่อพร้อมหลักฐานสำเร็จ! ' + savedName);
+
+      currentId = null;
+      currentName = null;
+      currentDept = null;
+      base64Image = "";
+      userCurrentLat = null;
+      userCurrentLng = null;
+      isLocationValid = false;
+
+    } catch (err) {
+      console.error(err);
+      window.showCheckinToast('❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '✅ ยืนยันเช็คชื่อ';
+    }
+  };
+
+  // INIT — สร้างปุ่มฝ่ายตอนโหลดหน้าเสร็จ + ผูก event ที่จำเป็น
+  document.addEventListener('DOMContentLoaded', function () {
+    buildDeptGrid();
+
+    const roomSelect = document.getElementById('roomSelect');
+    if (roomSelect) {
+      roomSelect.addEventListener('change', function () {
+        window.checkFormReady();
+      });
+    }
+  });
+
+})();
+
+/* =========================
+   ฟีเจอร์เสริม: ตรวจสอบสถานะการสมัครกีฬา
+   (เป็นฟีเจอร์แยกต่างหาก ไม่เกี่ยวกับฟอร์มเช็คชื่อด้านบน
+   ทำงานเฉพาะเมื่อหน้าเว็บมี element #checkStatusBtn จริง ๆ)
+========================= */
+document.addEventListener('DOMContentLoaded', function () {
+  const checkStatusBtn = document.getElementById('checkStatusBtn');
+  if (!checkStatusBtn) return;
+
+  checkStatusBtn.addEventListener('click', async () => {
+    const nameInput = document.getElementById('checkName') || document.getElementById('name');
+    const roomInput = document.getElementById('checkRoom') || document.getElementById('room');
+    const resultBox = document.getElementById('checkResult');
+
+    if (!resultBox) return;
+
+    if (!nameInput || !roomInput) {
+      resultBox.innerHTML = '<p style="color:red;">❌ ข้อผิดพลาดทางระบบ: หาช่องกรอกชื่อหรือห้องในหน้าเว็บไม่พบ</p>';
+      return;
+    }
+
+    const name = nameInput.value.trim();
+    const room = roomInput.value.trim();
+    if (!name || !room) {
+      resultBox.innerHTML = '<p style="color:red;">⚠️ กรุณากรอกชื่อและห้องให้ครบถ้วนก่อนกดปุ่ม</p>';
+      return;
+    }
+
+    checkStatusBtn.disabled = true;
+    const originalText = checkStatusBtn.innerText;
+    checkStatusBtn.innerText = 'กำลังตรวจสอบ...';
+
+    resultBox.innerHTML = '<p>⏳ กำลังตรวจสอบข้อมูล กรุณารอสักครู่...</p>';
+    try {
+      const baseUrl = "https://script.google.com/macros/s/AKfycbxjdfQSUS6clXl7-uEkjwINlLQfAYxgsAPare0o-LcvKTA_Ok-DmaatFy5cJcvcMDU0/exec";
+      const url = `${baseUrl}?name=${encodeURIComponent(name)}&room=${encodeURIComponent(room)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.error) {
+        resultBox.innerHTML = `<p style="color:red;">❌ ${data.error}</p>`;
+        return;
+      }
+      if (!data.results || data.results.length === 0) {
+        resultBox.innerHTML = '<p style="color:orange;">❌ ไม่พบข้อมูลการสมัคร ยังไม่เคยลงทะเบียนกีฬาใดเลย</p>';
+        return;
+      }
+      let html = '<p style="color:green; font-weight:bold;">✅ พบข้อมูลการสมัครเรียบร้อย:</p><ul style="text-align:left; display:inline-block;">';
+      data.results.forEach(r => {
+        html += `<li style="margin-bottom: 5px;">🏆 <strong>${r.sport}</strong> (ระดับ: ${r.level || '-'})</li>`;
+      });
+      html += '</ul>';
+      resultBox.innerHTML = html;
+    } catch (err) {
+      console.error(err);
+      resultBox.innerHTML = '<p style="color:red;">❌ เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล ลองใหม่อีกครั้ง</p>';
+    } finally {
+      checkStatusBtn.disabled = false;
+      checkStatusBtn.innerText = originalText;
+    }
+  });
+});
 
 
 
