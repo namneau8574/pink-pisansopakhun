@@ -933,7 +933,7 @@ if (inputField) {
 (function () {
   "use strict";
 
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwGl1l3SOzMMA7njkm5I8_53ecSG_onrpL5gPV3RFr4WNUir3sJD8oF466S89cZSeQ5/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxs2baRGBF4rAqjLSoQqxtxOZbPYOqZ0NNPAy0-C_hFE8sj2Ewi01v1L4ov5mhTuq9Y/exec";
 
   const students = {
     // --- ม.5/11 ---
