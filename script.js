@@ -1085,6 +1085,7 @@ if (inputField) {
   let isLocationValid = false;
   let userCurrentLat = null;
   let userCurrentLng = null;
+  let checkinInProgress = false; // 🆕 กันกดปุ่มยืนยันซ้อนกันจนยิง 2 คำขอ
 
   // แกะรอยพิกัดโรงเรียนจากลิงก์อัตโนมัติ
   function extractCoordsFromUrl(url) {
@@ -1124,9 +1125,6 @@ if (inputField) {
   }
 
   // ซ่อนทุกส่วนของฟอร์ม กลับสู่สถานะเริ่มต้นก่อนค้นหาใหม่
-  // (มี id ตรงกับ HTML จริงทั้งหมด — เดิมมีเวอร์ชันซ้ำนอก IIFE ที่ใช้ id ผิด
-  //  ('roomSection' ที่ไม่มีอยู่จริง) แล้วเขียนทับตัวนี้ ทำให้เกิด error
-  //  และสคริปต์หยุดทำงานกลางคัน จึงลบตัวซ้ำนั้นออกไปแล้ว)
   window.hideAllCheckin = function () {
     const ids = [
       'errorBox',
@@ -1195,9 +1193,7 @@ if (inputField) {
     window.checkFormReady();
   };
 
-  // เลือกฝ่าย — ตอนนี้แก้ไขให้ตั้งค่า currentDept ตัวเดียวกับที่
-  // checkFormReady / confirmCheckIn ใช้จริง (แต่ก่อนมันเป็นตัวแปร global
-  // คนละตัวเพราะ selectDept เดิมอยู่นอก IIFE)
+  // เลือกฝ่าย
   window.selectDept = function (dept) {
     currentDept = dept;
     window.resetDeptBtns();
@@ -1207,7 +1203,7 @@ if (inputField) {
     window.checkFormReady();
   };
 
-  // ตรวจสอบตำแหน่งพิกัดปัจจุบันของนักเรียน
+  // ตรวจสอบตำแหน่งพิกัดปัจจุบันของนักเรียน (ใช้ในขั้นตอนเช็คอิน)
   function verifyLocation() {
     const statusEl = document.getElementById('locationStatus');
     if (!navigator.geolocation) {
@@ -1261,7 +1257,7 @@ if (inputField) {
     reader.readAsDataURL(file);
   };
 
-  // ตรวจเงื่อนไขความพร้อมปุ่มยืนยัน
+  // ตรวจเงื่อนไขความพร้อมปุ่มยืนยัน (เฉพาะฝั่งเช็คอิน)
   window.checkFormReady = function () {
     const roomEl = document.getElementById('roomSelect');
     const room = roomEl ? roomEl.value : '';
@@ -1275,7 +1271,7 @@ if (inputField) {
     }
   };
 
-  // ฟังก์ชันค้นหารายชื่อ
+  // ฟังก์ชันค้นหารายชื่อ (ขั้นตอนเช็คอิน)
   window.searchStudent = function () {
     const idEl = document.getElementById('studentId');
     if (!idEl) {
@@ -1285,6 +1281,10 @@ if (inputField) {
 
     const id = idEl.value.trim();
     window.hideAllCheckin();
+
+    // ซ่อนผลลัพธ์ของปุ่มเช็คเอาท์ (ถ้ามีค้างอยู่) เพื่อไม่ให้ปนกัน
+    const checkoutStatus = document.getElementById('checkoutStatus');
+    if (checkoutStatus) checkoutStatus.style.display = 'none';
 
     currentDept = null;
     base64Image = "";
@@ -1324,13 +1324,17 @@ if (inputField) {
     verifyLocation();
   };
 
-  // ฟังก์ชันบันทึกข้อมูลและส่งค่าไปยังคอลัมน์ต่างๆ บนชีต
+  // ฟังก์ชันบันทึกข้อมูลเช็คอินและส่งค่าไปยังคอลัมน์ต่างๆ บนชีต
   window.confirmCheckIn = async function () {
     const room = document.getElementById('roomSelect').value;
     if (!currentId || !currentDept || !room || !isLocationValid || !base64Image) {
       window.showCheckinToast('⚠️ ข้อมูลไม่ครบถ้วน หรือ พิกัดไม่อยู่ในเขตพื้นที่งาน');
       return;
     }
+
+    // 🆕 กันกดซ้อน: ถ้ากำลังส่งข้อมูลอยู่แล้ว ไม่ต้องยิงคำขอซ้ำอีก
+    if (checkinInProgress) return;
+    checkinInProgress = true;
 
     const now  = new Date();
     const time = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
@@ -1344,7 +1348,7 @@ if (inputField) {
 
     try {
       const params = new URLSearchParams({
-        sheet: 'เช็คชื่อ', id: currentId,
+        type: 'เข้า', sheet: 'เช็คชื่อ', id: currentId,
         name: currentName, room: room, dept: currentDept,
         time: time, date: date, maps: studentMapUrl, photo: base64Image
       });
@@ -1382,6 +1386,67 @@ if (inputField) {
     } finally {
       btn.disabled = false;
       btn.textContent = '✅ ยืนยันเช็คชื่อ';
+      checkinInProgress = false; // 🆕
+    }
+  };
+
+  // 🆕 ฟังก์ชันเช็คเอาท์ — ใช้เลขประจำตัวจากช่อง #studentId ช่องเดิม
+  // ไม่ต้องเลือกห้อง/ฝ่าย/ถ่ายรูป/เช็คพิกัดซ้ำ กดปุ่มแล้วบันทึกเวลาออกทันที
+  window.checkOutStudent = async function () {
+    const idEl = document.getElementById('studentId');
+    const statusEl = document.getElementById('checkoutStatus');
+    const btn = document.getElementById('checkoutBtn');
+    if (!idEl || !statusEl || !btn) return;
+
+    const id = idEl.value.trim();
+
+    statusEl.style.display = 'block';
+    statusEl.style.color = '#666';
+    statusEl.innerHTML = '';
+
+    if (!id) {
+      statusEl.style.color = 'red';
+      statusEl.innerHTML = '⚠️ กรุณากรอกเลขประจำตัวก่อนกดเช็คเอาท์';
+      return;
+    }
+
+    const studentData = students[id];
+    if (!studentData) {
+      statusEl.style.color = 'red';
+      statusEl.innerHTML = '❌ ไม่พบเลขประจำตัวนี้ในคณะสี ม.5 ครับ';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = '⏳ กำลังบันทึกเวลาออก...';
+    statusEl.innerHTML = '⏳ กำลังบันทึกเวลาออก...';
+
+    const now = new Date();
+    const time = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+    const date = now.toLocaleDateString('th-TH');
+
+    try {
+      const params = new URLSearchParams({
+        type: 'ออก', sheet: 'เช็คชื่อ', id: id,
+        name: studentData.name, time: time, date: date
+      });
+
+      // หมายเหตุ: ใช้ mode 'no-cors' เหมือนฝั่งเช็คอินเดิม จึงอ่าน response
+      // กลับมาไม่ได้ (ไม่รู้ว่า backend เจอแถวเช็คอินของวันนี้ไหม)
+      // ข้อความด้านล่างจึงเป็นการ "สันนิษฐานว่าสำเร็จ" ถ้าไม่มี network error
+      await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: params });
+
+      statusEl.style.color = 'green';
+      statusEl.innerHTML = '✅ เช็คเอาท์สำเร็จ! ' + studentData.name + ' เวลา ' + time +
+        '<br><span style="font-size:12px;color:#999;">(หากยังไม่ได้เช็คชื่อเข้าวันนี้ ระบบจะไม่มีแถวให้บันทึกเวลาออก กรุณาตรวจสอบในชีตอีกครั้ง)</span>';
+      idEl.value = '';
+    } catch (err) {
+      console.error(err);
+      statusEl.style.color = 'red';
+      statusEl.innerHTML = '❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🚪 เช็คเอาท์ (ออกจากกิจกรรม)';
     }
   };
 
