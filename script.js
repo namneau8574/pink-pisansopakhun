@@ -933,7 +933,7 @@ if (inputField) {
 (function () {
   "use strict";
 
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbxs2baRGBF4rAqjLSoQqxtxOZbPYOqZ0NNPAy0-C_hFE8sj2Ewi01v1L4ov5mhTuq9Y/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwa6-gH-o21452kVl77qxPRRDgQ600bocxdzSl3qJgpNmAZrR0SToBbLvw4AjufS3Ah/exec";
 
   const students = {
 
