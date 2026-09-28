@@ -1729,3 +1729,218 @@ if (sdForm) {
     }
   });
 }
+
+
+
+
+
+
+
+
+<!-- ============================================
+     ORDER + PAYMENT (รวมเป็นระบบเดียว)
+     กรอกครบ 5 ขั้นตอน แล้วกดยืนยันครั้งเดียวจบ
+     - ไม่มีการค้นหาชื่อทีหลังอีกต่อไป
+============================================ -->
+<!-- SIZE CHART -->
+<div class="size-chart-card">
+  <div class="size-chart-title">
+    <span>📏</span>
+    <div>
+      <h3>ตารางไซร์เสื้อ</h3>
+      <p>เลือกไซร์ให้เหมาะกับคุณก่อนสั่งซื้อ</p>
+    </div>
+  </div>
+
+  <div class="size-chart-image">
+    <img 
+      src="Size.png" 
+      alt="ตารางไซร์เสื้อ"
+      loading="lazy"
+    >
+  </div>
+
+  <div class="size-chart-note">
+    ✦ แนะนำให้ตรวจสอบขนาดจากตารางก่อนสั่งซื้อ
+  </div>
+</div>
+    <section id="ordershirt">
+  <div class="order-header">
+    <span class="order-eyebrow">ORDER & PAY</span>
+    <h2 class="title">˚₊ 🧉‧สั่งจองเสื้อ + ชำระเงิน. ˚🧆 ⋆ 🍩</h2>
+    <p class="order-sub">เลือกแบบเสื้อ กรอกข้อมูล และแนบสลิป</p>
+    <p class="order-sub">✦ บุคคลทั่วไป/ศิษย์เก่า/ผู้ปกครอง สามารถสั่งจองได้เช่นกัน — เลือก "อื่นๆ" ที่ระดับชั้นแล้วพิมพ์ข้อมูลของคุณเองได้เลย</p>
+  </div>
+
+  <!-- ⚠️ แก้ตรงนี้: ต้องมี class="order-form" ไม่งั้นการ์ดฟอร์มจะไม่มีสไตล์เลย -->
+  <form id="orderForm" class="order-form" novalidate>
+
+    <!-- ==============================
+         STEP 1 : เลือกแบบเสื้อ
+    =============================== -->
+    <div class="form-step">
+      <span class="step-num">1</span>
+      <div class="step-fields">
+        <label class="step-label">เลือกแบบเสื้อ</label>
+
+        <div id="orderDesignGrid" class="btn-grid design-grid">
+          <button type="button" class="pick-btn design-btn" data-design="1" aria-pressed="false">
+            <img src="21[1].png" alt="เสื้อแบบที่ 1" class="design-thumb">
+            <span>แบบที่ 1</span>
+            <span>150บาท</span>
+              
+          </button>
+          <button type="button" class="pick-btn design-btn" data-design="2" aria-pressed="false">
+            <img src="20[1].png" alt="เสื้อแบบที่ 2" class="design-thumb">
+            <span>แบบที่ 2</span>
+            <span>120บาท</span>
+              
+          </button>
+        </div>
+เลือกได้ 1 หรือ 2 ได้ทั้ง2แบบถูกม๊วกกก
+        <p class="design-hint">⁺₊🥨₊⁺ ⋆ ซื้อได้ทั้ง2แบบถูกม๊วกกก . ∙ 🍽◝ ৩ </p>
+      </div>
+    </div>
+
+    <!-- ==============================
+         STEP 2 : ข้อมูลผู้สั่งจอง
+    =============================== -->
+    <div class="form-step">
+      <span class="step-num">2</span>
+      <div class="step-fields">
+        <label class="step-label">ข้อมูลผู้สั่งจอง</label>
+
+        <input type="text" id="orderName" placeholder="👤 ชื่อ-นามสกุล" required>
+
+        <div id="orderLevelGrid" class="btn-grid">
+          <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
+          <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
+          <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
+          <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
+          <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
+          <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
+          <button type="button" class="pick-btn" data-level="OTHER">อื่นๆ</button>
+        </div>
+
+        <!-- ข้อความเตือนก่อนเลือกชั้น จะซ่อนอัตโนมัติเมื่อมีห้องให้เลือกแล้ว -->
+        <p id="roomHint" class="room-hint">⬆️ กรุณาเลือกระดับชั้นก่อน</p>
+        <div id="orderRoomGrid" class="btn-grid"></div>
+
+        <input type="text" id="orderRollNo" placeholder="🔢 เลขที่" inputmode="numeric" maxlength="3" required>
+      </div>
+    </div>
+    <input type="text" id="orderContact" placeholder="📱 ช่องทางติดต่อ (LINE / IG / Facebook)" required>
+
+
+    <!-- ==============================
+         STEP 3 : ชื่อ-เบอร์หลังเสื้อ
+    =============================== -->
+    <div class="form-step">
+      <span class="step-num">3</span>
+      <div class="step-fields">
+        <label class="step-label">ชื่อ-เบอร์หลังเสื้อ</label>
+
+        <div class="name-number-row">
+          <input type="text" id="orderBackName" placeholder="✏️ ชื่อหลังเสื้อ" maxlength="20">
+          <input type="text" id="orderBackNumber" placeholder="🔢 เบอร์" inputmode="numeric" maxlength="3">
+        </div>
+
+        <label class="checkbox-row">
+          <input type="checkbox" id="noBackPrint">
+          ไม่ใส่ชื่อ-เบอร์หลังเสื้อ
+        </label>
+      </div>
+    </div>
+
+    <!-- ==============================
+         STEP 4 : เลือกไซซ์ (แยกตามแบบ)
+    =============================== -->
+    <div class="form-step">
+      <span class="step-num">4</span>
+      <div class="step-fields">
+        <label class="step-label">เลือกไซร์</label>
+
+        <!-- แบบ 1 -->
+        <div id="sizeBlock1" class="size-block" style="display:none;">
+           <p class="order-sub">ตั้งแต่ 2xl+10บาท 3xl+20 4xl+30 5xl+40</p>
+          <p class="size-block-label">👕 ไซร์ — เสื้อแบบที่ 1</p>
+          
+          <div id="sizeGrid1" class="btn-grid">
+            <button type="button" class="pick-btn" data-size="S">S</button>
+            <button type="button" class="pick-btn" data-size="M">M</button>
+            <button type="button" class="pick-btn" data-size="L">L</button>
+            <button type="button" class="pick-btn" data-size="XL">XL</button>
+            <button type="button" class="pick-btn" data-size="2XL">2XL</button>
+            <button type="button" class="pick-btn" data-size="3XL">3XL</button>
+            <button type="button" class="pick-btn" data-size="OTHER">อื่นๆ</button>
+          </div>
+          <input type="text" id="otherSizeInput1" placeholder="ระบุไซซ์ เช่น 4XL, 5XL " style="display:none;">
+          <input type="hidden" id="orderSize1">
+        </div>
+
+        <!-- แบบ 2 -->
+        <div id="sizeBlock2" class="size-block" style="display:none;">
+          <p class="size-block-label">👕 ไซร์ — เสื้อแบบที่ 2</p>
+          <p class="order-sub">ตั้งแต่ 2xl+10บาท 3xl+20บาท 4xl+30บาท 5xl+40บาท</p>
+          <div id="sizeGrid2" class="btn-grid">
+            <button type="button" class="pick-btn" data-size="S">S</button>
+            <button type="button" class="pick-btn" data-size="M">M</button>
+            <button type="button" class="pick-btn" data-size="L">L</button>
+            <button type="button" class="pick-btn" data-size="XL">XL</button>
+            <button type="button" class="pick-btn" data-size="2XL">2XL</button>
+            <button type="button" class="pick-btn" data-size="3XL">3XL</button>
+            <button type="button" class="pick-btn" data-size="OTHER">อื่นๆ</button>
+          </div>
+          <input type="text" id="otherSizeInput2" placeholder="ระบุไซซ์ เช่น 4XL, 5XL, 6XL" style="display:none;">
+          <input type="hidden" id="orderSize2">
+        </div>
+      </div>
+    </div>
+
+    <!-- ==============================
+         STEP 5 : ชำระเงิน
+    =============================== -->
+    <div class="form-step">
+      <span class="step-num">5</span>
+      <div class="step-fields">
+        <label class="step-label">ชำระเงิน</label>
+
+        <div class="qr-card">
+          <p class="qr-label">📱 สแกน QR เพื่อโอนเงิน</p>
+          <img src="qrcode111.jpg" alt="QR โอนเงิน" class="qr-img">
+          <div class="bank-info">
+            <span>ธนาคารกสิกรไทย</span>
+             <p>1088208737</p>
+            <span>น้ำเหนือ ศรีนาคำ</span>
+          </div>
+        </div>
+
+        <div class="order-total-box">
+          <span>💰 ยอดชำระทั้งหมด</span>
+          <strong id="orderTotal">0 บาท</strong>
+        </div>
+
+        <!-- ⚠️ แก้ตรงนี้: ใส่ class="upload-text" กลับเข้าไป -->
+        <label for="orderSlipInput" class="upload-drop" id="orderUploadDrop">
+          <span class="upload-icon">🧾</span>
+          <span id="uploadText" class="upload-text">แตะเพื่อเลือกรูปสลิป</span>
+        </label>
+        <input type="file" id="orderSlipInput" accept="image/*" hidden>
+
+        <!-- ⚠️ แก้ตรงนี้: ใส่ class="slip-preview-box" กลับเข้าไป -->
+        <div id="orderSlipPreviewBox" class="slip-preview-box" style="display:none;">
+          <img id="orderSlipPreview" alt="ตัวอย่างสลิป">
+        </div>
+      </div>
+    </div>
+       <!-- ==============================
+         SUBMIT
+    =============================== -->
+    <button type="submit" id="orderSubmitBtn">⚡ ยืนยันการสั่งจองและชำระเงิน</button>
+
+  </form>
+
+  <div id="orderContainer" aria-live="polite"></div>
+
+</section>
+
