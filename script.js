@@ -1737,210 +1737,550 @@ if (sdForm) {
 
 
 
-<!-- ============================================
-     ORDER + PAYMENT (รวมเป็นระบบเดียว)
-     กรอกครบ 5 ขั้นตอน แล้วกดยืนยันครั้งเดียวจบ
-     - ไม่มีการค้นหาชื่อทีหลังอีกต่อไป
-============================================ -->
-<!-- SIZE CHART -->
-<div class="size-chart-card">
-  <div class="size-chart-title">
-    <span>📏</span>
-    <div>
-      <h3>ตารางไซร์เสื้อ</h3>
-      <p>เลือกไซร์ให้เหมาะกับคุณก่อนสั่งซื้อ</p>
+/* =========================================================
+   ORDER + PAYMENT (ระบบเดียว)
+   เลือกแบบ -> กรอกข้อมูล -> ชื่อ/เบอร์หลังเสื้อ -> ไซซ์ -> แนบสลิป -> ส่งครั้งเดียว
+========================================================= */
+const SYSTEM_ENABLED = true;
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ======================================
+     CONFIG
+  ======================================= */
+
+  const DESIGN_PRICES = {
+    "1": 150,
+    "2": 120
+  };
+
+  // ค่าไซซ์เพิ่มเติม ตั้งแต่ 2XL ขึ้นไป
+  const SIZE_SURCHARGE = {
+    "2XL": 10,
+    "3XL": 20,
+    "4XL": 30,
+    "5XL": 40
+  };
+
+  function getSizeSurcharge(size) {
+    if (!size) return 0;
+    return SIZE_SURCHARGE[size.trim().toUpperCase()] || 0;
+  }
+
+  function getDesignPrice(design, size) {
+    return (DESIGN_PRICES[design] || 0) + getSizeSurcharge(size);
+  }
+
+  function getTotalPrice(designs, size1, size2) {
+    return designs.reduce((sum, d) => {
+      const size = d === "1" ? size1 : size2;
+      return sum + getDesignPrice(d, size);
+    }, 0);
+  }
+
+  // 🔗 ใส่ Web App URL จาก Google Apps Script ตรงนี้
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbzE8fYlzo1aGgZ1QVQ-nPbXv70bFIasGkxIoiT0jXPQsk4T75nHcqi_TwVX0a6tADmM/exec";
+
+  // (ทางเลือก) ถ้าอยากกำหนดห้องเฉพาะของแต่ละชั้นแทนการไล่ 1..N อัตโนมัติ
+  // ให้เพิ่มชั้นนั้นในนี้ เช่น "ม.1": ["1/2", "1/7", "1/15"]
+  // ชั้นไหนไม่ได้ระบุในนี้ จะ gen ห้องอัตโนมัติตาม DEFAULT_ROOM_COUNT
+  const ROOMS_BY_LEVEL = {
+    "ม.1": ["1/2", "1/7", "1/15"],
+    "ม.2": ["2/1", "2/8", "2/13"],
+    "ม.3": ["3/4", "3/5", "3/10"],
+    "ม.4": ["4/1", "4/6", "4/13"],
+    "ม.5": ["5/3", "5/7", "5/11"],
+    "ม.6": ["6/7", "6/9", "6/14"]
+  };
+  const DEFAULT_ROOM_COUNT = 12;
+
+  /* ======================================
+     STATE
+  ======================================= */
+
+  let selectedDesigns = [];
+  let selectedLevel = "";
+  let selectedRoom = "";
+  let selectedSize1 = "";
+  let selectedSize2 = "";
+  let selectedSlip = null;
+  let isOtherLevel = false; // ✅ true เมื่อเลือก "อื่นๆ" (บุคคลทั่วไป/ไม่ใช่นักเรียน)
+
+
+  /* ======================================
+     DESIGN
+  ======================================= */
+
+  document.querySelectorAll(".design-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const design = btn.dataset.design;
+
+      if (selectedDesigns.includes(design)) {
+        selectedDesigns = selectedDesigns.filter(d => d !== design);
+        btn.classList.remove("selected");
+        btn.setAttribute("aria-pressed", "false");
+      } else {
+        selectedDesigns.push(design);
+        btn.classList.add("selected");
+        btn.setAttribute("aria-pressed", "true");
+      }
+
+      updateSizeBlocks();
+      calculateTotal();
+    });
+  });
+
+
+  /* ======================================
+     SIZE BLOCK
+     (โชว์/ซ่อนตามแบบที่เลือก + ล้างค่าไซซ์เก่าให้หมดจริงๆ
+      ทั้งตัวแปร, hidden input, ปุ่มที่ค้าง .selected, ช่อง "อื่นๆ")
+  ======================================= */
+
+  function clearSizeUI(gridId, hiddenId, otherId) {
+    document.querySelectorAll(`#${gridId} .pick-btn`).forEach(b => b.classList.remove("selected"));
+    document.getElementById(hiddenId).value = "";
+    const other = document.getElementById(otherId);
+    other.style.display = "none";
+    other.value = "";
+  }
+
+  function updateSizeBlocks() {
+    const design1 = selectedDesigns.includes("1");
+    const design2 = selectedDesigns.includes("2");
+
+    document.getElementById("sizeBlock1").style.display = design1 ? "block" : "none";
+    document.getElementById("sizeBlock2").style.display = design2 ? "block" : "none";
+
+    if (!design1) {
+      selectedSize1 = "";
+      clearSizeUI("sizeGrid1", "orderSize1", "otherSizeInput1");
+    }
+    if (!design2) {
+      selectedSize2 = "";
+      clearSizeUI("sizeGrid2", "orderSize2", "otherSizeInput2");
+    }
+  }
+
+
+  /* ======================================
+     SIZE BUTTON
+  ======================================= */
+
+  function setupSize(gridId, hiddenId, otherId, number) {
+    const grid = document.getElementById(gridId);
+
+    grid.querySelectorAll(".pick-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        grid.querySelectorAll(".pick-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+
+        const size = btn.dataset.size;
+        const other = document.getElementById(otherId);
+
+        if (size === "OTHER") {
+          other.style.display = "block";
+          other.focus();
+          document.getElementById(hiddenId).value = "";
+          if (number === 1) selectedSize1 = ""; else selectedSize2 = "";
+        } else {
+          other.style.display = "none";
+          other.value = "";
+          document.getElementById(hiddenId).value = size;
+          if (number === 1) selectedSize1 = size; else selectedSize2 = size;
+        }
+
+        calculateTotal();
+      });
+    });
+
+    document.getElementById(otherId).addEventListener("input", function () {
+      const value = this.value.trim().toUpperCase();
+      this.value = value;
+      document.getElementById(hiddenId).value = value;
+      if (number === 1) selectedSize1 = value; else selectedSize2 = value;
+      calculateTotal();
+    });
+  }
+
+  setupSize("sizeGrid1", "orderSize1", "otherSizeInput1", 1);
+  setupSize("sizeGrid2", "orderSize2", "otherSizeInput2", 2);
+
+
+  /* ======================================
+     LEVEL
+  ======================================= */
+
+  document.querySelectorAll("#orderLevelGrid .pick-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#orderLevelGrid .pick-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+
+      selectedLevel = btn.dataset.level;
+
+      if (selectedLevel === "OTHER") {
+        isOtherLevel = true;
+        renderOtherRoomInput();
+      } else {
+        isOtherLevel = false;
+        createRooms(selectedLevel);
+      }
+    });
+  });
+
+  // ✅ ช่องกรอกอิสระสำหรับบุคคลทั่วไป / ระดับชั้นอื่นๆ ที่ไม่อยู่ใน ม.1-ม.6
+  function renderOtherRoomInput() {
+    const grid = document.getElementById("orderRoomGrid");
+    const hint = document.getElementById("roomHint");
+    grid.innerHTML = "";
+    selectedRoom = "";
+
+    const wrap = document.createElement("div");
+    wrap.style.width = "100%";
+
+    const otherInput = document.createElement("input");
+    otherInput.type = "text";
+    otherInput.id = "orderOtherRoomInput";
+    otherInput.placeholder = "🏫 ระบุชั้น/ห้อง สีอื่นที่อยากสั่ง เช่น ม.5/8 ";
+    otherInput.addEventListener("input", () => {
+      selectedRoom = otherInput.value.trim();
+    });
+
+    wrap.appendChild(otherInput);
+    grid.appendChild(wrap);
+
+    if (hint) hint.style.display = "none";
+  }
+
+
+  /* ======================================
+     ROOM
+     - ถ้ามีระบุห้องเฉพาะของชั้นนั้นใน ROOMS_BY_LEVEL จะใช้ลิสต์นั้น
+     - ถ้าไม่มี จะ gen ห้อง 1..DEFAULT_ROOM_COUNT ให้อัตโนมัติ
+  ======================================= */
+
+  function createRooms(level) {
+    const grid = document.getElementById("orderRoomGrid");
+    const hint = document.getElementById("roomHint");
+
+    grid.innerHTML = "";
+    selectedRoom = "";
+
+    const customRooms = ROOMS_BY_LEVEL[level];
+    const roomLabels = customRooms
+      ? customRooms
+      : Array.from({ length: DEFAULT_ROOM_COUNT }, (_, i) => `${level}/${i + 1}`);
+
+    roomLabels.forEach(roomLabel => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "pick-btn";
+      btn.textContent = roomLabel;
+
+      btn.addEventListener("click", () => {
+        grid.querySelectorAll(".pick-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedRoom = roomLabel;
+      });
+
+      grid.appendChild(btn);
+    });
+
+    if (hint) hint.style.display = "none";
+  }
+
+
+  /* ======================================
+     NO BACK PRINT
+  ======================================= */
+
+  document.getElementById("noBackPrint").addEventListener("change", function () {
+    const name = document.getElementById("orderBackName");
+    const number = document.getElementById("orderBackNumber");
+
+    name.disabled = this.checked;
+    number.disabled = this.checked;
+
+    if (this.checked) {
+      name.value = "";
+      number.value = "";
+    }
+  });
+
+
+  /* ======================================
+     ตัวเลขล้วนสำหรับเลขที่ / เบอร์หลังเสื้อ
+  ======================================= */
+
+  ["orderRollNo", "orderBackNumber"].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener("input", e => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    });
+  });
+
+
+  /* ======================================
+     PRICE
+  ======================================= */
+
+  function calculateTotal() {
+    const total = getTotalPrice(selectedDesigns, selectedSize1, selectedSize2);
+    document.getElementById("orderTotal").textContent = total.toLocaleString("th-TH") + " บาท";
+  }
+
+
+  /* ======================================
+     SLIP
+  ======================================= */
+
+  document.getElementById("orderSlipInput").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("กรุณาเลือกไฟล์รูปภาพ");
+      this.value = "";
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert("ไฟล์ต้องไม่เกิน 10MB");
+      this.value = "";
+      return;
+    }
+
+    selectedSlip = file;
+    document.getElementById("uploadText").textContent = "✅ เลือกสลิปแล้ว (แตะเพื่อเปลี่ยน)";
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const preview = document.getElementById("orderSlipPreview");
+      preview.src = e.target.result;
+      document.getElementById("orderSlipPreviewBox").style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function resetSlipUI() {
+    selectedSlip = null;
+    const previewBox = document.getElementById("orderSlipPreviewBox");
+    const previewImg = document.getElementById("orderSlipPreview");
+    previewBox.style.display = "none";
+    previewImg.src = "";
+    document.getElementById("uploadText").textContent = "แตะเพื่อเลือกรูปสลิป";
+    document.getElementById("orderSlipInput").value = "";
+  }
+
+
+  /* ======================================
+     VALIDATE
+  ======================================= */
+
+  function validate() {
+    if (selectedDesigns.length === 0) {
+      alert("กรุณาเลือกแบบเสื้อ");
+      return false;
+    }
+
+    const name = document.getElementById("orderName").value.trim();
+    if (!name) {
+      alert("กรุณากรอกชื่อ-นามสกุล");
+      return false;
+    }
+
+    if (!selectedLevel) {
+      alert("กรุณาเลือกชั้น");
+      return false;
+    }
+
+    if (!selectedRoom) {
+      alert(isOtherLevel ? "กรุณากรอกชั้น/ห้อง หรือหน่วยงานของคุณ" : "กรุณาเลือกห้อง");
+      return false;
+    }
+
+    const roll = document.getElementById("orderRollNo").value.trim();
+    if (!roll) {
+      alert("กรุณากรอกเลขที่");
+      return false;
+    }
+   
+    const contact = document.getElementById("orderContact").value.trim();
+    if (!contact) {
+      alert("กรุณากรอกช่องทางติดต่อ");
+      return false;
+    }
+
+    if (selectedDesigns.includes("1") && !document.getElementById("orderSize1").value.trim()) {
+      alert("กรุณาเลือกไซซ์แบบที่ 1");
+      return false;
+    }
+
+    if (selectedDesigns.includes("2") && !document.getElementById("orderSize2").value.trim()) {
+      alert("กรุณาเลือกไซซ์แบบที่ 2");
+      return false;
+    }
+
+    if (!selectedSlip) {
+      alert("กรุณาแนบสลิป");
+      return false;
+    }
+
+    return true;
+  }
+
+
+  /* ======================================
+     FILE → BASE64
+  ======================================= */
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(",")[1]); // ตัด prefix data:...;base64,
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+
+  /* ======================================
+     SUBMIT
+  ======================================= */
+
+  document.getElementById("orderForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    if (!validate()) return;
+
+    const name = document.getElementById("orderName").value.trim();
+    const rollNo = document.getElementById("orderRollNo").value.trim();
+    const contact = document.getElementById("orderContact").value.trim();
+    const backName = document.getElementById("orderBackName").value.trim();
+    const backNumber = document.getElementById("orderBackNumber").value.trim();
+    const size1 = document.getElementById("orderSize1").value.trim();
+    const size2 = document.getElementById("orderSize2").value.trim();
+    const noBackPrintChecked = document.getElementById("noBackPrint").checked;
+
+    const quantity = selectedDesigns.length;
+    const total = getTotalPrice(selectedDesigns, size1, size2);
+
+    const orderData = {
+      // ✅ เมื่อเลือก "อื่นๆ" จะส่ง action เป็น order_other เพื่อให้ฝั่ง Apps Script
+      //    แยกไปบันทึกลงชีตคนละแผ่นจากนักเรียนในระบบปกติ
+      action: isOtherLevel ? "order_other" : "order",
+      isOther: isOtherLevel,
+      name,
+      level: isOtherLevel ? "อื่นๆ" : selectedLevel,
+      room: selectedRoom,
+      rollNo,
+      contact,
+      backName: noBackPrintChecked ? "" : backName,
+      backNumber: noBackPrintChecked ? "" : backNumber,
+      designs: [],
+      quantity,
+      total
+    };
+
+    if (selectedDesigns.includes("1")) {
+      orderData.designs.push({ design: "1", size: size1 });
+    }
+    if (selectedDesigns.includes("2")) {
+      orderData.designs.push({ design: "2", size: size2 });
+    }
+
+    const button = document.getElementById("orderSubmitBtn");
+    button.disabled = true;
+    button.textContent = "⏳ กำลังส่งข้อมูล...";
+
+    try {
+      const slipBase64 = await fileToBase64(selectedSlip);
+
+      orderData.slip = {
+        name: selectedSlip.name,
+        type: selectedSlip.type,
+        data: slipBase64
+      };
+
+      const response = await fetch(GAS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(orderData)
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || "ส่งข้อมูลไม่สำเร็จ");
+      }
+
+      // ===== สำเร็จ =====
+      const sizeRows = selectedDesigns
+        .map(d => {
+          const size = d === "1" ? size1 : size2;
+          return `<div class="detail-row"><span>ไซซ์ (แบบที่${d})</span><strong>${size}</strong></div>`;
+        })
+        .join("");
+
+      const backRow = (noBackPrintChecked || (!backName && !backNumber))
+        ? ""
+        : `<div class="detail-row"><span>ชื่อ-เบอร์หลังเสื้อ</span><strong>${backName}${backName && backNumber ? " / " : ""}${backNumber}</strong></div>`;
+
+    document.getElementById("orderContainer").innerHTML = `
+  <div class="order-success-box">
+    <div class="success-photo-wrap">
+      <img src="1608.png" alt="ขอบคุณค้าบบบ" class="success-owner-photo">
     </div>
+    <h3>สั่งจองสำเร็จ 💗</h3>
+    <p class="success-thankyou"> เปิดเทอม<br>รอรับเสื้อได้เลย💗<</p>
+    <div class="success-detail">
+      <div class="detail-row"><span>ชื่อ</span><strong>${name}</strong></div>
+      <div class="detail-row"><span>ชั้น/ห้อง</span><strong>${selectedLevel}/${selectedRoom}</strong></div>
+      <div class="detail-row"><span>เลขที่</span><strong>${rollNo}</strong></div>
+      <div class="detail-row"><span>ติดต่อ</span><strong>${contact}</strong></div>
+      ${sizeRows}
+      ${backRow}
+    </div>
+    <div class="success-total">ยอดชำระ ${total.toLocaleString("th-TH")} บาท</div>
   </div>
+`;
+      this.reset();
 
-  <div class="size-chart-image">
-    <img 
-      src="Size.png" 
-      alt="ตารางไซร์เสื้อ"
-      loading="lazy"
-    >
-  </div>
+      selectedDesigns = [];
+      selectedLevel = "";
+      selectedRoom = "";
+      selectedSize1 = "";
+      selectedSize2 = "";
+      isOtherLevel = false;
 
-  <div class="size-chart-note">
-    ✦ แนะนำให้ตรวจสอบขนาดจากตารางก่อนสั่งซื้อ
-  </div>
-</div>
-    <section id="ordershirt">
-  <div class="order-header">
-    <span class="order-eyebrow">ORDER & PAY</span>
-    <h2 class="title">˚₊ 🧉‧สั่งจองเสื้อ + ชำระเงิน. ˚🧆 ⋆ 🍩</h2>
-    <p class="order-sub">เลือกแบบเสื้อ กรอกข้อมูล และแนบสลิป</p>
-    <p class="order-sub">✦ บุคคลทั่วไป/ศิษย์เก่า/ผู้ปกครอง สามารถสั่งจองได้เช่นกัน — เลือก "อื่นๆ" ที่ระดับชั้นแล้วพิมพ์ข้อมูลของคุณเองได้เลย</p>
-  </div>
+      document.querySelectorAll(".pick-btn").forEach(btn => {
+        btn.classList.remove("selected");
+        if (btn.hasAttribute("aria-pressed")) btn.setAttribute("aria-pressed", "false");
+      });
 
-  <!-- ⚠️ แก้ตรงนี้: ต้องมี class="order-form" ไม่งั้นการ์ดฟอร์มจะไม่มีสไตล์เลย -->
-  <form id="orderForm" class="order-form" novalidate>
+      document.getElementById("sizeBlock1").style.display = "none";
+      document.getElementById("sizeBlock2").style.display = "none";
+      ["otherSizeInput1", "otherSizeInput2"].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.display = "none";
+        el.value = "";
+      });
 
-    <!-- ==============================
-         STEP 1 : เลือกแบบเสื้อ
-    =============================== -->
-    <div class="form-step">
-      <span class="step-num">1</span>
-      <div class="step-fields">
-        <label class="step-label">เลือกแบบเสื้อ</label>
+      document.getElementById("orderRoomGrid").innerHTML = "";
+      const roomHint = document.getElementById("roomHint");
+      if (roomHint) roomHint.style.display = "";
 
-        <div id="orderDesignGrid" class="btn-grid design-grid">
-          <button type="button" class="pick-btn design-btn" data-design="1" aria-pressed="false">
-            <img src="21[1].png" alt="เสื้อแบบที่ 1" class="design-thumb">
-            <span>แบบที่ 1</span>
-            <span>150บาท</span>
-              
-          </button>
-          <button type="button" class="pick-btn design-btn" data-design="2" aria-pressed="false">
-            <img src="20[1].png" alt="เสื้อแบบที่ 2" class="design-thumb">
-            <span>แบบที่ 2</span>
-            <span>120บาท</span>
-              
-          </button>
-        </div>
-เลือกได้ 1 หรือ 2 ได้ทั้ง2แบบถูกม๊วกกก
-        <p class="design-hint">⁺₊🥨₊⁺ ⋆ ซื้อได้ทั้ง2แบบถูกม๊วกกก . ∙ 🍽◝ ৩ </p>
-      </div>
-    </div>
+      resetSlipUI();
+      calculateTotal();
 
-    <!-- ==============================
-         STEP 2 : ข้อมูลผู้สั่งจอง
-    =============================== -->
-    <div class="form-step">
-      <span class="step-num">2</span>
-      <div class="step-fields">
-        <label class="step-label">ข้อมูลผู้สั่งจอง</label>
+    } catch (error) {
+      console.error(error);
+      alert("❌ ส่งข้อมูลไม่สำเร็จ\n" + error.message);
+    } finally {
+      button.disabled = false;
+      button.textContent = "⚡ ยืนยันการสั่งจองและชำระเงิน";
+    }
+  });
 
-        <input type="text" id="orderName" placeholder="👤 ชื่อ-นามสกุล" required>
-
-        <div id="orderLevelGrid" class="btn-grid">
-          <button type="button" class="pick-btn" data-level="ม.1">ม.1</button>
-          <button type="button" class="pick-btn" data-level="ม.2">ม.2</button>
-          <button type="button" class="pick-btn" data-level="ม.3">ม.3</button>
-          <button type="button" class="pick-btn" data-level="ม.4">ม.4</button>
-          <button type="button" class="pick-btn" data-level="ม.5">ม.5</button>
-          <button type="button" class="pick-btn" data-level="ม.6">ม.6</button>
-          <button type="button" class="pick-btn" data-level="OTHER">อื่นๆ</button>
-        </div>
-
-        <!-- ข้อความเตือนก่อนเลือกชั้น จะซ่อนอัตโนมัติเมื่อมีห้องให้เลือกแล้ว -->
-        <p id="roomHint" class="room-hint">⬆️ กรุณาเลือกระดับชั้นก่อน</p>
-        <div id="orderRoomGrid" class="btn-grid"></div>
-
-        <input type="text" id="orderRollNo" placeholder="🔢 เลขที่" inputmode="numeric" maxlength="3" required>
-      </div>
-    </div>
-    <input type="text" id="orderContact" placeholder="📱 ช่องทางติดต่อ (LINE / IG / Facebook)" required>
-
-
-    <!-- ==============================
-         STEP 3 : ชื่อ-เบอร์หลังเสื้อ
-    =============================== -->
-    <div class="form-step">
-      <span class="step-num">3</span>
-      <div class="step-fields">
-        <label class="step-label">ชื่อ-เบอร์หลังเสื้อ</label>
-
-        <div class="name-number-row">
-          <input type="text" id="orderBackName" placeholder="✏️ ชื่อหลังเสื้อ" maxlength="20">
-          <input type="text" id="orderBackNumber" placeholder="🔢 เบอร์" inputmode="numeric" maxlength="3">
-        </div>
-
-        <label class="checkbox-row">
-          <input type="checkbox" id="noBackPrint">
-          ไม่ใส่ชื่อ-เบอร์หลังเสื้อ
-        </label>
-      </div>
-    </div>
-
-    <!-- ==============================
-         STEP 4 : เลือกไซซ์ (แยกตามแบบ)
-    =============================== -->
-    <div class="form-step">
-      <span class="step-num">4</span>
-      <div class="step-fields">
-        <label class="step-label">เลือกไซร์</label>
-
-        <!-- แบบ 1 -->
-        <div id="sizeBlock1" class="size-block" style="display:none;">
-           <p class="order-sub">ตั้งแต่ 2xl+10บาท 3xl+20 4xl+30 5xl+40</p>
-          <p class="size-block-label">👕 ไซร์ — เสื้อแบบที่ 1</p>
-          
-          <div id="sizeGrid1" class="btn-grid">
-            <button type="button" class="pick-btn" data-size="S">S</button>
-            <button type="button" class="pick-btn" data-size="M">M</button>
-            <button type="button" class="pick-btn" data-size="L">L</button>
-            <button type="button" class="pick-btn" data-size="XL">XL</button>
-            <button type="button" class="pick-btn" data-size="2XL">2XL</button>
-            <button type="button" class="pick-btn" data-size="3XL">3XL</button>
-            <button type="button" class="pick-btn" data-size="OTHER">อื่นๆ</button>
-          </div>
-          <input type="text" id="otherSizeInput1" placeholder="ระบุไซซ์ เช่น 4XL, 5XL " style="display:none;">
-          <input type="hidden" id="orderSize1">
-        </div>
-
-        <!-- แบบ 2 -->
-        <div id="sizeBlock2" class="size-block" style="display:none;">
-          <p class="size-block-label">👕 ไซร์ — เสื้อแบบที่ 2</p>
-          <p class="order-sub">ตั้งแต่ 2xl+10บาท 3xl+20บาท 4xl+30บาท 5xl+40บาท</p>
-          <div id="sizeGrid2" class="btn-grid">
-            <button type="button" class="pick-btn" data-size="S">S</button>
-            <button type="button" class="pick-btn" data-size="M">M</button>
-            <button type="button" class="pick-btn" data-size="L">L</button>
-            <button type="button" class="pick-btn" data-size="XL">XL</button>
-            <button type="button" class="pick-btn" data-size="2XL">2XL</button>
-            <button type="button" class="pick-btn" data-size="3XL">3XL</button>
-            <button type="button" class="pick-btn" data-size="OTHER">อื่นๆ</button>
-          </div>
-          <input type="text" id="otherSizeInput2" placeholder="ระบุไซซ์ เช่น 4XL, 5XL, 6XL" style="display:none;">
-          <input type="hidden" id="orderSize2">
-        </div>
-      </div>
-    </div>
-
-    <!-- ==============================
-         STEP 5 : ชำระเงิน
-    =============================== -->
-    <div class="form-step">
-      <span class="step-num">5</span>
-      <div class="step-fields">
-        <label class="step-label">ชำระเงิน</label>
-
-        <div class="qr-card">
-          <p class="qr-label">📱 สแกน QR เพื่อโอนเงิน</p>
-          <img src="qrcode111.jpg" alt="QR โอนเงิน" class="qr-img">
-          <div class="bank-info">
-            <span>ธนาคารกสิกรไทย</span>
-             <p>1088208737</p>
-            <span>น้ำเหนือ ศรีนาคำ</span>
-          </div>
-        </div>
-
-        <div class="order-total-box">
-          <span>💰 ยอดชำระทั้งหมด</span>
-          <strong id="orderTotal">0 บาท</strong>
-        </div>
-
-        <!-- ⚠️ แก้ตรงนี้: ใส่ class="upload-text" กลับเข้าไป -->
-        <label for="orderSlipInput" class="upload-drop" id="orderUploadDrop">
-          <span class="upload-icon">🧾</span>
-          <span id="uploadText" class="upload-text">แตะเพื่อเลือกรูปสลิป</span>
-        </label>
-        <input type="file" id="orderSlipInput" accept="image/*" hidden>
-
-        <!-- ⚠️ แก้ตรงนี้: ใส่ class="slip-preview-box" กลับเข้าไป -->
-        <div id="orderSlipPreviewBox" class="slip-preview-box" style="display:none;">
-          <img id="orderSlipPreview" alt="ตัวอย่างสลิป">
-        </div>
-      </div>
-    </div>
-       <!-- ==============================
-         SUBMIT
-    =============================== -->
-    <button type="submit" id="orderSubmitBtn">⚡ ยืนยันการสั่งจองและชำระเงิน</button>
-
-  </form>
-
-  <div id="orderContainer" aria-live="polite"></div>
-
-</section>
+});
 
