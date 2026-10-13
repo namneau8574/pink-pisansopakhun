@@ -1736,3 +1736,365 @@ if (sdForm) {
 
 
 
+
+
+
+
+
+
+
+/* =======================================================
+   CONFIG
+   แก้ URL นี้ให้เป็น URL ของ Web App ที่ deploy จาก Code.gs
+   (Deploy > New deployment > Web app > Execute as: Me,
+    Who has access: Anyone)
+======================================================= */
+const GAS_URL =
+  "https://script.google.com/macros/s/AKfycbz_IQk78EmAUq5Hdyv_gd7KlKrDKnK86x6AXzc-o8pBwf70mmqCQzkSrjl9TK_uTUwj/exec";
+
+/* =======================================================
+   ELEMENTS
+======================================================= */
+const els = {
+  searchCard: document.getElementById("searchCard"),
+  paymentCard: document.getElementById("paymentCard"),
+
+  level: document.getElementById("level"),
+  room: document.getElementById("room"),
+  rollNo: document.getElementById("rollNo"),
+
+  searchBtn: document.getElementById("searchBtn"),
+  searchBtnText: document.getElementById("searchBtnText"),
+  loading: document.getElementById("loading"),
+  errorMessage: document.getElementById("errorMessage"),
+
+  foundMeta: document.getElementById("foundMeta"),
+  amountValue: document.getElementById("amountValue"),
+
+  payStep: document.getElementById("payStep"),
+  paidStep: document.getElementById("paidStep"),
+
+  slipInput: document.getElementById("slipInput"),
+  uploadText: document.getElementById("uploadText"),
+  slipPreviewBox: document.getElementById("slipPreviewBox"),
+  slipPreview: document.getElementById("slipPreview"),
+
+  confirmPayBtn: document.getElementById("confirmPayBtn"),
+  confirmPayBtnText: document.getElementById("confirmPayBtnText"),
+
+  resetBtn: document.getElementById("resetBtn")
+};
+
+let currentStudent = null;
+let selectedSlip = null;
+let searchTimer = null;
+let lastAutoKey = ""; // ป้องกันการยิงค้นหาซ้ำ combo เดิมที่เพิ่งค้นไปแล้ว
+
+/* =======================================================
+   HELPERS
+======================================================= */
+
+function showError(message) {
+  els.errorMessage.textContent = "❌ " + message;
+  els.errorMessage.style.display = "block";
+}
+
+function clearError() {
+  els.errorMessage.style.display = "none";
+  els.errorMessage.textContent = "";
+}
+
+function setLoading(isLoading) {
+  els.loading.style.display = isLoading ? "flex" : "none";
+  els.searchBtn.disabled = isLoading;
+}
+
+function fileToBase64(file) {
+  return new Promise(function (resolve, reject) {
+    const reader = new FileReader();
+
+    reader.onload = function () {
+      const result = String(reader.result || "");
+      const base64 = result.indexOf(",") >= 0 ? result.split(",")[1] : result;
+      resolve(base64);
+    };
+
+    reader.onerror = function () {
+      reject(new Error("อ่านไฟล์ไม่สำเร็จ"));
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+function resetSlip() {
+  selectedSlip = null;
+  els.slipInput.value = "";
+  els.uploadText.textContent = "แตะเพื่อแนบรูปสลิป";
+  els.slipPreview.src = "";
+  els.slipPreviewBox.style.display = "none";
+}
+
+function resetAll() {
+  currentStudent = null;
+  resetSlip();
+
+  els.level.value = "";
+  els.room.value = "";
+  els.rollNo.value = "";
+  lastAutoKey = "";
+
+  clearError();
+
+  els.payStep.style.display = "block";
+  els.paidStep.style.display = "none";
+
+  els.paymentCard.style.display = "none";
+  els.searchCard.style.display = "block";
+
+  els.level.focus();
+}
+
+els.resetBtn.addEventListener("click", resetAll);
+
+async function callApi(params) {
+  const url = new URL(GAS_URL);
+  Object.keys(params).forEach(function (key) {
+    url.searchParams.set(key, params[key]);
+  });
+
+  const response = await fetch(url.toString());
+  return response.json();
+}
+
+/* =======================================================
+   AUTO-SEARCH BY LEVEL + ROOM + ROLL NO
+   ไม่ต้องพิมพ์ชื่อแล้ว เพราะพิมพ์ชื่อไม่ตรงกับที่บันทึกไว้บ่อย
+   (คำนำหน้า/เว้นวรรค) พอกรอกครบ 3 ช่องนี้ ระบบจะ debounce
+   แล้วค้นหาให้อัตโนมัติ ถ้าเจอจะเด้งเข้าหน้าชำระเงินเลย
+======================================================= */
+
+function fieldsComplete() {
+  return Boolean(
+    els.level.value.trim() && els.room.value.trim() && els.rollNo.value.trim()
+  );
+}
+
+function currentKey() {
+  return els.level.value.trim() + "|" + els.room.value.trim() + "|" + els.rollNo.value.trim();
+}
+
+function scheduleAutoSearch() {
+  if (searchTimer) {
+    clearTimeout(searchTimer);
+    searchTimer = null;
+  }
+
+  clearError();
+
+  if (!fieldsComplete()) {
+    return;
+  }
+
+  const key = currentKey();
+  if (key === lastAutoKey) {
+    // ผู้ใช้ยังไม่ได้แก้ไขค่าใด ๆ จาก combo ที่เพิ่งค้นหาไปแล้ว ไม่ต้องยิงซ้ำ
+    return;
+  }
+
+  searchTimer = setTimeout(function () {
+    lastAutoKey = key;
+    runSearch();
+  }, 500);
+}
+
+els.level.addEventListener("change", scheduleAutoSearch);
+els.room.addEventListener("input", scheduleAutoSearch);
+els.rollNo.addEventListener("input", scheduleAutoSearch);
+
+els.rollNo.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    if (searchTimer) {
+      clearTimeout(searchTimer);
+      searchTimer = null;
+    }
+    lastAutoKey = currentKey();
+    runSearch();
+  }
+});
+
+/* =======================================================
+   SEARCH
+======================================================= */
+
+async function runSearch() {
+  clearError();
+
+  const level = els.level.value.trim();
+  const room = els.room.value.trim();
+  const rollNo = els.rollNo.value.trim();
+
+  if (!level || !room || !rollNo) {
+    showError("กรุณาเลือกชั้น และกรอกห้องกับเลขที่ให้ครบ");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const data = await callApi({
+      action: "findShopFee10",
+      level: level,
+      room: room,
+      rollNo: rollNo
+    });
+
+    if (!data.success) {
+      showError(
+        data.message ||
+          "ไม่พบข้อมูลตามห้อง/เลขที่นี้ ลองตรวจสอบรูปแบบห้อง (เช่น 5/7 หรือ 5/07) และเลขที่อีกครั้ง"
+      );
+      return;
+    }
+
+    currentStudent = data;
+    renderPaymentCard(data);
+  } catch (err) {
+    showError("เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+  } finally {
+    setLoading(false);
+  }
+}
+
+els.searchBtn.addEventListener("click", function () {
+  if (searchTimer) {
+    clearTimeout(searchTimer);
+    searchTimer = null;
+  }
+  lastAutoKey = currentKey();
+  runSearch();
+});
+
+/* =======================================================
+   RENDER PAYMENT CARD
+   *** แก้ตรงนี้ ***
+   เดิม: ใส่ยอด "10" ตายตัวเสมอ
+   ใหม่: อ่านยอดจาก data.total ที่ backend คำนวณมาให้แล้ว
+   (สั่ง 1 แบบ = 10 บาท, สั่ง 2 แบบ = 20 บาท ฯลฯ)
+   และโชว์รายละเอียดว่าสั่งกี่แบบ แบบอะไรบ้าง
+======================================================= */
+
+function renderPaymentCard(data) {
+  els.searchCard.style.display = "none";
+  els.paymentCard.style.display = "block";
+
+  const itemsText = (data.items && data.items.length)
+    ? " • " + data.items.join(" + ")
+    : "";
+
+  els.foundMeta.textContent =
+    data.name + " • " + data.level + "/" + data.room + " เลขที่ " + data.rollNo +
+    itemsText + " (" + data.unpaidQuantity + " แบบ × " + data.unitPrice + " บาท)";
+
+  // เดิม: els.amountValue.textContent = "10";
+  els.amountValue.textContent = String(data.total);
+
+  if (data.alreadyPaid) {
+    els.payStep.style.display = "none";
+    els.paidStep.style.display = "block";
+  } else {
+    els.payStep.style.display = "block";
+    els.paidStep.style.display = "none";
+    resetSlip();
+  }
+}
+
+/* =======================================================
+   SELECT SLIP
+======================================================= */
+
+els.slipInput.addEventListener("change", function () {
+  const file = els.slipInput.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    alert("❌ กรุณาเลือกไฟล์รูปภาพ");
+    els.slipInput.value = "";
+    return;
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    alert("❌ ไฟล์ต้องมีขนาดไม่เกิน 10MB");
+    els.slipInput.value = "";
+    return;
+  }
+
+  selectedSlip = file;
+  els.uploadText.textContent = "✅ เลือกสลิปแล้ว (แตะเพื่อเปลี่ยน)";
+
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    els.slipPreview.src = event.target.result;
+    els.slipPreviewBox.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
+
+/* =======================================================
+   CONFIRM PAYMENT
+   *** แก้ตรงนี้ ***
+   เดิม: amount: 10 (ส่งค่าคงที่ 10 บาทไปตลอด)
+   ใหม่: amount: currentStudent.total (ยอดจริงตามจำนวนแบบที่สั่ง)
+======================================================= */
+
+els.confirmPayBtn.addEventListener("click", async function () {
+  if (!currentStudent) return;
+
+  if (!selectedSlip) {
+    alert("⚠️ กรุณาแนบรูปสลิปก่อนยืนยัน");
+    return;
+  }
+
+  els.confirmPayBtn.disabled = true;
+  els.confirmPayBtnText.textContent = "⏳ กำลังส่งข้อมูล...";
+
+  try {
+    const base64 = await fileToBase64(selectedSlip);
+
+    const payload = {
+      action: "payShopFee10",
+      name: currentStudent.name,
+      level: currentStudent.level,
+      room: currentStudent.room,
+      rollNo: currentStudent.rollNo,
+      amount: currentStudent.total, // เดิม: amount: 10,
+      slip: {
+        name: selectedSlip.name,
+        type: selectedSlip.type,
+        data: base64
+      }
+    };
+
+    const response = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.message || "ชำระเงินไม่สำเร็จ");
+    }
+
+    els.payStep.style.display = "none";
+    els.paidStep.style.display = "block";
+  } catch (error) {
+    console.error(error);
+    alert("❌ " + (error.message || "เกิดข้อผิดพลาด"));
+  } finally {
+    els.confirmPayBtn.disabled = false;
+    els.confirmPayBtnText.textContent = "⚡ ยืนยันการชำระเงิน";
+  }
+});
