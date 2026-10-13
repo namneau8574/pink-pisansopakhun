@@ -1750,7 +1750,7 @@ if (sdForm) {
     Who has access: Anyone)
 ======================================================= */
 const GAS_URL =
-  "https://script.google.com/macros/s/AKfycbz_IQk78EmAUq5Hdyv_gd7KlKrDKnK86x6AXzc-o8pBwf70mmqCQzkSrjl9TK_uTUwj/exec";
+  "https://script.google.com/macros/s/AKfycbyWpMe1buLDe1rAGzsU0G8n8gM5ym_YSGhJIPFIazOKdFSi_VF5IQWhQ2CnbP6PO5M/exec";
 
 /* =======================================================
    ELEMENTS
